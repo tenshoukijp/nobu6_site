@@ -1,0 +1,398 @@
+%(hilight)s
+<div class="content-box mb-3 content-lighten">
+	<h2><i class="fa fa-book fa-fw"></i>軍団</h2>
+	<p>軍団とは、軍団長率いる軍団のことです。<br>
+		大名自身が率いる第１軍団も、軍団という扱いになります。
+	</p>
+	<p>軍団と一言で言っても３つの概念で構成されます。<br>
+	</p>
+	<ul class="pointlist">
+		<li>
+			<h4>軍団</h4>
+			<p>軍団という抽象的なカテゴリの概念。</p>
+			<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_gundan_01.png"></p>
+		<li>
+			<h4>「p軍団情報」という配列</h4>
+			<p>軍団の一覧リストに相当する「軍団の配列」の概念。</p>
+			<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_gundan_02.png"></p>
+		<li>
+			<h4>p軍団情報[ix] (0 &lt;= ix &lt; 軍団の総数)</h4>
+			<p>軍団の配列のうち、どれか１つの軍団</p>
+			<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_gundan_03.png"></p>
+	</ul>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>軍団番号から軍団長がいる居城を求める</h3>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_gundan_04.png"></p>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+	int iGundanID = pターン情報.現在のターン【軍団番号】 - 1;
+
+	if (0 &lt;= iGundanID &amp;&amp; iGundanID &lt; 最大数::軍団情報::配列数) {
+		if (Is_プレイヤ担当軍団(iGundanID)) {
+			int iCastleID = p軍団情報[iGundanID].所属居城【城番号】 - 1;
+			デバッグ出力 &lt;&lt; Get_城名(iCastleID) &lt;&lt; Get_城称(iCastleID) &lt;&lt; endl;
+		}
+	}
+}
+</pre>
+	</div>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>軍団番号から軍団が所属している大名を求める</h3>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_gundan_05.png"></p>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+	for (int iGundanID = 0; iGundanID &lt; 最大数::軍団情報::配列数; iGundanID++) {
+
+		// その軍団が所属している大名番号【配列用】を求める
+		int iDaimyoID = p軍団情報[iGundanID].所属大名【大名番号】 - 1;
+
+		int i軍団長BushouID = p軍団情報[iGundanID].軍団長【武将番号】 - 1;
+		if (0 &lt;= i軍団長BushouID &amp;&amp; i軍団長BushouID &lt; 最大数::武将情報::配列数) {
+			デバッグ出力 &lt;&lt; &quot;軍団長の&quot; &lt;&lt; Get_名字(i軍団長BushouID) &lt;&lt; Get_名前(i軍団長BushouID) &lt;&lt; &quot;は...&quot; &lt;&lt; endl;
+
+			// 第一軍団長であり、大名でもある
+			if (p武将戸籍情報[i軍団長BushouID].状態 == 状態::大名) {
+				デバッグ出力 &lt;&lt; &quot;大名本人でもあります&quot; &lt;&lt; endl;
+			}
+			// 第二軍団以降の軍団長であり、大名ではない場合
+			else {
+				if (0 &lt;= iDaimyoID &amp;&amp; iDaimyoID &lt; 最大数::大名情報::配列数) {
+					int i大名BushouID = p大名情報[iDaimyoID].大名【武将番号】 - 1;
+
+					if (0 &lt;= iDaimyoID &amp;&amp; iDaimyoID &lt; 最大数::武将情報::配列数) {
+						デバッグ出力 &lt;&lt; Get_名字(i大名BushouID) &lt;&lt; Get_名前(i大名BushouID) &lt;&lt; &quot;の大名家に帰属する軍団長です。&quot; &lt;&lt; endl;
+					}
+				}
+
+			}
+		}
+	}
+}</pre>
+	</div>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>プレイヤ担当の軍団か？</h3>
+	<p>プレイヤーが担当する大名家に帰属する全ての軍団（第１軍団～第８軍団）であれば、true となります。</p>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_gundan_13.png"></p>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+	for (int iGundanID = 0; iGundanID &lt; 最大数::軍団情報::配列数; iGundanID++) {
+		if (Is_プレイヤ担当軍団(iGundanID)) {
+			int iBushouID = p軍団情報[iGundanID].軍団長【武将番号】 - 1;
+			if (0 &lt;= iBushouID &amp;&amp; iBushouID &lt; 最大数::武将情報::配列数) {
+				デバッグ出力 &lt;&lt; Get_名字(iBushouID) &lt;&lt; Get_名前(iBushouID) &lt;&lt; &quot;はプレイヤの担当している大名麾下の軍団長です(大名自身含む)&quot; &lt;&lt; endl;
+			}
+		}
+	}
+}
+</pre>
+	</div>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>軍団番号とループ</h3>
+	<p>軍団番号【配列用】をループしていく方法としては主に以下の２通りがあります。</p>
+	<h4>単純に for でループしていく方法</h4>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+	// for とカウンタで回すタイプ
+	for (int iGundanID = 0; iGundanID &lt; 最大数::軍団情報::配列数; iGundanID++) {
+		int iBushouID = p軍団情報[iGundanID].軍団長【武将番号】 - 1;
+		if (0 &lt;= iBushouID &amp;&amp; iBushouID &lt; 最大数::武将情報::配列数) {
+			デバッグ出力 &lt;&lt; Get_名字(iBushouID) &lt;&lt; Get_名前(iBushouID) &lt;&lt; &quot;軍団&quot; &lt;&lt; endl;
+		}
+	}
+}
+</pre>
+</div>
+<h4>リストを得て、foreachをする方法</h4>
+<div class="code">
+	<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+	// 有効な軍団番号【配列用】のリストを取得するタイプ
+	番号リスト型 vGundanList = Get_軍団番号リスト【配列用】();
+
+	for (int iGundanID : vGundanList) {
+		int iBushouID = p軍団情報[iGundanID].軍団長【武将番号】 - 1;
+		if (0 &lt;= iBushouID &amp;&amp; iBushouID &lt; 最大数::武将情報::配列数) {
+			デバッグ出力 &lt;&lt; Get_名字(iBushouID) &lt;&lt; Get_名前(iBushouID) &lt;&lt; &quot;軍団&quot; &lt;&lt; endl;
+		}
+	}
+}
+</pre>
+	</div>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>軍団の行動力</h3>
+	<p>軍団の行動力は、軍団長個人に帰属するのではなく、軍団という組織のパラメータです。</p>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_gundan_06.png"></p>
+	<blockquote>p軍団情報[ix].行動力</blockquote>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+	for (int iGundanID = 0; iGundanID &lt; 最大数::軍団情報::配列数; iGundanID++) {
+		int iBushouID = p軍団情報[iGundanID].軍団長【武将番号】 - 1;
+		if (0 &lt;= iBushouID &amp;&amp; iBushouID &lt; 最大数::武将情報::配列数) {
+			デバッグ出力 &lt;&lt; Get_名字(iBushouID) &lt;&lt; Get_名前(iBushouID) &lt;&lt; &quot;の行動力は&quot; &lt;&lt; (int)p軍団情報[iGundanID].行動力 &lt;&lt; endl;
+			if (Is_プレイヤ担当軍団(iGundanID)) {
+				p軍団情報[iGundanID].行動力 = 200;
+			}
+		}
+	}
+}
+</pre>
+	</div>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>金・米・馬・鉄砲</h3>
+	<p>馬や鉄砲については、武将の兵に貸し与えているものとは別の、いわば「予備の馬」「予備の鉄砲」の数値だと言えます。</p>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_gundan_07.png"></p>
+	<blockquote>p軍団情報[ix].金</blockquote>
+	<blockquote>p軍団情報[ix].米</blockquote>
+	<blockquote>p軍団情報[ix].馬</blockquote>
+	<blockquote>p軍団情報[ix].鉄砲</blockquote>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+	for (int iGundanID = 0; iGundanID &lt; 最大数::軍団情報::配列数; iGundanID++) {
+		int iBushouID = p軍団情報[iGundanID].軍団長【武将番号】 - 1;
+		if (0 &lt;= iBushouID &amp;&amp; iBushouID &lt; 最大数::武将情報::配列数) {
+			デバッグ出力 &lt;&lt; Get_名字(iBushouID) &lt;&lt; Get_名前(iBushouID) &lt;&lt; endl;
+			int 金 = p軍団情報[iGundanID].金;
+			int 米 = p軍団情報[iGundanID].米;
+			int 馬 = p軍団情報[iGundanID].馬;
+			int 鉄砲 = p軍団情報[iGundanID].鉄砲;
+			デバッグ出力 &lt;&lt; &quot;金, 米, 馬, 鉄砲&quot; &lt;&lt; 金 &lt;&lt; &quot;,&quot; &lt;&lt; 米 &lt;&lt; &quot;,&quot; &lt;&lt; 馬 &lt;&lt; &quot;,&quot; &lt;&lt; 鉄砲 &lt;&lt; endl;
+
+			if (金 &lt; 5000) {
+				p軍団情報[iGundanID].金 = 5000;
+			}
+			if (米 &lt; 5000) {
+				p軍団情報[iGundanID].米 = 5000;
+			}
+			if (馬 &lt; 5000) {
+				p軍団情報[iGundanID].馬 = 5000;
+			}
+			if (鉄砲 &lt; 1000) {
+				p軍団情報[iGundanID].鉄砲 = 1000;
+			}
+		}
+	}
+}
+</pre>
+	</div>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>１番～８番の軍団割当番号</h3>
+	<p>言葉が軍団番号と近くて紛らわしいので気をつけてください。<br>
+	こちらは、第一軍団～第八軍団といったように、１～８で割り当てられている軍団の数字での呼び名です。</p>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_gundan_08.png"></p>
+	<blockquote>p軍団情報[ix].軍団割当番号</blockquote>
+	<blockquote>番号リスト型 Get_軍団未割当番号リスト(int 大名番号【配列用】)</blockquote>
+	<blockquote>番号リスト型 Get_軍団割当番号リスト(int 大名番号【配列用】)</blockquote>
+	<blockquote>bool Set_軍団割当番号変更(int 軍団番号【配列用】, int 新割当番号)</blockquote>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+	for (int iGundanID = 0; iGundanID &lt; 最大数::軍団情報::配列数; iGundanID++) {
+		int iBushouID = p軍団情報[iGundanID].軍団長【武将番号】 - 1;
+		if (0 &lt;= iBushouID &amp;&amp; iBushouID &lt; 最大数::武将情報::配列数) {
+			デバッグ出力 &lt;&lt; Get_名字(iBushouID) &lt;&lt; Get_名前(iBushouID) &lt;&lt; &quot;の軍団割当番号は&quot; &lt;&lt; (int)p軍団情報[iGundanID].軍団割当番号 &lt;&lt; endl;
+		}
+	}
+}</pre>
+	</div>
+	<h3>軍団割当番号を変更する際は、「空き番号」を探して、そこへと変更することになる</h3>
+	<div class="code">
+		<pre class="brush:cpp;">
+
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+	for (int iGundanID = 0; iGundanID &lt; 最大数::軍団情報::配列数; iGundanID++) {
+		int iBushouID = p軍団情報[iGundanID].軍団長【武将番号】 - 1;
+		if (0 &lt;= iBushouID &amp;&amp; iBushouID &lt; 最大数::武将情報::配列数) {
+			デバッグ出力 &lt;&lt; Get_名字(iBushouID) &lt;&lt; Get_名前(iBushouID) &lt;&lt; &quot;の軍団割当番号は&quot; &lt;&lt; (int)p軍団情報[iGundanID].軍団割当番号 &lt;&lt; endl;
+
+			// 軍団番号が変更可能な第２軍団以降に関して
+			if (p軍団情報[iGundanID].軍団割当番号 &gt;= 2) {
+
+				// 軍団が所属している大名を求める
+				int iDaimyoID = p軍団情報[iGundanID].所属大名【大名番号】 - 1;
+
+				if (0 &lt;= iDaimyoID &amp;&amp; iDaimyoID &lt; 最大数::大名情報::配列数) {
+					// 軍団割当番号ででまだ割り当てられていない番号のリストを得る
+					番号リスト型 未割り当てリスト = Get_軍団未割当番号リスト(iDaimyoID);
+
+					// 未割り当ての番号が１つ以上ある
+					bool success = false;
+					if (未割り当てリスト.size() &gt;= 1) {
+						int last_index = 未割り当てリスト.size() - 1;
+						int 未割り当ての最後の番号 = 未割り当てリスト[last_index];
+						// 未割り当ての最初の番号に当てる
+						success = Set_軍団割当番号変更(iGundanID, 未割り当ての最後の番号);
+					}
+
+					if (success) {
+						番号リスト型 割り当て済みの番号リスト = Get_軍団割当番号リスト(iDaimyoID);
+						デバッグ出力 &lt;&lt; &quot;大名番号【配列用】&quot; &lt;&lt; iDaimyoID &lt;&lt; &quot;において、軍団割当番号は...&quot;;
+						for (int ix : 割り当て済みの番号リスト) {
+							デバッグ出力 &lt;&lt; ix &lt;&lt; &quot;,&quot;;
+						}
+						デバッグ出力 &lt;&lt; &quot;と変化しました&quot; &lt;&lt; endl;
+					}
+
+				}
+			}
+
+		}
+	}
+}
+
+</pre>
+	</div>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>軍団の兵数</h3>
+	<p>実は「軍団の兵数」といった概念は存在していません。<br>
+		軍団に所属する個々の武将が持っている兵数を足したもの、それが軍団の兵数です。<br>
+	よって軍団の兵数の値を設定する、といった概念はありません。</p>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_gundan_09.png"></p>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+	for (int iGundanID = 0; iGundanID &lt; 最大数::軍団情報::配列数; iGundanID++) {
+		int iBushouID = p軍団情報[iGundanID].軍団長【武将番号】 - 1;
+		if (0 &lt;= iBushouID &amp;&amp; iBushouID &lt; 最大数::武将情報::配列数) {
+			デバッグ出力 &lt;&lt; Get_名字(iBushouID) &lt;&lt; Get_名前(iBushouID) &lt;&lt; &quot;の軍団の兵数は&quot; &lt;&lt; Get_軍団兵数(iGundanID) &lt;&lt; endl;
+		}
+	}
+}
+</pre>
+	</div>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>ある軍団に所属する武将のリスト</h3>
+	<p>ある軍団下にある武将番号【配列用】の一覧を取得しいたいといったことはよくあることです。<br>
+	<blockquote>番号リスト型 Get_軍団麾下武将番号リスト【配列用】(int 軍団番号【配列用】)</blockquote>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+	int iBushouID = Get_武将番号【配列用】(顔番号::明智光秀);
+	if (0 &lt;= iBushouID &amp;&amp; iBushouID &lt; 最大数::武将情報::配列数) {
+
+		// 明智光秀が軍団長である時、
+		if (p武将戸籍情報[iBushouID].状態 == 状態::軍団長) {
+
+			// 明智光秀が支配する軍団番号【配列用】を得る
+			int iGundanID = p武将情報[iBushouID].所属軍団【軍団番号】 - 1;
+
+			if (0 &lt;= iGundanID &amp;&amp; iGundanID &lt; 最大数::軍団情報::配列数) {
+
+				番号リスト型 bushou_list = Get_軍団麾下武将番号リスト【配列用】(iGundanID);
+
+				デバッグ出力 &lt;&lt; &quot;明智軍団配下の武将...&quot;;
+				for (int iBID : bushou_list) {
+					デバッグ出力 &lt;&lt; Get_名字(iBID) &lt;&lt; Get_名前(iBID) &lt;&lt; endl;
+				}
+
+				デバッグ出力 &lt;&lt; &quot;...以上。&quot;;
+			}
+		}
+	}
+}
+</pre>
+	</div>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_gundan_14.png"></p>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>軍師を求める</h3>
+	<p>第１軍団(大名自身の軍団）～第８軍団には能力を満たせば、自動的に軍師が割り当てられます。<br>
+	その軍師が誰なのかを取得します。</p>
+	<p>この自動割り当てのアルゴリズムを変更したい場合は、<a href="?page=nobu_mod_the_snmod_methodref_on_custom_gunshi_bushou">カスタム条件 － AS条件::軍師武将番号</a> を参照してください。</p>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_gundan_10.png"></p>
+	<blockquote>int Get_軍師武将番号【配列用】(int 軍団番号【配列用】)</blockquote>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+	for (int iGundanID = 0; iGundanID &lt; 最大数::軍団情報::配列数; iGundanID++) {
+		int iBushouID = p軍団情報[iGundanID].軍団長【武将番号】 - 1;
+		if (0 &lt;= iBushouID &amp;&amp; iBushouID &lt; 最大数::武将情報::配列数) {
+
+			int 軍師BushouID = Get_軍師武将番号【配列用】(iGundanID);
+
+			デバッグ出力 &lt;&lt; Get_名字(iBushouID) &lt;&lt; Get_名前(iBushouID) &lt;&lt; &quot;の軍団の軍師は...&quot; &lt;&lt; endl;
+
+			if (0 &lt;= 軍師BushouID &amp;&amp; 軍師BushouID &lt; 最大数::武将情報::配列数) {
+				デバッグ出力 &lt;&lt; Get_名字(軍師BushouID) &lt;&lt; Get_名前(軍師BushouID) &lt;&lt; &quot;です！&quot; &lt;&lt; endl;
+			}
+			else {
+				デバッグ出力 &lt;&lt; &quot;いません！&quot; &lt;&lt; endl;
+			}
+		}
+	}
+}
+</pre>
+	</div>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>ある「軍団」が持つ城の一覧</h3>
+	<blockquote>int Get_軍団所持城数(int 軍団番号【配列用】)</blockquote>
+	<blockquote>番号リスト型 Get_軍団所持城番号リスト【配列用】(int 軍団番号【配列用】)</blockquote>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+	// 明智光秀が軍団長のとき、その城数と城番号【配列用】のリストを得る
+	int iBushouID = Get_武将番号【配列用】(顔番号::明智光秀);
+
+	if (0 &lt;= iBushouID &amp;&amp; iBushouID &lt; 最大数::武将情報::配列数) {
+		if (p武将戸籍情報[iBushouID].状態 == 状態::軍団長) {
+			int iGundanID = p武将情報[iBushouID].所属軍団【軍団番号】 - 1;
+
+			if (0 &lt;= iGundanID &amp;&amp; iGundanID &lt; 最大数::軍団情報::配列数) {
+				int 城数 = Get_軍団所持城数(iGundanID);
+				デバッグ出力 &lt;&lt; &quot;明智光秀の軍団の城数は&quot; &lt;&lt; 城数 &lt;&lt; endl;
+
+				番号リスト型 list = Get_軍団所持城番号リスト【配列用】(iGundanID);
+				for (int iCastleID : list) {
+					デバッグ出力 &lt;&lt; Get_城名(iCastleID) + Get_城称(iCastleID) &lt;&lt; endl;
+				}
+			}
+		}
+	}
+}
+</pre>
+	</div>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>軍団の役職</h3>
+	<p><a href="?page=nobu_mod_the_snmod_methodref_api_yakushoku">役職</a> のページを参照してください。</p>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>より詳細を知るには...</h3>
+	<p>
+		「軍団」に関する主な所は以上となります。<br>
+		詳しくは「軍団情報型.h」や「軍団情報列挙.h」などを参照してください。
+	</p>
+</div>

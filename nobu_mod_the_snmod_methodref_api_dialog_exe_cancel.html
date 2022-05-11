@@ -1,0 +1,35 @@
+%(hilight)s
+<div class="content-box mb-3 content-lighten">
+	<h2><i class="fa fa-book fa-fw"></i>ダイアログ - 実行・取消ダイアログ</h2>
+	<p>実行・取消型のダイアログを表示するAPIです。</p>
+	<p>大小関わらず、自作の独自イベントなどで利用することになるでしょう。</p>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_dialog_01.png"></p>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<blockquote>int 実行／取消ダイアログ表示(string ダイアログ文字列)</blockquote>
+	<p></p>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_相場変更直前() {
+	int ret = 実行／取消ダイアログ表示(&quot;○○を実行しますか？&quot;);
+	if (ret == TRUE) {
+		デバッグ出力 &lt;&lt; &quot;実行します&quot; &lt;&lt; endl;
+	}
+	else {
+		デバッグ出力 &lt;&lt; &quot;実行しません&quot; &lt;&lt; endl;
+	}
+}
+</pre>
+	</div>
+</div>
+
+
+
+<div class="content-box mb-3 content-lighten">
+	<h3>より詳細を知るには...</h3>
+	<p>
+		「実行・取消ダイアログ」に関する主な所は以上となります。
+		詳しくは「ダイアログ情報型.h」を参照してください。
+	</p>
+</div>

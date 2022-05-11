@@ -1,0 +1,85 @@
+﻿%(hilight)s
+<div class="content-box mb-3 content-lighten">
+  <h1>
+    <i class="fa fa-book fa-fw"></i>_svfw32.dll</h1>
+</div>
+<div class="content-box mb-3 content-lighten">
+  <h3>これって？</h3>
+  <br>
+  _inmm.dll は WINMM.DLL を使って CD を鳴らしているゲームに働きますが、<br>
+  ごくまれに(*1) MSVFW32.DLL という DLL を使って CD を鳴らしているゲー<br>
+  ムもあります。そんなゲームで _inmm.dll を使えるようにしようというの<br>
+  がこれです。<br>
+  <br>
+  どんなゲームでこれが使えるかは、_inmm.dll FAQ の「パッチを当てたのに<br>
+  CDから音が鳴ります。」を参照してください。<br>
+  <br>
+  (*1) 今のところ、ぱんだはうす系の一部のゲームしか確認されていません。<br>
+  <br>
+  <br>
+</div>
+<div class="content-box mb-3 content-lighten">
+  <h3>どうやって</h3>
+  <br>
+  仕組みは _inmm.dll と同じです。ゲームにパッチを当てて、MSVFW32.DLL<br>
+  への命令を _svfw32.dll に送るようにします。_svfw32.dll ではその命令<br>
+  を _inmm.dll に送ります。<br>
+  <br>
+  <br>
+</div>
+<div class="content-box mb-3 content-lighten">
+  <h3>手順</h3>
+  <br>
+  1. _svfw32.dll を windows フォルダかゲームのあるフォルダに置きます。<br>
+  <br>
+  2. ゲームにパッチを当てます。<br>
+  <br>
+  _inmmcnf に対象ゲームが登録されていれば、他のゲームと同じように<br>
+  _inmmcnf.exe の一覧からパッチを当てることができます。<br>
+  <br>
+  _inmmcnf に登録されていない場合は、付属の vfwpatch.exe を使います。<br>
+  vfwpatch.exe を起動してパッチを当てるファイルを選択するか、パッチ<br>
+  を当てるファイルをエクスプローラ上で vfwpatch.exe にドロップして<br>
+  ください。<br>
+  <br>
+  3. いつものように _inmm.ini を用意して、ゲームを起動します。<br>
+  <br>
+  <br>
+</div>
+<div class="content-box mb-3 content-lighten">
+  <h3>注意</h3>
+  <br>
+  MSVFW32.DLL の機能のうち、ぱんだはうす系のちょっと古いゲームで使われ<br>
+  ている「Script Engine 'Monochrome'」が使っている機能しか現在実装して<br>
+  いません。MSVFW32.DLL を使う他のゲームでは動かない可能性が高いです。<br>
+  <br>
+  _svfw32.dll を使ってゲームを動かすと、ゲームの実行ファイルがあるフォ<br>
+  ルダに _svfw32.log というログファイルを作ります。動かなかった場合、<br>
+  このファイルを作者まで送って頂けると対処できるかもしれません。<br>
+  <br>
+  <br>
+</div>
+<div class="content-box mb-3 content-lighten">
+  <h3>_inmmcnfに登録</h3>
+  <br>
+  _inmmcnf.ini で _svfw32.dll 用のパッチを適用することを指定するには、<br>
+  File= の代わりに VfwPatch= でパッチを当てるファイル名を指定します。<br>
+  あと、Message1 には『_inmm.dllのホームページで配布されている<br>
+  「_svfw32.dll」が必要です。』と書いておきましょう（配布されている<br>
+  _inmmcnf.ini の「SPARK!」の項目を参考にしてください）。<br>
+  <br>
+  <br>
+</div>
+<div class="content-box mb-3 content-lighten">
+  <h3>さいごに</h3>
+  <br>
+  どこか間違ってたら教えてください。<br>
+  <br>
+  改変・再配布はご自由にどうぞ。<br>
+  <br>
+  このプログラムを使用した結果について作者は一切責任もてません。<br>
+  <br>
+  <br>
+  作者 irori &lt;irori@gmx.net&gt;<br>
+  http://www.geocities.co.jp/Playtown-Domino/8282/<br>
+</div>

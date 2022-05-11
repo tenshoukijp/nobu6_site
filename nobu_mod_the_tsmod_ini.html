@@ -1,0 +1,60 @@
+<div class="content-box mb-3 content-lighten">
+    <h2><i class="fa fa-gears fa-fw"></i>TSMod設定キットの機能 ～tsmod.ini編～</h2>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>TSMod.ini とは</h3>
+    <p>TSMod.iniとは、TSModの挙動をカスタム出来る設定項目が記述されているファイルです。</p>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>テキストエディタで編集する</h3>
+    <p>ご自身のお好みのテキストエディターで設定を自由に書き換えることが出来ます。<br>
+        テキストエディターを普段利用していないという方は、以下に｢サクラエディタ｣を用意していますので、これを｢<b>天翔記フォルダー</b>｣に入れて利用してください。<br>
+        このサクラエディタは、<b>若干ながら、TSMod.ini専用にカスタマイズ</b>されています。</p>
+        <div class="card mb-3 ml-3" style="max-width: 30rem;">
+            <!-- カード本文：card-body -->
+            <div class="card-body text-center">
+                <div class="row">
+                    <div class="col-12"><small>更新日 %(year)04d/%(mon)02d/%(mday)02d</small></div>
+                </div>
+                <a href="./cnt_sakura/sakura.zip" class="btn btn-primary"><i class="fa fa-download fa-fw"></i>サクラエディタ ver.1.6.6</a>
+            </div>
+        </div>
+    </p>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>TSMod.iniは直接編集しない方がいい!!</h3>
+    <p>TSMod.iniファイルを直接編集することにより動作の変更が可能ではあります。<br>
+        しかし、<b><span class="negative">TSMod.iniは、TSModのバージョンが上がると、ModUpdaterによる最新版取得時に上書きされてしまいます。</span></b></p>
+    <p>ですから、<b><span class="negative">TSMod.ini 自体を編集するのは、あまりお勧めしません。</span></b><br>
+    </p>
+    <p><img src="./cnt_mod/cnt_mod_tsmod_ini_01.png"><br>
+    </p>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3><b>TSMod<font color="red">Ex</font>.ini</b>を作成し、編集する</h3>
+    <p>そこで、TSModEx.iniというファイルを新たに自分で作り、<br>
+        そこで好みの設定をすることとお勧めします。<br>
+    </p>
+    <p>TSModEx.iniはTSModが更新されても、上書きされたりしませんので、自由にカスタムできます。 <br>
+    </p>
+    <p><img src="./cnt_mod/cnt_mod_tsmod_ini_02.png"><br>
+    </p>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>LUA言語を使用可能</h3>
+    <p>この「TSMod.ini」や「TSModEx.ini」ではLua言語を自由に使うことができます。<br>
+        たとえば、起動する度に、フォントを変更したり、<br>
+        日付やPCのマシンによって、特定のパラメータを変更したり、といったことも簡単に出来ます。<br>
+    </p>
+    <p>また、エラー情報は、「<a href="?page=nobu_mod_the_debugger">ModDebugger</a>」上に表示されます。<br>
+    </p>
+    <p><img src="./cnt_mod/cnt_mod_tsmod_ini_03.png"><br>
+    </p>
+
+    <fieldset style="margin-left: 20px" class="alert alert-info">
+        <legend>独自に拡張されたLua言語</legend> TSMod/ScenarioMod用のLuaは、<br>
+        独自に拡張がほどこされたLuaであり、多くの機能が追加されています。
+        </p>
+        (※参照:<a href="?page=nobu_mod_the_snmod_methodref_lua_init">ScenarioMod/TSMod用のLuaインタプリタ</a> )
+    </fieldset>
+</div>

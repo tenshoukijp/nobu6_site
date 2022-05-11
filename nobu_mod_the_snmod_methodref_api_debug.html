@@ -1,0 +1,43 @@
+%(hilight)s
+<div class="content-box mb-3 content-lighten">
+	<h2><i class="fa fa-book fa-fw"></i>デバッグ</h2>
+	<p>前提知識として、デバッグ出力 については、「<a href="?page=nobu_mod_the_snmod_moddebugger">ModDebuggerとデバッグ出力</a>」にて <mark>ModDebugger</mark> も含めて解説されていますので、<br>
+		そちらを参照してください。</p>
+  <p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_debug_01.png"></p>
+</div>
+<div class="content-box mb-3 content-lighten">
+	<h3>デバッグ出力 ～ C言語 の print風 ～</h3>
+	<p>printf(format, ...)</b> と、完全に同一の記法となる。 </p>
+	<div class="code">
+		<pre class="brush:cpp;">デバッグ出力("%d,%s\n", 3, 元メッセージ.c_str())</pre>
+	</div>
+	<p>のような記法。 <br></p>
+	<fieldset class="alert alert-info">
+		<legend>%sにstringを放り込む間違いをし易いので注意</legend>
+		こちらの記法で注意すべきは、printfのフォーマット指定子は｢string型｣をサポートしていないので、 <br>
+		string型については、上記のように c_str() もしくは data() すること。
+	</fieldset>
+</div>
+<div class="content-box mb-3 content-lighten">
+	<h3>デバッグ出力 ～ C++ の cout風 ～</h3>
+	<p>C++のcout &lt;&lt; ...と、完全に同一の記法となる。<br>
+		cout で利用可能な記法やマニピュレータは原則全て利用可能である。即ち、<br></p>
+	<div class="code">
+		<pre class="brush:cpp;">デバッグ出力 &lt;&lt; (int)メッセージ関連情報.第１人称【武将番号】 &lt;&lt; &quot;,&quot; &lt;&lt; 元メッセージ &lt;&lt; endl</pre>
+	</div>
+
+	<p>のような記法。 <br></p>
+	<fieldset class="alert alert-info">
+		<legend>数値型と思われるものは徹底的に(int)でキャストすること</legend>
+		天翔記のデータ構造は、<mark>byte型=unsigned char型のものが多いため、intでキャストを忘れると</mark>、デバッグ出力が<mark>「数値」ではなく「文字」と勘違いして出力</mark>します<br>
+		文字ではなく数値だということを明言するため、数値型として表示して欲しいものは、徹底して(int)でキャストする癖をつけましょう。<br>
+		又、基本的には、endlを付けることになります。endl(もしくはデバッグ出力.flush()したタイミングで出力されます。
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>より詳細を知るには...</h3>
+	<p>
+		デバッグに関する主な所は以上となります。
+		詳しくは「デバッグ情報型.h」などを参照してください。
+	</p>
+</div>

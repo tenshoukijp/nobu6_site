@@ -1,0 +1,119 @@
+%(hilight)s
+<div class="content-box mb-3 content-lighten">
+	<h2><i class="fa fa-book fa-fw"></i>ダイアログ - 選択メニューダイアログ</h2>
+	<p>複数のメニューから選択するタイプのダイアログを表示するAPIです。</p>
+	<p>大小関わらず、自作の独自イベントなどで利用することになるでしょう。</p>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_dialog_02.png"></p>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<blockquote>int 選択メニューダイアログ表示(文字列リスト型 文字列リスト, int Ｘ座標, int Ｙ座標 )</blockquote>
+	<p>メニューの項目数は<b>最大で「３６」個までである。<br>
+			それを越えた時は、ダイアログ自体表示しない。</b> 又、１つもメニュー項目がない場合もダイアログを表示しない。</p>
+	<div class="code">
+		<pre class="brush:cpp;">
+  文字列リスト型 myList;
+
+  myList.push_back(&quot;あああ&quot;);
+  myList.push_back(&quot;いいいい&quot;);
+  myList.push_back(&quot;ううううう&quot;);
+
+  int result = 選択メニューダイアログ表示(myList);
+
+  // メニューダイアログで具体的な項目が選択されなかった場合0xFFFFが返ってくる。
+  if ( result == 0xFFFF ) {
+    デバッグ出力 &lt;&lt; &quot;メニューはどの項目も選択されずキャンセルして閉じられました。&quot;;
+  }
+
+    // 配列にアクセスするので、必ず範囲内に収まっているかチェックする。
+  if ( result != 0xFFFF ) {
+    デバッグ出力 &lt;&lt; &quot;メニュー配列&quot; &lt;&lt; result &lt;&lt; &quot;が選択されました。\n上から&quot; &lt;&lt; result+1 &lt;&lt; &quot;番目です。&quot; &lt;&lt; endl;
+    デバッグ出力 &lt;&lt; &quot;メニュー上の文字列&quot; &lt;&lt; myList[result] &lt;&lt; &quot;が選択されました!!&quot;;
+  }
+</pre>
+	</div>
+	<p>文字列リスト型 の実態は vector&lt;string&gt; であるため、<br>
+		固定的な文字列のリストである場合には、一気に初期化の段階でリストにしたほうがわかりやすいだろう。
+	</p>
+
+	<div class="code">
+		<pre class="brush:cpp;">
+
+  文字列リスト型 myList{
+	&quot;あああ&quot;,
+	&quot;いいいい&quot;,
+	&quot;ううううう&quot;
+  };
+
+</pre>
+	</div>
+
+	<p>事前にはメニュー項目の数や内容が定まらないため、１つ１つ push_back してゆくようなシーンもある
+		まどろっこしく感じられるかもしれないが、これによって、「プログラムを組む段階では事前に知っていないメニュー」を作ることが可能だ。</p>
+	<p>例えば次のようなものである。</p>
+	<fieldset class="code">
+		<legend>自分の麾下の軍団長と大名自身をリスト化して選択する</legend>
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+  文字列リスト型 myList;
+  for ( int iBushouID=0; iBushouID &lt; 最大数::武将情報::配列数; iBushouID++ ) {
+    // 武将は、今ターンがまわってる大名に所属してて…
+    if ( p武将情報[iBushouID].所属大名【大名番号】 == pターン情報.現在のターン【大名番号】 ) {
+      // 大名かもしくは軍団長ならば
+      if ( p武将戸籍情報[iBushouID].状態 == 状態::大名 || p武将戸籍情報[iBushouID].状態 == 状態::軍団長 ) {
+        // メニューリストに入れる。
+        myList.push_back(Get_名字(iBushouID)+Get_名前(iBushouID));
+      }
+    }
+  }
+
+  int result = 選択メニューダイアログ表示(myList);
+
+  // 配列にアクセスするので、必ず範囲内に収まっているかチェックする。
+  if ( result != 0xFFFF ) {
+    デバッグ出力 &lt;&lt; &quot;メニュー配列&quot; &lt;&lt; result &lt;&lt; &quot;が選択されました。\n上から&quot; &lt;&lt; result+1 &lt;&lt; &quot;番目です。&quot; &lt;&lt; endl;
+    デバッグ出力 &lt;&lt; &quot;メニュー上の文字列&quot; &lt;&lt; myList[result] &lt;&lt; &quot;が選択されました!!&quot;;
+  }
+}
+</pre>
+	</fieldset>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>メニューの位置を指定することが可能</h3>
+	<p>座標を指定しない限りは画面の中央に表示されます。</p>
+	<div class="code">
+		<pre class="brush:cpp;">
+文字列リスト型 list;
+list.push_back(&quot;あああああああああああああああああああああああ&quot;);
+list.push_back(&quot;い&quot;);
+list.push_back(&quot;う&quot;);
+int result = 選択メニューダイアログ表示(list);
+</pre>
+	</div>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_scenario_mod_44.png"></p>
+	<p>通常はこのように座標は指定せず、画面の中央に出すのがよいとは思いますが、<br>
+		ＸとＹの位置をあえて指定することも可能です。</p>
+	<div class="code">
+		<pre class="brush:cpp;">
+	文字列リスト型 myList{
+		"あああ",
+		"いいいい",
+		"ううううう"
+	};
+
+	int result = 選択メニューダイアログ表示(myList, 300, 200);
+	
+</pre>
+	</div>
+</div>
+
+
+<div class="content-box mb-3 content-lighten">
+	<h3>より詳細を知るには...</h3>
+	<p>
+		「選択メニューダイアログ」に関する主な所は以上となります。
+		詳しくは「ダイアログ情報型.h」を参照してください。
+	</p>
+</div>

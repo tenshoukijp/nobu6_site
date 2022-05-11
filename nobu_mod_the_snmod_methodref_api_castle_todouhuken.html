@@ -1,0 +1,37 @@
+%(hilight)s
+<div class="content-box mb-3 content-lighten">
+    <h2><i class="fa fa-book fa-fw"></i>城 － 都道府県</h2>
+    <h3>城 － 国と似たような概念ですが、こちらは現代の都道府県を取得するためのものです。</h3>
+    <p>主な使用用途としては、「天翔記の城」を「現代マップと絡めて」利用する際に使用することとなるでしょう。</p>
+    <p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_castle_todouhuken_01.png"></p>
+</div>
+
+
+<div class="content-box mb-3 content-lighten">
+    <h3>とある城が存在する現代の都道府県番号、および、都道府県名を得る</h3>
+    <blockquote>int Get_城都道府県番号(int 城番号【配列用】)</blockquote>
+    <blockquote>string Get_都道府県名(int 都道府県番号)</blockquote>
+    <div class="code">
+        <pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+	int iCastleID = 城配列番号::二条城;
+
+	int 都道府県番号 = Get_城都道府県番号(iCastleID);
+
+	string 都道府県名 = Get_都道府県名(都道府県番号);
+
+	デバッグ出力 &lt;&lt; &quot;二条城は現代の都道府県の&quot; &lt;&lt; 都道府県名 &lt;&lt; &quot;にあります&quot; &lt;&lt; endl;
+}
+</pre>
+    </div>
+</div>
+
+
+
+<div class="content-box mb-3 content-lighten">
+    <h3>より詳細を知るには...</h3>
+    <p>
+        「城 － 都道府県」に関する主な所は以上となります。
+        詳しくは「地域情報型.h」や「地域情報列挙.h」などを参照してください。
+    </p>
+</div>

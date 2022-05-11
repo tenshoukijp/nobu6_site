@@ -1,0 +1,231 @@
+%(hilight)s
+<div class="content-box mb-3 content-lighten">
+	<h2><i class="fa fa-book fa-fw"></i>待機武将</h2>
+	<p>待機武将は、シナリオデータ(sndata.n6p)の武将関連の情報に問い合せることにより、<br>
+		待機武将の一覧に対してアクセスする手段となります。
+	</p>
+	</p>
+	<p>ゲーム実行中に待機武将そのもののデータを事前に書き換えることは出来ないため、<br>
+		原則的にはこの情報は<mark>読み取り専用</mark>となります。<br>
+	</p>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>待機武将そのものの登場・非登場をコントロールしたい場合</h3>
+	<p>
+		待機武将が登場した直後に実行されるイベントハンドラの<br>
+		<a href="?page=nobu_mod_the_snmod_methodref_on_taiki_regist_before">On_待機武将登場直前</a> を利用してください。
+	</p>
+</div>
+<div class="content-box mb-3 content-lighten">
+	<h3>待機武将の登場と同時に能力等を変更させたい場合</h3>
+	<p>
+		待機武将が登場した直前に実行されるイベントハンドラの<br>
+		<a href="?page=nobu_mod_the_snmod_methodref_on_taiki_regist_after">On_待機武将登場直後</a> を利用してください。
+	</p>
+</div>
+<div class="content-box mb-3 content-lighten">
+	<h3>Get_待機武将データ数()</h3>
+	<p>
+		該当のシナリオにおいて、「待機武将のデータ数」を取得する。<br>
+		実行するシナリオや、改変シナリオによって、「待機武将」の数が異なるので、<br>
+		「待機武将一覧」を総なめしたい場合などに利用する。
+	</p>
+	<p>これらの「待機武将」に関する並びやパラメータは、シナリオエディタで「該当シナリオ」の「未登場武将」タブで確認すると理解が早い。</p>
+	<p>
+		<img src="./cnt_mod/mod_snmod/cnt_mod_scenario_mod_104.png"><br>
+	</p>
+	<fireldset>
+		<legend>シナリオエディタの「独立の項目」のバグ</legend>
+	</fireldset>
+	<p>画像上にてシナリオエディタには間違いがあり、<span class="negative">
+			「独立」が2bit(値0-3) となっているが、これは3bit(値0-7)の間違い</span>です。<br>
+		シナリオエディタの画像上の「？」となっているものが、この「独立」の残り１ビットに相当しています。<br>
+	</p>
+</div>
+<div class="content-box mb-3 content-lighten">
+	<h3>Get_待機武将登場済人数()</h3>
+	<p>
+		待機武将のうち、すでに登場済みの武将の人数を得る。<br>
+		この数値は、「次に登場する待機武将」を割り出すのに使える。<br>
+	</p>
+	<p>
+		待機武将リストは、「シナリオデータからゲームないへと<mark>登場してゆく順番</mark>」で並んでいます。<br>
+		例えば、全体で700人の待機武将リストがある場合、200人登場済みであれば、200という数値が返ってきます。<br>
+		<br>
+		p待機武将戸籍情報[0]～p待機武将戸籍情報[199]で200人ですから
+		p待機武将戸籍情報[200]は、まだ登場していない「ちょうど次に登場する」予定の人を指すこととなります。<br>
+		(ただし、700人登場してしまっている場合、p待機武将戸籍情報[699]が700人目ですから、p待機武将戸籍情報[700]はアクセスできません。<br>
+		気をつけましょう。)
+	</p>
+</div>
+<div class="content-box mb-3 content-lighten">
+	<h3>「Get_待機武将***情報リスト() 」という３つの関数</h3>
+	<p>
+		登場済み(厳密には532枠内の)武将の情報を得るのに <mark>p武将情報 と p武将戸籍情報 の２種類</mark>に分かれていたのと同様に、<br>
+		待機武将は、「待機武将情報 と 待機武将戸籍情報 と 待機武将登場情報」の３種類に分かれています。<br>
+	</p>
+</div>
+<div class="content-box mb-3 content-lighten">
+	<h3>Get_待機武将戸籍情報リスト() は p武将戸籍情報 と 同様のパラメータを取得出来る</h3>
+	<p>p武将戸籍情報 と同様に、顔番号や姓名が含まれるのは、この待機武将戸籍情報となります。<br>
+		最も使い勝手がよいのは、やはり顔番号でしょう。
+	</p>
+	<div class="code">
+		<pre class="brush:cpp;highlight:[3,5]">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+    int num = Get_待機武将データ数();
+
+    auto p待機武将戸籍情報リスト = Get_待機武将戸籍情報リスト();
+
+    if (p待機武将戸籍情報リスト) {
+        for (int t = 0; t &lt; num; t++) {
+            デバッグ出力 &lt;&lt; p待機武将戸籍情報リスト[t].顔番号 &lt;&lt; endl;
+            デバッグ出力 &lt;&lt; p待機武将戸籍情報リスト[t]._名字 &lt;&lt; p待機武将戸籍情報リスト[t]._名前 &lt;&lt; endl;
+        }
+    }
+}
+</pre>
+	</div>
+</div>
+<div class="content-box mb-3 content-lighten">
+	<h3>Get_待機武将登場済人数() と Get_待機武将データ数() の使いどころ</h3>
+	<p>
+		登場済みの人数もわかっているため、「次に登場する武将の顔番号」を取得することも出来ます。
+	</p>
+	<div class="code">
+		<pre class="brush:cpp;highlight:[2,4,10,11,15]">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+	int 登場済の数 = Get_待機武将登場済人数();
+
+	auto p待機武将戸籍情報リスト = Get_待機武将戸籍情報リスト();
+
+	if (p待機武将戸籍情報リスト) {
+
+		// まだ待機している人がいるのか？
+		// 全員登場していると、「登場済みの数 == 待機武将データ数」となるため判定できる
+		if (登場済の数 &lt; Get_待機武将データ数()) {
+			auto next武将 = p待機武将戸籍情報リスト[登場済の数];
+
+			デバッグ出力 &lt;&lt; &quot;次に登場する予定の武将の姓名:&quot; &lt;&lt; next武将._名字 &lt;&lt; next武将._名前 &lt;&lt; endl;
+
+			if (next武将.顔番号 == 顔番号::明智光秀) {
+				デバッグ出力 &lt;&lt; &quot;次は明智光秀が登場するよ&quot; &lt;&lt; endl;
+			}
+		}
+	}
+}
+</pre>
+	</div>
+</div>
+<div class="content-box mb-3 content-lighten">
+	<h3>Get_待機武将情報リスト() は p武将情報と同様のパラメータを取得出来る</h3>
+	<p>
+		<span class="keyword">Get_待機武将戸籍情報リスト()</span>と使い方は同じであり、得られる型が、<span class="keyword">p武将情報の「武将情報型」</span>と同じプロパティを持つ型なる。<br>
+		これにより、「該当の待機武将」の詳しい能力を知ることが出来る。<br>
+		但し、<mark>p武将情報 とは異なり、姓名や鉄砲等に対して Get_*** などのラッパー関数などは一切無い</mark>ので注意すること。<br>
+		(間違って p武将情報用のラッパー関数を、この待機武将情報に当てはめないこと);
+
+	</p>
+	<div class="code">
+		<pre class="brush:cpp;highlight:[3,5]">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+    int num = Get_待機武将データ数();
+
+    auto p待機武将情報リスト = Get_待機武将情報リスト();
+
+    if (p待機武将情報リスト) {
+        for (int t = 0; t &lt; num; t++) {
+            デバッグ出力 &lt;&lt; (int)p待機武将情報リスト[t].兵数 &lt;&lt; endl;
+        }
+    }
+}
+</pre>
+	</div>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>Get_待機武将登場情報リスト() は 最速での登場予定年 や 帰属大名・登場城 の パラメータを取得出来る</h3>
+	<p>
+		<span class="keyword">Get_待機武将戸籍情報リスト()</span>と使い方は同じであり、得られる型が、登場年・登場時に仕える大名・登場時に居場所となる城などの情報となる。<br>
+		これにより、「<mark>最速で</mark>何年に登場するのか、どの大名か、どの城か」などを知ることが出来る。<br>
+		これらも生データであるため、下の例のように天翔記基準年()を足し込むなど工夫が必要となるだろう。
+
+	</p>
+	<fieldset class="code"><legend>最速の登場年</legend>
+		<pre class="brush:cpp;highlight:[4,12]">
+ void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+	int num = Get_待機武将データ数();
+
+	auto p待機武将登場情報リスト = Get_待機武将登場情報リスト();
+	auto p待機武将戸籍情報リスト = Get_待機武将戸籍情報リスト();
+
+	デバッグ出力 &lt;&lt; Get_天翔記基準年() &lt;&lt; endl;
+
+	int base = Get_天翔記基準年();
+	if (p待機武将登場情報リスト) {
+		for (int t = 0; t &lt; 10; t++) {
+			デバッグ出力 &lt;&lt; p待機武将戸籍情報リスト[t]._名字 &lt;&lt; p待機武将戸籍情報リスト[t]._名前 &lt;&lt; endl;
+			デバッグ出力 &lt;&lt; (int)p待機武将登場情報リスト[t].登場年 + base &lt;&lt; endl;
+		}
+	}
+
+}
+</pre>
+	</fieldset>
+	<fieldset class="code"><legend>直近でこれから登場する10人の武将は、その大名家に所属するのか</legend>
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+	int max_num = Get_待機武将データ数();
+
+	auto p待機武将登場情報リスト = Get_待機武将登場情報リスト();
+	auto p待機武将戸籍情報リスト = Get_待機武将戸籍情報リスト();
+
+	デバッグ出力 &lt;&lt; Get_天翔記基準年() &lt;&lt; endl;
+
+	int base = Get_天翔記基準年();
+
+	int 済数 = Get_待機武将登場済人数();
+
+	if (p待機武将登場情報リスト) {
+		// 未登場の最初の10人だけ
+		for (int t = 済数; t &lt; (済数+10); t++) {
+
+			// 間違ってデータ数を超えた場所にアクセスしてはならない
+			if (t &gt;= max_num) {
+				break;
+			}
+
+			デバッグ出力 &lt;&lt; p待機武将戸籍情報リスト[t]._名字 &lt;&lt; p待機武将戸籍情報リスト[t]._名前 &lt;&lt; endl;
+			デバッグ出力 &lt;&lt; (int)p待機武将登場情報リスト[t].登場年 + base &lt;&lt; endl;
+
+			// どの大名家に登場しますか？　その大名家の当主は現在だれですか？
+			int iDaimyoID = p待機武将登場情報リスト[t].所属大名【大名番号】-1;
+			if (0 &lt;= iDaimyoID &amp;&amp; iDaimyoID &lt; 最大数::大名情報::配列数) {
+
+				// 大名家の大名武将の武将番号 → 武将番号【配列用】へ
+				int iBushouID = p大名情報[iDaimyoID].大名【武将番号】-1;
+
+				if (0 &lt;= iBushouID &amp;&amp; iBushouID &lt; 最大数::武将情報::配列数) {
+					デバッグ出力 &lt;&lt; &quot;大名は...&quot; &lt;&lt; Get_名字(iBushouID) &lt;&lt; Get_名前(iBushouID) &lt;&lt; endl;
+				}
+
+			}
+
+			デバッグ出力 &lt;&lt; &quot;--------------------------------&quot; &lt;&lt; endl;
+		}
+	}
+}
+</pre>
+	</fieldset>
+</div>
+<div class="content-box mb-3 content-lighten">
+	<h3>より詳細を知るには...</h3>
+	<p>
+		暦に関する主な所は以上となります。
+		詳しくは「待機武将情報型.h」などを参照してください。
+	</p>
+</div>

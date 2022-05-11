@@ -1,0 +1,47 @@
+%(hilight)s
+<div class="content-box mb-3 content-lighten">
+	<h2><i class="fa fa-book fa-fw"></i>戦争 - 武将ユニットの移動力</h2>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>戦争中の「武将の移動力の残量」の取得・設定</h3>
+    <p>天翔記では、「移動残量(機動力)」という概念があり、移動や行動をするとこれが減る。<br>
+		移動力には、ターンの切り替わり目等による「回復」と、行動などによる「消費」がある。<br>
+        (目一杯移動すると０になるが、少しの移動や移動しない時などは移動残量が蓄積される)<br>
+        又、天翔記の元来の仕様では移動残量15がMAXであるが、それを超えて設定することをも可能とする。</p>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_war_unit_status_08.png"></p>
+	<blockquote>int Get_武将移動力残量(int 武将番号【配列用】)</blockquote>
+	<blockquote>int Set_武将移動力残量(int 武将番号【配列用】, int 移動力残量)</blockquote>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_war_unit_status_01.png"></p>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_残りターン変更《戦争画面》(int 残りターン数) {
+
+	番号リスト型 list = Get_出陣中の武将番号リスト【配列用】《表示中マップ》();
+
+	for(int iBushouID : list) {
+
+		// 現在の戦闘値を100以上で、戦才(家宝含む)が160以上なら
+		if (Get_戦闘値(iBushouID) &gt;= 50 &amp;&amp; p武将情報[iBushouID].最大戦才 &gt;= 80) {
+
+			// 凄まじい移動力残量を与える。(元来天翔記では15を超える数値にはならない)
+			Set_武将移動力残量(iBushouID, 50);
+		}
+
+		デバッグ出力 &lt;&lt; Get_名字(iBushouID) + Get_名前(iBushouID) &lt;&lt; &quot;の移動力残量は&quot; &lt;&lt; Get_武将移動力残量(iBushouID) &lt;&lt; &quot;です&quot; &lt;&lt; endl;
+	}
+}
+</pre>
+	</div>
+	<h4>移動力残量に関係するイベントハンドラ</h4>
+	<p><a href="?page=nobu_mod_the_snmod_methodref_on_change_movepower_in_battle">On_移動力残量変更時《戦争画面》</a> を参照のこと。</p>
+</div>
+
+
+<div class="content-box mb-3 content-lighten">
+	<h3>より詳細を知るには...</h3>
+	<p>
+		「戦争 - 武将ユニットの移動力」に関する主な所は以上となります。
+		詳しくは「戦場情報型.h」などを参照してください。
+	</p>
+</div>

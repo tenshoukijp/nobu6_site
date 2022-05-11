@@ -1,0 +1,146 @@
+%(hilight)s
+<div class="content-box mb-3 content-lighten">
+	<h2><i class="fa fa-book fa-fw"></i>文字列の判定</h2>
+	<p>ScenarioModでは、メッセージ内容で状況を判定することもあるため、<br>
+		文字列Ａに部分文字列Ｂが含まれているのか？ といった「部分文字列の一致」判定をすること比較的頻繁にあります。<br>
+	</p>
+	<p>
+		このため、「簡単な部分一致」と「あいまいな部分一致」をするための２つの関数が用意されています。</p>
+	</p>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>使い所をいちはやく知りたい場合</h3>
+	<p>
+		吹き出しメッセージなどが実行される直前用途のイベントハンドラ、<br>
+		<a href="?page=nobu_mod_the_snmod_methodref_on_sobachange">On_噴出メッセージ直前</a> を参照してください。
+		や
+		「追認するのみ」のダイアログにおいてボタンを押した際に実行されるイベントハンドラ
+		<a href="?page=nobu_mod_the_snmod_methodref_on_confirm_ratification_dialog">On_追認系ダイアログ確認時</a> を参照してください。
+	</p>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>BOOL Is_文字列マッチ( string 対象文字列, string 部分文字列);</h3>
+
+	<p>という、「対象文字列」に「部分文字列」が含まれているのか？<br>
+		を簡単に判定する関数です。<br>
+	</p>
+
+	<p>ScenarioModでは「文字列中に～が含まれる」は頻繁に利用されるため、 <br>
+		string型 でも char *型 でも放り込める点で、strstrよりも便利でしょう。 <br>
+	</p>
+
+	<div class="code">
+		<pre class="brush:cpp">
+if (Is_文字列マッチ(&quot;あいうえお&quot;, &quot;いう&quot;)) {
+	デバッグ出力 &lt;&lt; &quot;'あいうえお' という文字列には 'いう'が含まれます&quot; &lt;&lt; endl;
+}
+</pre>
+	</div>
+<p>元々C++のstring型にて、部分文字列とマッチしているかどうかは</p>
+
+	<div class="code">
+		<pre class="brush:cpp;">
+if ( 元メッセージ.find(&quot;aaa&quot;) != string::npos ) {
+  ～
+}
+</pre>
+	</div>
+	<p>などと記述していたのを</p>
+	<div class="code">
+		<pre class="brush:cpp;">
+if ( Is_文字列マッチ(元メッセージ , &quot;aaa&quot;) )
+  ～
+}
+</pre>
+	</div>
+
+	<p>などと記述しても良いということになります。<br>
+	</p>
+	<p>この関数は、次に説明する<span class="keyword">Is_正規表現マッチ</span>の関数と表記を合わせたものとなります。</p>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>BOOL Is_正規表現マッチ(string 対象文字列, string 正規表現文字列, 正規表現マッチ結果型* 正規表現マッチ結果 = NULL);</h3>
+	<p><b>正規表現</b>による文字列判定用の関数。<br>
+		ほとんどのプログラミング言語(C++,C#,JavaScript,pythonなどなど)と比較的類似している。<br>
+	</p>
+	<p>
+		これにより、完全な決め打ちできないメッセージをあいまいなまま取り扱うことが出来るようになった。<br>
+		また、部分的にマッチした文字列を抽出することも格段にしやすくなった。<br>
+		<br>
+		以下のように利用する。<br>
+
+		<h4>例①</h4>
+		<br>
+		<div class="code">
+			<pre class="brush:cpp;">
+if (Is_正規表現マッチ("あいうえお", &quot;いう.+&quot;)) {
+	デバッグ出力 &lt;&lt; 'あいうえお' という文字列は 'いう' という文字列 と「その後ろに何か１文字以上の文字」を 含んでいる &lt;&lt; endl;
+}
+</pre>
+		</div>
+
+		<h4>例②</h4>
+		<br>
+		<div class="code">
+			<pre class="brush:cpp;">
+string カスタム::On_噴出メッセージ直前(string 武将名, string 元メッセージ, メッセージ関連情報型 メッセージ関連情報) {
+
+	if (Is_正規表現マッチ(元メッセージ, &quot;米を.+?ほど\\s売&quot;)) {
+		デバッグ出力 &lt;&lt; 元メッセージ &lt;&lt; endl;
+	}
+
+	// 変更しない場合&quot;&quot;
+	return &quot;&quot;;
+}
+</pre>
+		</div>
+		<h4>例③</h4>
+		<div class="code">
+			<pre class="brush:cpp;">
+string カスタム::On_噴出メッセージ直前(string 武将名, string 元メッセージ, メッセージ関連情報型 メッセージ関連情報) {
+    if (Is_正規表現マッチ(元メッセージ, &quot;^他.+[米馬鉄砲]+を[0-9]+ほど\\s売&quot; )) {
+	    デバッグ出力 &lt;&lt; 元メッセージ &lt;&lt; endl;
+    }
+
+	// 変更しない場合&quot;&quot;
+	return &quot;&quot;;
+}
+</pre>
+		</div>
+		<h4>例④:詳細なマッチ結果を得る</h4>
+		<ul>
+			<li>｢<b>正規表現マッチ結果型</b> ｣ の変数を用意すると、 (下の例なら｢マッチ結果｣という変数名) <br>
+				詳細なマッチ情報が得られる。
+		</ul>
+		<ul>
+			<li>マッチ結果[1]のように番号でアクセスする。中身は文字列。 <br>
+			<li>０番目がマッチした部分の文字列全体。 <br>
+			<li>１番目以降が( )でくくった部分にマッチした文字列が順次格納される。 <br>
+			<li>存在しない｢番号｣にアクセスした場合は、空の文字列相当である｢""｣が返ってくる。
+		</ul>
+		<div class="code">
+			<pre class="brush:cpp;">
+	正規表現マッチ結果型 マッチ結果;
+	if ( Is_正規表現マッチ(元メッセージ, &quot;\\s(.+)を(\\d+?)ほど&quot;, &amp;マッチ結果 ) ) {
+		デバッグ出力 &lt;&lt; マッチ結果[0] &lt;&lt; &quot;:&quot; &lt;&lt; マッチ結果[1] &lt;&lt; &quot;:&quot;  &lt;&lt; マッチ結果[2] &lt;&lt;  endl;
+	}
+</pre>
+		</div>
+		<p>この例であれば、元のメッセージが｢｢他でもない[改行]米を1100ほど[改行]売りたいのじゃ｣というメッセージだった場合、</p>
+		<ul>
+			<li>マッチ結果[0]は、｢[改行]米を1100ほど｣となる。
+			<li>マッチ結果[1]は、1番目の( )の中身なので、｢米｣となり、
+			<li>マッチ結果[2]は、2番目の( )の中身なので、｢1100｣という<mark>文字列</mark>となる。
+		</ul>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>より詳細を知るには...</h3>
+	<p>
+		「文字列の判定・正規表現」に関する主な所は以上となります。
+		詳しくは「メッセージ関連情報型.h」などを参照してください。
+	</p>
+</div>

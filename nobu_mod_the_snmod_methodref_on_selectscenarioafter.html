@@ -1,0 +1,274 @@
+%(hilight)s
+<div class="content-box mb-3 content-lighten">
+    <h2><i class="fa fa-book fa-fw"></i>void カスタム::On_シナリオデータ反映直後(int シナリオ番号)</h2>
+    <div class="code">
+        <pre class="brush:cpp;">
+void カスタム::On_シナリオデータ反映直後(int シナリオ番号) {
+}
+</pre>
+    </div>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>タイミング</h3>
+    <ul>
+        <li>
+            見た目的には特定のシナリオで大名選択画面になる前、<br>
+            シナリオ説明表示で「確認ボタン」を押した直後、「シナリオデータの各種の配置データを反映した直後」となります。<br>
+            <p>
+                <img src="./cnt_mod/mod_snmod/cnt_mod_scenario_mod_ref_088.png"><br>
+            </p>
+    </ul>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>一般的用途</h3>
+    <ul>
+        <li>
+            特定のシナリオで与えられているデータの初期値を変更したい場合に利用する。<br>
+            用途が、「On_シナリオ大名選択直前」と類似していますが、<br>
+        <li>このタイミングは「シナリオの本来の配置データ」をScenaroModで微修正するのに非常に適したタイミングだと言えます。
+    </ul>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>例①</h3>
+    <p>各大名の軍団長の忠誠が０の状態からのスタート。<br>
+        ゲーム開始直後付近は、独立・裏切りが跋扈する。</p>
+    <div class="code">
+        <pre class="brush:cpp;">
+void カスタム::On_シナリオデータ反映直後(int シナリオ番号) {
+
+    for (int iBushouID = 0; iBushouID &lt; 最大数::武将情報::配列数; iBushouID++) {
+        if (p武将戸籍情報[iBushouID].状態 == 状態::軍団長) {
+            p武将情報[iBushouID].忠誠 = 0;
+        }
+    }
+}
+</pre>
+    </div>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>例②</h3>
+    <p>シナリオ５で、明智光秀の軍団がまるまる大名として独立した状態とする</p>
+    <div class="code">
+        <pre class="brush:cpp;">
+void カスタム::On_シナリオデータ反映直後(int シナリオ番号) {
+
+    if (シナリオ番号 == 5) {
+        // 明智光秀を探す
+        int iBushouID = Get_武将番号【配列用】(顔番号::明智光秀);
+        // 登場している
+        if (0 &lt;= iBushouID &amp;&amp; iBushouID &lt; 最大数::武将情報::配列数) {
+            // 光秀は軍団長だ
+            if (p武将戸籍情報[iBushouID].状態 == 状態::軍団長) {
+
+                // 所属軍団
+                int iGundanID = p武将情報[iBushouID].所属軍団【軍団番号】 - 1;
+
+                // 該当の軍団長は、大名として独立する
+                int iDaimyoID = Set_軍団独立(iGundanID);
+
+                // 成否をチェック
+                if (iDaimyoID != 0xFFFF) {
+                    デバッグ出力 &lt;&lt; &quot;明智光秀は独立に成功した&quot; &lt;&lt; endl;
+                }
+            }
+
+        }
+    }
+}
+</pre>
+    </div>
+    <p>
+        <img src="./cnt_mod/mod_snmod/cnt_mod_scenario_mod_ref_089.png"><br>
+    </p>
+
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>例③</h3>
+    <p>シナリオ３～５で、織田家の配下から武将を見繕って、軍団を新設する。<br></p>
+    <div class="code">
+        <pre class="brush:cpp;">
+void カスタム::On_シナリオデータ反映直後(int シナリオ番号) {
+
+    if (3 &lt;= シナリオ番号 &amp;&amp; シナリオ番号 &lt;= 5) {
+
+        int iBushouID = Get_武将番号【配列用】(顔番号::織田信長);
+
+        if (0 &lt;= iBushouID &amp;&amp; iBushouID &lt; 最大数::武将情報::配列数) {
+            if (p武将戸籍情報[iBushouID].状態 == 状態::大名) {
+                // 信長の大名としての番号
+                int pDaimyoID = p武将情報[iBushouID].所属大名【大名番号】 - 1;
+
+                // 信長家で、軍団を新設したいが、可能なのか？
+                // どのような「城」で、どのような「武将」が新たな軍団長となれるのか
+                auto ret = Get_軍団新設候補情報(pDaimyoID);
+
+                デバッグ出力 &lt;&lt; &quot;この大名が軍団を新設することは？&quot; &lt;&lt; (ret.Is新設可能 ? &quot;可能&quot; : &quot;不可能&quot;) &lt;&lt; endl;
+
+                if (ret.Is新設可能) {
+
+                    デバッグ出力 &lt;&lt; &quot;２～８で余っている軍団割当番号は？ &quot;;
+                    for each(auto wn in ret.候補軍団割当番号リスト) {
+                        デバッグ出力 &lt;&lt; wn &lt;&lt; &quot; &quot;;
+                    }
+                    デバッグ出力 &lt;&lt; endl;
+
+                    デバッグ出力 &lt;&lt; &quot;どの城に軍団を新設できますか？&quot;;
+                    for each(auto cn in ret.候補城番号【配列用】リスト) {
+                        デバッグ出力 &lt;&lt; Get_城名(cn) + Get_城称(cn) &lt;&lt; &quot; &quot;;
+                    }
+                    デバッグ出力 &lt;&lt; endl;
+
+                    デバッグ出力 &lt;&lt; &quot;誰を軍団に任命できますか？&quot;;
+                    for each(auto bn in ret.候補武将番号【配列用】リスト) {
+                        デバッグ出力 &lt;&lt; Get_名字(bn) + Get_名前(bn) &lt;&lt; &quot; &quot;;
+                    }
+                    デバッグ出力 &lt;&lt; endl;
+
+                    // 候補のうち、一番先頭の武将、先頭の城で、軍団を新設する
+                    int iGundanID = Set_軍団新設(ret.候補武将番号【配列用】リスト[0], ret.候補城番号【配列用】リスト[0], ret);
+                    if (iGundanID != 0xFFFF) {
+                        デバッグ出力 &lt;&lt; &quot;軍団番号【配列用】&quot; &lt;&lt; iGundanID &lt;&lt; &quot;に軍団が新設された&quot; &lt;&lt; endl;
+                    }
+                    else {
+                        デバッグ出力 &lt;&lt; &quot;軍団の新設には失敗した&quot; &lt;&lt; endl;
+                    }
+                }
+            }
+        }
+    }
+}
+</pre>
+    </div>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>例④</h3>
+    <p>シナリオ３で、真田幸隆が独立した状態でスタートする。<br></p>
+    <div class="code">
+        <pre class="brush:cpp;">
+ void カスタム::On_シナリオデータ反映直後(int シナリオ番号) {
+
+    if (シナリオ番号 == 3) {
+
+        int 幸隆BushouID = Get_武将番号【配列用】(顔番号::真田幸隆);
+
+        //　居る
+        if (0 &lt;= 幸隆BushouID &amp;&amp; 幸隆BushouID &lt; 最大数::武将情報::配列数) {
+
+            // 現役
+            if (p武将戸籍情報[幸隆BushouID].状態 == 状態::現役) {
+
+                int 幸隆の所属大名DaimyoID = p武将情報[幸隆BushouID].所属大名【大名番号】 - 1;
+
+                // 今、幸隆がいる大名家は、新軍団を作成できますか？
+                auto 情報 = Get_軍団新設候補情報(幸隆の所属大名DaimyoID);
+
+                if (情報.Is新設可能) {
+                    // 軍団を新設する候補情報の、軍団長になりうる人物として、幸隆は含まれているのか？
+                    auto biter = std::find(情報.候補武将番号【配列用】リスト.begin(), 情報.候補武将番号【配列用】リスト.end(), 幸隆BushouID);
+
+                    // 軍団を新設する候補情報の、城情報リストの中に「戸石城」はあるか？
+                    auto citer = std::find(情報.候補城番号【配列用】リスト.begin(), 情報.候補城番号【配列用】リスト.end(), 城::城配列番号::戸石城);
+
+                    // 両方大丈夫
+                    if (biter != 情報.候補武将番号【配列用】リスト.end() &amp;&amp;
+                        citer != 情報.候補城番号【配列用】リスト.end()) {
+                        int i幸隆の新設GundanID = Set_軍団新設(幸隆BushouID, 城::城配列番号::戸石城, 情報);
+
+                        // 軍団化に成功している
+                        if (i幸隆の新設GundanID != 0xFFFF) {
+
+                            int i幸隆の新設DaimyoID = Set_軍団独立(i幸隆の新設GundanID);
+
+                            if (i幸隆の新設DaimyoID != 0xFFFF) {
+                                デバッグ出力 &lt;&lt; &quot;幸隆は大名化した&quot; &lt;&lt; endl;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+}
+</pre>
+    </div>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>例⑤</h3>
+    <p>シナリオ３～５で、織田家の配下から武将を見繕って、軍団を新設し、<br>
+        その軍団長は、信長から可能なかぎりありったけの城をもっていき、<br>
+        そして独立して大名となる。</p>
+    <div class="code">
+        <pre class="brush:cpp;">
+void カスタム::On_シナリオデータ反映直後(int シナリオ番号) {
+
+    if (3 &lt;= シナリオ番号 &amp;&amp; シナリオ番号 &lt;= 5) {
+
+        int iBushouID = Get_武将番号【配列用】(顔番号::織田信長);
+
+        if (0 &lt;= iBushouID &amp;&amp; iBushouID &lt; 最大数::武将情報::配列数) {
+            if (p武将戸籍情報[iBushouID].状態 == 状態::大名) {
+                // 信長の大名としての番号
+                int pDaimyoID = p武将情報[iBushouID].所属大名【大名番号】 - 1;
+
+                // 信長家で、軍団を新設したいが、可能なのか？
+                // どのような「城」で、どのような「武将」が新たな軍団長となれるのか
+                auto ret = Get_軍団新設候補情報(pDaimyoID);
+
+                デバッグ出力 &lt;&lt; &quot;この大名が軍団を新設することは？&quot; &lt;&lt; (ret.Is新設可能 ? &quot;可能&quot; : &quot;不可能&quot;) &lt;&lt; endl;
+
+                if (ret.Is新設可能) {
+
+                    デバッグ出力 &lt;&lt; &quot;２～８で余っている軍団割当番号は？ &quot;;
+                    for each(auto wn in ret.候補軍団割当番号リスト) {
+                        デバッグ出力 &lt;&lt; wn &lt;&lt; &quot; &quot;;
+                    }
+                    デバッグ出力 &lt;&lt; endl;
+
+                    デバッグ出力 &lt;&lt; &quot;どの城に軍団を新設できますか？&quot;;
+                    for each(auto cn in ret.候補城番号【配列用】リスト) {
+                        デバッグ出力 &lt;&lt; Get_城名(cn) + Get_城称(cn) &lt;&lt; &quot; &quot;;
+                    }
+                    デバッグ出力 &lt;&lt; endl;
+
+                    デバッグ出力 &lt;&lt; &quot;誰を軍団に任命できますか？&quot;;
+                    for each(auto bn in ret.候補武将番号【配列用】リスト) {
+                        デバッグ出力 &lt;&lt; Get_名字(bn) + Get_名前(bn) &lt;&lt; &quot; &quot;;
+                    }
+                    デバッグ出力 &lt;&lt; endl;
+
+                    // 候補のうち、一番先頭の武将、先頭の城で、軍団を新設する
+                    int iGundanID = Set_軍団新設(ret.候補武将番号【配列用】リスト[0], ret.候補城番号【配列用】リスト[0], ret);
+                    if (iGundanID != 0xFFFF) {
+                        デバッグ出力 &lt;&lt; &quot;軍団番号【配列用】&quot; &lt;&lt; iGundanID &lt;&lt; &quot;に軍団が新設された&quot; &lt;&lt; endl;
+                    }
+                    else {
+                        デバッグ出力 &lt;&lt; &quot;軍団の新設には失敗した&quot; &lt;&lt; endl;
+                    }
+
+                    int list_castle_cnt = ret.候補城番号【配列用】リスト.size();
+
+                    // 最初の城(vix==0)は軍団長独立に使ったので残りの候補の城を全て奪う、
+                    for (int vix = 1; vix &lt; list_castle_cnt; vix++) {
+                        Set_非本拠城所属軍団(ret.候補城番号【配列用】リスト[vix], iGundanID);
+                    }
+
+                    // 奪うだけ奪ってから独立
+                    int iDaimyoID = Set_軍団独立(iGundanID);
+                    if (iDaimyoID != 0xFFFF) {
+                        デバッグ出力 &lt;&lt; &quot;独立し、大名化に成功した&quot; &lt;&lt; endl;
+                    }
+                    else {
+                        デバッグ出力 &lt;&lt; &quot;独立し、大名化に失敗した&quot; &lt;&lt; endl;
+                    }
+                }
+            }
+        }
+    }
+}
+</pre>
+    </div>
+    <p>
+        <img src="./cnt_mod/mod_snmod/cnt_mod_scenario_mod_ref_027.png"><br>
+    </p>
+</div>

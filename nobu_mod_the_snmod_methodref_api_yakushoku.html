@@ -1,0 +1,110 @@
+%(hilight)s
+<div class="content-box mb-3 content-lighten">
+	<h2><i class="fa fa-book fa-fw"></i>役職</h2>
+	<p>役職とは、「征夷大将軍」や「関東管領」、あるいは「四国探題」などのことです。<br>
+		役職は、「大名<mark>家</mark>」もしくは「<mark>軍</mark>団」に与えられます。<br>
+		</p>
+	<p>勘違いしやすいところですが、<mark>役職は「人間」には与えられません</mark>。<br>
+	即ち、「大名本人」や「軍団長」が武将として役職を持っているわけではなく、<br>
+	「大名家」や「軍団」という組織に対して役職を持っているということになります。</p>
+
+	<p>よって、役職を持っている大名武将が亡くなったとしても、原則的には役職は継続されます。<br>
+	また、軍団が役職を持っている場合には、軍団長を解任して、別の人物を軍団長にした場合、<br>
+	その軍団の役職は保持されていますので、新たな軍団長の役職欄に役職が表示されます。</p>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>大名の役職の取得や設定</h3>
+	<blockquote>int Get_大名役職(int 大名番号【配列用】)</blockquote>
+	<blockquote>bool Set_大名役職(int 大名番号【配列用】, int 役職値)</blockquote>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+	int i征夷大将軍DaimyoID = 0xFFFF;
+
+	// 征夷大将軍を持っている大名を探す
+	for (int iDaimyoID = 0; iDaimyoID &lt; 最大数::大名情報::配列数; iDaimyoID++) {
+		if (Get_大名役職(iDaimyoID) == 役職::征夷大将軍) {
+			i征夷大将軍DaimyoID = iDaimyoID;
+		}
+	}
+
+	if (i征夷大将軍DaimyoID != 0xFFFF) {
+		int i征夷大将軍BusyouID = p大名情報[i征夷大将軍DaimyoID].大名【武将番号】 - 1;
+		if (0 &lt;= i征夷大将軍BusyouID &amp;&amp; i征夷大将軍BusyouID &lt; 最大数::武将情報::配列数) {
+			デバッグ出力 &lt;&lt; &quot;征夷大将軍は&quot; &lt;&lt; Get_名字(i征夷大将軍BusyouID) + Get_名前(i征夷大将軍BusyouID) &lt;&lt; &quot;が支配する大名家が所持しています&quot; &lt;&lt; endl;
+		}
+	}
+
+	if (i征夷大将軍DaimyoID != 0xFFFF) {
+		// 征夷大将軍はやめて、羽州探題にする
+		Set_大名役職(i征夷大将軍DaimyoID, 役職::羽州探題);
+	}
+}
+</pre>
+	</div>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_yakushoku_01.png"></p>
+</div>
+<div class="content-box mb-3 content-lighten">
+	<h3>軍団の役職の取得や設定</h3>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_シナリオデータ反映直後(int シナリオ番号) {
+
+	// シナリオ上から５番目の「本能寺の変」で開始して確認
+	if (Get_現在のシナリオ番号() == 5) {
+
+		int i明智光秀BushouID = Get_武将番号【配列用】(顔番号::明智光秀);
+
+		if (0 &lt;= i明智光秀BushouID &amp;&amp; i明智光秀BushouID &lt; 最大数::武将情報::配列数) {
+
+			// 明智光秀は軍団長
+			if (p武将戸籍情報[i明智光秀BushouID].状態 == 状態::軍団長) {
+
+				// 明智光秀が属する軍団番号【配列用】を得る
+				int iGundanID = p武将情報[i明智光秀BushouID].所属軍団【軍団番号】 - 1;
+
+				if (0 &lt;= iGundanID &amp;&amp; iGundanID &lt; 最大数::軍団情報::配列数) {
+
+					// 明智光秀が軍団長の軍団に対して「管領」の役職を与える
+					Set_軍団役職(iGundanID, 役職::管領);
+
+					// (特に意味はないが、Get をここで使って確認)
+					map&lt;int, string&gt; m{
+						{ 役職::無し,       &quot;無し&quot; },
+						{ 役職::征夷大将軍, &quot;征夷大将軍&quot; },
+						{ 役職::管領,       &quot;管領&quot; },
+						{ 役職::関東管領,   &quot;関東管領&quot; },
+						{ 役職::奥州探題,   &quot;奥州探題&quot; },
+						{ 役職::西国探題,   &quot;西国探題&quot; },
+						{ 役職::九州探題,   &quot;九州探題&quot; },
+						{ 役職::羽州探題,   &quot;羽州探題&quot; },
+					};
+
+					// 今代入した軍団の役職をGetして Get_軍団役職の使い方を確認
+					int i役職 = Get_軍団役職(iGundanID);
+					デバッグ出力 &lt;&lt; m[i役職] &lt;&lt; &quot;が明智軍団に設定されています&quot; &lt;&lt; endl;
+				}
+			}
+		}
+	}
+}
+		</pre>
+	</div>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_yakushoku_02.png"></p>
+	<fieldset class="alert alert-info"><legend>Set_軍団役職(...) や Get_軍団役職(...) を第１軍団に対して実行した場合</legend>
+	<p>第１軍団とは大名直轄の軍団のことですから、第１軍団に対して役職が割り当てられる、ということはゲーム的にはありません。<br>
+	第１軍団ではなく、大名家に対して与えられます。</p>
+	<p>このため、Get_軍団役職(...) や Set_軍団役職(...) によって、第１軍団への役職を取得、もしくは設定した場合、<br>
+	<mark>第１軍団ではなく、大名家の役職を取得、もしくは大名家に対して役職を設定</mark>といったように、<br>
+	軍団ではなく大名への処理に関数の内部で自動的に変換して処理されます。</p>
+	</fieldset>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>より詳細を知るには...</h3>
+	<p>
+		「役職」に関する主な所は以上となります。詳しくは「役職情報型.h」や「役職情報列挙.h」を参照してください。
+	</p>
+</div>

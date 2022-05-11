@@ -1,0 +1,143 @@
+<div class="content-box mb-3 content-lighten">
+    <h2><i class="fa fa-book fa-fw"></i>VisualStudio のインストール</h2>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>概要</h3>
+    <p>ここでは、ScenarioModをさわる前段階として、Visual Studioのインストール時の留意点が記載されています。</p>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>前準備</h3>
+    <p>
+        Visual C++ をインストールしていない人は、この段階で、Visual C++ をインストールすること。<br>
+        ScenarioModのコンパイルは、Visual Studio 2013 ～ Visual Studio 2022 で可能です。
+    </p>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>Visual Studio 2013 の場合</h3>
+    <p>
+        <a href="https://visualstudio.microsoft.com/ja/vs/older-downloads/">Visual Studio Community 2013</a>を 普通にインストールすればOKです。<br>
+        日本語化する際には、<a href="https://my.visualstudio.com/Downloads?q=visual%20studio%202013&wt.mc_id=o~msft~vscom~older-downloads">Visual Studio 2013 Language Pack</a> を利用してください。<br>
+        <br>
+        <p>TOOLのOPTIONから以下のような設定で日本語を選択すれば日本語化されます。<br>
+            <mark>以降、起動時に言語パックのエラーが出るかと思います</mark>が、気にする必要はありません。<br>
+        </p>
+        <p><img src="./cnt_mod/mod_snmod/cnt_mod_scenario_mod_107.png"><br></p>
+        <br>
+        また、<mark>Visual Studio 2013はインストールだけしておけばよく、実際にこの古いバージョンを利用する必要はありません</mark>。<br>
+        (ScenarioModに関して言えば、VS2013は必須ではありません。より新しいVS2019やVS2022だけでもOKです)<br>
+        例えば、<span class="positive">同じPCに Visual Studio Community 2019 など「新しいバージョン」もインストール</span>して、そちらを起動して利用するようにしましょう。<br>
+        (2013のライブラリやコンパイラを利用しつつ、環境は2019を利用する)
+    </p>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>Visual Studio 2015 の場合</h3>
+    <fieldset class="alert alert-info">
+        <legend>C++を使う準備</legend>Visual Studio Community 2015など、一部バージョンでは、<span class="positive">
+            インストールした状態のままでは、C++が使えません。<br>
+            ファイル→新規作成→プロジェクトなどから「Visual C++ 2015 Tools for Windows Desktop」をインストールしてください。<br>
+        </span>
+    </fieldset>
+    <p>
+        <img src="./cnt_mod/mod_snmod/cnt_mod_scenario_mod_init_01.png"><br>
+    </p>
+    <p>インストール後、ScenarioModの.slnを起動し、プラットフォームツールセットとして Visual Studio 2015 を選択しましょう。</p>
+    <p><img src="./cnt_mod/mod_snmod/cnt_mod_scenario_mod_build_multi_ver_01.png"></p>
+    <p><img src="./cnt_mod/mod_snmod/cnt_mod_scenario_mod_build_10.png"></p>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>Visual Studio 2017 の場合</h3>
+    <fieldset class="alert alert-info">
+        <legend>C++を使う準備</legend>Visual Studio Community 2017では<span class="positive">
+            インストールした状態のままでは、C++が使えません。<br></span>
+        インストール時に<ul>
+            <li>C++のデスクトップ
+            <li>.NETデスクトップ
+            <li>C++/CLI
+            <li>Windows 8.1 SDK
+            <li>グラフィックツール Windows 8.1 SDK
+        </ul>などを使えるオプションを選択し、インストールしてください。<br>
+    </fieldset>
+    <p><img src="./cnt_mod/mod_snmod/cnt_mod_scenario_mod_init_02.png"><br></p>
+    <p><img src="./cnt_mod/mod_snmod/cnt_mod_scenario_mod_init_03.png"><br></p>
+    <p><img src="./cnt_mod/mod_snmod/cnt_mod_scenario_mod_build_04.png"><br></p>
+    <p>インストール後、ScenarioModの.slnを起動し、プラットフォームツールセットとして Visual Studio 2017 を選択しましょう。</p>
+    <p><img src="./cnt_mod/mod_snmod/cnt_mod_scenario_mod_build_multi_ver_01.png"></p>
+    <p>Windows SDK は 迷うのであれば、8.1を指定してください。<br>
+        <mark>Windows 10 SDKを利用する場合、「10.0.17763.0」以下である必要があります。<br>
+            このバージョンより「大きな」バージョンのWindows 10 SDKではコンパイルできません。</mark><br>
+        (アライメントオプションの/Zp1が邪魔をしているが、このオプションはScenarioModでは必須) </p>
+    <p><img src="./cnt_mod/mod_snmod/cnt_mod_scenario_mod_build_01.png"><br></p>
+
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>Visual Studio 2019 の場合</h3>
+    <fieldset class="alert alert-info">
+        <legend>C++を使う準備</legend>Visual Studio Community 2019では<span class="positive">
+            インストールした状態のままでは、C++が使えません。</span><br>
+        インストール時に<ul>
+            <li>C++のデスクトップ
+            <li>.NETデスクトップ
+            <li>C++/CLI v142 ビルドツール用 サポート(最新)
+            <li>Windows 10.0.17763.0 SDK (<mark>かならず「この10.0.17763.0のバージョン」にもチェックをいれてください。</mark>)
+                <p><img src="./cnt_mod/mod_snmod/cnt_mod_scenario_mod_build_05.png"><br></p>
+        </ul>などを使えるオプションを選択し、インストールしてください。<br>
+    </fieldset>
+    <p><img src="./cnt_mod/mod_snmod/cnt_mod_scenario_mod_106.png"><br></p>
+    <p><img src="./cnt_mod/mod_snmod/cnt_mod_scenario_mod_105.png"><br></p>
+    <p><img src="./cnt_mod/mod_snmod/cnt_mod_scenario_mod_build_05.png"><br></p>
+    <p>インストール後、ScenarioModの.slnを起動し、プラットフォームツールセットとして Visual Studio 2019 を選択しましょう。</p>
+    <p>ターゲットプラットフォームには、「10.0.17763.0」を選択するのが良いでしょう。</p>
+    <p><img src="./cnt_mod/mod_snmod/cnt_mod_scenario_mod_build_multi_ver_01.png"></p>
+    <p><img src="./cnt_mod/mod_snmod/cnt_mod_scenario_mod_build_03.png"><br></p>
+    <p>これより<mark>新しい「10.0.19041.0」などを選択すると、コンパイルできない</mark>ので注意。<br>
+        (アライメントオプションの/Zp1が邪魔をしているが、このオプションはScenarioModでは必須)</p>
+    <p><img src="./cnt_mod/mod_snmod/cnt_mod_scenario_mod_build_02.png"><br></p>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>Visual Studio 2022 の場合</h3>
+    <fieldset class="alert alert-info">
+        <legend>C++を使う準備</legend>Visual Studio Community 2022では<span class="positive">
+            インストールした状態のままでは、C++が使えません。<br></span>
+        インストール時に<ul>
+            <li>C++のデスクトップ
+            <li>.NETデスクトップ
+                <p><img src="./cnt_mod/mod_snmod/cnt_mod_scenario_mod_106.png"><br></p>
+            <li><mark>C++/CLI v143 ビルドツール用 サポート(最新)</mark>
+                <p>「個別のコンポーネント」から選択してチェックを入れてください。</p>
+        </ul>
+        <p>などを使えるオプションを選択し、インストールしてください。<br></p>
+        <ul>
+            <li>Windows 10 SDK 10.0.17763.0<br>
+                Visual Studio 2022にとっては、<mark>Windows 10 SDK の少し古いバージョン</mark>の追加インストール必要となります。<br>
+                「<a href="https://developer.microsoft.com/ja-jp/windows/downloads/sdk-archive/">Windows SDK アーカイブ</a>」の<br>
+                「Windows 10 SDK 1809 (10.0.17763.0) 」をインストールしてください。
+                <p><img src="./cnt_mod/mod_snmod/cnt_mod_scenario_mod_build_09.png" width="657" height="583"><br></p>
+        </ul>
+    </fieldset>
+    <p>インストール後、ScenarioModの.slnを起動し、プラットフォームツールセットとして Visual Studio 2022 を選択しましょう。</p>
+    <p>ターゲットプラットフォームには、「10.0.17763.0」を選択してください。</p>
+    <p><img src="./cnt_mod/mod_snmod/cnt_mod_scenario_mod_build_multi_ver_01.png"></p>
+    <p><img src="./cnt_mod/mod_snmod/cnt_mod_scenario_mod_build_06.png"><br></p>
+    <p>これより<mark>新しい「10.0.19041.0」などを選択すると、コンパイルできない</mark>ので注意。<br>
+        (アライメントオプションの/Zp1が邪魔をしているが、このオプションはScenarioModでは必須)</p>
+    <p><img src="./cnt_mod/mod_snmod/cnt_mod_scenario_mod_build_02.png"><br></p>
+    </ul>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+    <h3>C++17を使いたい場合</h3>
+    <p>ScenarioMod <mark>v2.7.9.6 以降</mark>は、C++17 (C++/CLI版) に対応しています。<br>
+        C++17を利用したい場合は、ScenarioModのプロジェクトから「C++言語標準」を「ISO C++17 標準」に設定してください。</p>
+    <p>
+        2021年現在、C++17の機能を利用したソース例も増えてきたため、C++17までカバーしておいた方が<br>
+        ソースのコピペでエラーが出る可能性を抑えることができることでしょう。</p>
+    <p>C++20は C++/CLI に対しては2021/8月現在ではまだ利用できません。</p>
+    <p><img src="./cnt_mod/mod_snmod/cnt_mod_scenario_mod_build_07.png"><br></p>
+    <p>少し古いScenarioModを利用している人でも、<br>
+        「ScenarioModプロジェクト」の「構成プロパティ」「C++」「コマンドライン」で、<br>
+        以下のように、</p>
+    <blockquote>/D "_HAS_STD_BYTE=0"</blockquote>
+    <p>を付け加えれば C++17は使えます。
+    </p>
+    <p><img src="./cnt_mod/mod_snmod/cnt_mod_scenario_mod_build_08.png"><br></p>
+</div>

@@ -1,0 +1,51 @@
+%(hilight)s
+<div class="content-box mb-3 content-lighten">
+	<h2><i class="fa fa-book fa-fw"></i>デバッグ画像</h2>
+	<p>文字列ではなく「画像」をその瞬間スクリーンショットとして撮りたいといった場合もあります。<br>
+		そういった場合に使えるのがこの「デバッグ画像出力」です。</p>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>例①</h3>
+	<p>以下の例では、相場変更時に天翔記の画面のスクリーンショットを指定のファイル名へと保存する。<br>
+		ファイルは「天翔記フォルダ」にある。</p>
+	<div class="code">
+		<pre class="brush:cpp">
+void カスタム::On_相場変更直前() {
+	デバッグ画像出力(&quot;On_相場変更直前のスクショ.png&quot;);
+}
+</pre>
+	</div>
+</div>
+<div class="content-box mb-3 content-lighten">
+	<h3>例②</h3>
+	<p>もちろんフルパスを指定することも可能だ。<br>
+		その場合には、ディレクトリがないのであれば、ディレクトリを作る必要がある。<br>
+		(ディレクトリが存在すると分かっているのであれば、ディレクトリを作る必要はない)</p>
+	<div class="code">
+		<pre class="brush:cpp">
+// mkdirに必要
+#include &lt;direct.h&gt;
+
+void カスタム::On_相場変更直前() {
+
+	// C:\bb というディレクトリを作る
+	// (既にディレクトリが存在しているなら、実行に失敗するが、存在するのであるから問題はない)
+	_mkdir(R&quot;(C:\bb)&quot;);
+
+	// スクリーンショットを保存する。(すでにファイルがあっても上書き)
+	デバッグ画像出力(R&quot;(C:\bb\On_相場変更直前のスクショ.png)&quot;);
+}
+</pre>
+	</div>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_debugpic_01.png"></p>
+</div>
+
+
+<div class="content-box mb-3 content-lighten">
+	<h3>より詳細を知るには...</h3>
+	<p>
+		デバッグ画像に関する主な所は以上となります。
+		詳しくは「デバッグ画像情報型.h」などを参照してください。
+	</p>
+</div>

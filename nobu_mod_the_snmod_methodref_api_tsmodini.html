@@ -1,0 +1,61 @@
+%(hilight)s
+<div class="content-box mb-3 content-lighten">
+	<h2><i class="fa fa-book fa-fw"></i>TSMod.ini (TSModEx.ini)</h2>
+	<p>環境設定に準ずるものとしてTSMod.ini (TSModEx.ini) で設定している値を取得することが出来る</p>
+	</p>
+</div>
+<div class="content-box mb-3 content-lighten">
+	<h3>TSMod.ini (もしくは TSModEx.ini)で設定されているフラグの読み取り</h3>
+
+	<blockquote>Get_ＴＳＭＯＤＩＮＩ設定(string フラグ名)</blockquote>
+	<p>TSMod.ini の設定項目の値を、ScenarioModから得ることが可能。<br>
+		TSModEx.iniに記載した内容も含まれる。<br>
+	</p>
+	<p>値は、天翔記起動時にTSModが処理したものを取得することとなる。<br>
+	</p>
+	<p><b>値が存在しない項目の場合、「-0xFFFF」という独特な値が返ってくる。</b></p>
+	<div class="code">
+		<pre class="brush:cpp;">
+// TSMod.iniの「もしも…すべての武将が歳を取っても才能が減衰しない」の設定値を得る。
+int iflagValue = Get_ＴＳＭＯＤＩＮＩ設定(&quot;all_bushou_no_decline_talent_param&quot;);
+if ( iflagValue != -0xFFFF ) {
+   // ～
+}
+</pre>
+	</div>
+	<fieldset class="alert alert-info">
+		<legend>TSMod.iniのフラグと参照先が同一なものを書き換える際に注意</legend>
+		Set_コマンド行動力(...) という関数を利用する際には注意を要します。<br>
+		具体的には「<a href="?page=nobu_mod_the_snmod_methodref_api_command_main">メイン画面 - コマンド</a>」の「Set_コマンド行動力(...)」の項目を参照してください。
+	</fieldset>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>TSMod.ini (もしくは TSModEx.ini)で設定されている「txt」や「asm」の読み取り</h3>
+
+	<p>それはそのままポインタのアドレスを指し示していますので、そのまま読み取ればよいでしょう。</p>
+	<p>TSMod.iniにて</p>
+	<div class="code">
+		<pre class="brush:cpp;">
+txt['4BC884'] = '天翔 明朝'</pre>
+	</div>
+	<p>などと設定されているのであれば、これは0x4BC884のアドレスにその文字列を代入したという意味ですので</p>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_メインゲーム開始() {
+	char *フォント名 = (char*)0x4BC884;
+	デバッグ出力 &lt;&lt; フォント名 &lt;&lt; endl;
+}
+</pre>
+	</div>
+	<p>などとすると読み込むことが出来ます。</p>
+</div>
+
+
+<div class="content-box mb-3 content-lighten">
+	<h3>より詳細を知るには...</h3>
+	<p>
+		暦に関する主な所は以上となります。
+		詳しくは「環境設定情報型.h」を参照してください。
+	</p>
+</div>

@@ -1,0 +1,175 @@
+%(hilight)s
+<div class="content-box mb-3 content-lighten">
+    <h2><i class="fa fa-book fa-fw"></i>城 － 城の位置、城Ａから城Ｂへの方向</h2>
+    <h3>城の位置</h3>
+    <p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_castle_position_04.png"></p>
+    <h3>城のグリッド位置</h3>
+    <p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_castle_position_01.png"></p>
+    <p>城は、いずれかのグリッドの中に入っています。<br>
+        上下・斜めに隣接したグリッドに位置する城は、戦争で攻めることが出来る「隣接城」です。</p>
+
+</div>
+
+
+<div class="content-box mb-3 content-lighten">
+    <h3>とある城の周辺城を求める</h3>
+    <blockquote>城グリッド位置型</blockquote>
+    <div class="code">
+        <pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+	int iCastleID_A = 城配列番号::観音寺城;
+	城グリッド位置型 位置a = Get_城グリッド位置(iCastleID_A);
+
+	デバッグ出力(&quot;観音寺:(X,Y):(%d,%d)&quot;, 位置a.Ｘ, 位置a.Ｙ);
+
+	int iCastleID_B = 城配列番号::二条城;
+	城グリッド位置型 位置b = Get_城グリッド位置(iCastleID_B);
+
+	デバッグ出力(&quot;二条城:(X,Y):(%d,%d)&quot;, 位置b.Ｘ, 位置b.Ｙ);
+
+	番号リスト型 城番号リスト = {
+		位置b.北西【城番号】,
+		位置b.北【城番号】,
+		位置b.北東【城番号】,
+		位置b.西【城番号】,
+		位置b.東【城番号】,
+		位置b.南西【城番号】,
+		位置b.南【城番号】,
+		位置b.南東【城番号】,
+	};
+
+	デバッグ出力 &lt;&lt; &quot;二条城の周辺の城は...&quot; &lt;&lt; endl;
+	for (int 城番号 : 城番号リスト) {
+		int iCastleID = 城番号 - 1; // 城番号→城番号【配列用】
+
+		if (0 &lt;= iCastleID &amp;&amp; iCastleID &lt; 最大数::城情報::配列数) {
+			デバッグ出力 &lt;&lt; Get_城名(iCastleID) &lt;&lt; Get_城称(iCastleID) &lt;&lt; endl;
+		}
+	}
+}
+</pre>
+    </div>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+    <h3>とある城が隣接しているかどうかの判定</h3>
+    <blockquote>bool Is_隣接城(int 城Ａ番号【配列用】, int 城Ｂ番号【配列用】);</blockquote>
+	<p><mark>斜めの隣接も含まれます。どちらかの城で戦争が起きれば、互いに戦争に巻き込まれる城か</mark>、と考えればよいでしょう。<br>
+	街道でつながっているかどうかは考慮されません。</p>
+    <div class="code">
+        <pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+	int iCastleID_A = 城配列番号::二条城;
+	int iCastleID_B = 城配列番号::観音寺城;
+
+	if (Is_隣接城(iCastleID_A, iCastleID_B)) {
+		デバッグ出力 &lt;&lt; &quot;２つの城は隣接している&quot; &lt;&lt; endl;
+	}
+	else {
+		デバッグ出力 &lt;&lt; &quot;２つの城は隣接していない&quot; &lt;&lt; endl;
+	}
+}
+</pre>
+    </div>
+	<h4>城グリッド位置型にも対応</h4>
+    <blockquote>bool Is_隣接城(城グリッド位置型 &位置１, 城グリッド位置型 &位置２);</blockquote>
+    <div class="code">
+        <pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+	int iCastleID_A = 城配列番号::二条城;
+	int iCastleID_B = 城配列番号::観音寺城;
+
+	城グリッド位置型 APOS = Get_城グリッド位置(iCastleID_A);
+	城グリッド位置型 BPOS = Get_城グリッド位置(iCastleID_B);
+
+	if (Is_隣接城(APOS, BPOS)) {
+		デバッグ出力 &lt;&lt; &quot;２つの城は隣接している&quot; &lt;&lt; endl;
+	}
+	else {
+		デバッグ出力 &lt;&lt; &quot;２つの城は隣接していない&quot; &lt;&lt; endl;
+	}
+}
+</pre>
+    </div>	
+</div>
+
+
+<div class="content-box mb-3 content-lighten">
+    <h3>城Ａ → 城Ｂのグリッドベースでの方向ベクトルを得る</h3>
+    <blockquote>城グリッドベクトル型</blockquote>
+    <blockquote>２Ｄベクトル型</blockquote>
+    <div class="code">
+        <pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+	int iCastleID_A = 城配列番号::観音寺城;
+	城グリッド位置型 位置a = Get_城グリッド位置(iCastleID_A);
+
+	デバッグ出力(&quot;観音寺:(X,Y):(%d,%d)&quot;, 位置a.Ｘ, 位置a.Ｙ);
+
+	int iCastleID_B = 城配列番号::二条城;
+	城グリッド位置型 位置b = Get_城グリッド位置(iCastleID_B);
+
+	デバッグ出力(&quot;二条城:(X,Y):(%d,%d)&quot;, 位置b.Ｘ, 位置b.Ｙ);
+
+	// 観音寺城 → 二条城 方向へのベクトル
+	城グリッドベクトル型 my方向;
+	my方向 = 位置b - 位置a;
+
+	デバッグ出力(&quot;観音寺⇒二条城は (Vx,Vy):(%d,%d)の方向にある。&quot;, my方向.Ｘ, my方向.Ｙ);
+
+	２Ｄベクトル型 v(my方向.Ｘ, my方向.Ｙ);
+	string 方向文字列 = Get_８方位文字列(v);
+
+	デバッグ出力 &lt;&lt; &quot;それは日本語でいうところの&quot; &lt;&lt; 方向文字列 &lt;&lt; &quot;である&quot; &lt;&lt; endl;
+}
+</pre>
+    </div>
+    <div class="code">
+        <pre class="brush:ps;">
+観音寺:(X,Y):(14,7)
+二条城:(X,Y):(13,7)
+観音寺⇒二条城は (Vx,Vy):(-1,0)の方向にある。
+それは日本語でいうところの西である
+    </pre>
+    </div>
+</div>
+
+
+<div class="content-box mb-3 content-lighten">
+    <h3>メイン画面での城アイコンの移動</h3>
+    <blockquote>void Set_城位置(int 城番号【配列用】, int Ｘ位置, int Ｙ位置)</blockquote>
+    <fieldset class="alert alert-info">
+        <legend>通常この関数を使うことはない</legend>通常、「城」のアイコンを移動させても無意味であるため、この関数を利用することはないが、<br>
+        <a href="?page=nobu_mod_the_mapobgk">戦場グリッドマップ</a> や、<a href="?page=nobu_mod_the_mapdatahd">ＨＤ版風の全国マップ</a> のようなModを制作する際には、<br>
+        この城を微小に移動させて背景とうまく合わせる、といった作業が必要となります。
+    </fieldset>
+    <div class="code">
+        <pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+	int iCastleID = 城配列番号::二条城;
+
+	// 二条城は元々 (X:66, Y:21にある)
+	// 
+	// X位置を右に４移動
+	Set_城位置(iCastleID, 68, 21);
+
+	画面更新();
+}
+</pre>
+    </div>
+    <p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_castle_position_02.png"></p>
+    <p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_castle_position_03.png"></p>
+    <p>「同じ城グリッド内」で移動すること。グリッドをはみ出すと、城をクリックしても反応しなくなってしまう。</p>
+</div>
+
+
+<div class="content-box mb-3 content-lighten">
+    <h3>より詳細を知るには...</h3>
+    <p>
+        「城 － 城の位置、城Ａから城Ｂへの方向」に関する主な所は以上となります。
+        詳しくは「城情報型.h」や「城情報列挙.h」などを参照してください。
+    </p>
+</div>

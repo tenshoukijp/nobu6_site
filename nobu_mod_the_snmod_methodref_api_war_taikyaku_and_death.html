@@ -1,0 +1,125 @@
+%(hilight)s
+<div class="content-box mb-3 content-lighten">
+	<h2><i class="fa fa-book fa-fw"></i>戦争 - 退却と戦死</h2>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>武将ユニットが戦死したかどうかの判定</h3>
+	<blockquote>p武将戸籍情報[iBushouID].戦死</blockquote>
+	<p>なお、戦死については、<a href="?page=nobu_mod_the_snmod_methodref_api_bushou_death">武将 － 死亡</a> の項目とも関わるので、<br>
+		「戦死」→「死亡」とフラグがバトンで渡っていくことをしっておくこと。</a></p>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_war_unit_status_05.png"></p>
+	<div class="code">
+		<pre class="brush:cpp;">
+番号リスト型 戦争出陣武将リストの控え;
+void カスタム::On_残りターン変更《戦争画面》(int 残りターン数) {
+	if (残りターン数 == 30) {
+		// Get_出陣中の武将番号リスト【配列用】() の関数は「退却武将」や「戦死武将」は含まれないため、一番最初のターンの開始で、全員分のリストを控えておく
+		戦争出陣武将リストの控え = Get_出陣中の武将番号リスト【配列用】();
+	}
+
+	for (int iBushouID : 戦争出陣武将リストの控え) {
+		if (p武将戸籍情報[iBushouID].戦死) {
+			デバッグ出力 &lt;&lt; Get_名字(iBushouID) + Get_名前(iBushouID) &lt;&lt; &quot;は、この戦争中に戦死しました&quot; &lt;&lt; endl;
+		}
+	}
+}
+
+void カスタム::On_戦争終了() {
+	// 戦争終了時にリストをクリア
+	戦争出陣武将リストの控え.clear();
+}
+</pre>
+	</div>
+	<p>戦場での戦死に関連する項目として、</p>
+	<ul>
+		<li><a href="?page=nobu_mod_the_snmod_methodref_on_custom_totsugeki">AS条件::戦争::突撃受動者死亡可否</a></li>
+		<li><a href="?page=nobu_mod_the_snmod_methodref_on_custom_teppou_sibou">AS条件::戦争::鉄砲受動者死亡可否</a></li>
+		<li><a href="?page=nobu_mod_the_snmod_methodref_on_custom_yumi_sibou">AS条件::戦争::弓受動者死亡可否</a></li>
+		<li><a href="?page=nobu_mod_the_snmod_methodref_on_custom_normal_attack_heisuu_zero_sibou">AS条件::戦争::非戦死攻撃受動者兵士消失時死亡可否</a></li>
+		<li><a href="?page=nobu_mod_the_snmod_methodref_on_custom_ansatsu_battle_sibou">AS条件::戦争::暗殺受動者死亡可否</a></li>
+	</ul>
+	<p>などがあります。</p>
+</div>
+
+
+<div class="content-box mb-3 content-lighten">
+	<h3>武将ユニットを戦場で戦死させる</h3>
+	<p><a href="?page=nobu_mod_the_snmod_methodref_api_bushou_death">武将 - 死亡</a> にて説明されています。</noframes>
+	</p>
+</div>
+
+
+
+
+<div class="content-box mb-3 content-lighten">
+	<h3>武将ユニットが退却したかどうかの判定</h3>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_war_unit_status_04.png"></p>
+	<blockquote>p武将戸籍情報[iBushouID].退却</blockquote>
+	<p>出陣していない武将が、城を奪われた際に退却することは、この項目とは無関係である。<br>
+		あくまでも出陣していたユニットが、兵数0等により退却したかどうかの判定となる。</p>
+	<div class="code">
+		<pre class="brush:cpp;">
+番号リスト型 戦争出陣武将リストの控え;
+void カスタム::On_残りターン変更《戦争画面》(int 残りターン数) {
+	if (残りターン数 == 30) {
+		// Get_出陣中の武将番号リスト【配列用】() の関数は「退却武将」や「戦死武将」は含まれないため、一番最初のターンの開始で、全員分のリストを控えておく
+		戦争出陣武将リストの控え = Get_出陣中の武将番号リスト【配列用】();
+	}
+
+	for (int iBushouID : 戦争出陣武将リストの控え) {
+		if (p武将戸籍情報[iBushouID].退却) {
+			デバッグ出力 &lt;&lt; Get_名字(iBushouID) + Get_名前(iBushouID) &lt;&lt; &quot;は、この戦争中に退却しました&quot; &lt;&lt; endl;
+		}
+	}
+}
+
+void カスタム::On_戦争終了() {
+	// 戦争終了時にリストをクリア
+	戦争出陣武将リストの控え.clear();
+}
+</pre>
+	</div>
+	<p>戦場での退却に関連する項目として、</p>
+	<ul>
+		<li><a href="?page=nobu_mod_the_snmod_methodref_on_custom_taikyaku">AND条件::戦争::退却可否</a></li>
+	</ul>
+	<p>などがあります。</p>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>武将ユニットを戦場で退却させる</h3>
+	<blockquote>int Do_コマンド《戦争画面》《退却》(int 武将番号【配列用】)</blockquote>
+	<p>
+		<font color="red"><b>この関数はUIやメッセージ吹き出しを伴うため、</b></font><br>
+		On_残りターン変更《戦争画面》 イベントハンドラなど、<br>
+		<font color="red"><b>「UIや吹き出しが出ても大丈夫なイベントハンドラ限定」で、かつ「別の噴き出しが出ていないとき限定」で使用可能である。</b></font>
+	</p>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_残りターン変更《戦争画面》(int 残りターン数) {
+
+	番号リスト型 list = Get_出陣中の武将番号リスト【配列用】《表示中マップ》();
+
+	// １人以上武将が表示中なら...
+	if (list.size() &gt; 0) {
+		// 先頭の１人が戦場から退場
+		int iBushouID = list[0];
+		Do_コマンド《戦争画面》《退却》(iBushouID);
+	}
+}
+	</div>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_war_unit_taikyaku_and_death_01.png"></p>
+
+</div>
+
+
+
+
+<div class="content-box mb-3 content-lighten">
+	<h3>より詳細を知るには...</h3>
+	<p>
+		「戦争 - 退却と戦死」に関する主な所は以上となります。
+		詳しくは「戦場情報型.h」「武将情報型.h」などを参照してください。
+	</p>
+</div>

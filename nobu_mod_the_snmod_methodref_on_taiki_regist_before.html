@@ -1,0 +1,102 @@
+%(hilight)s
+<div class="content-box mb-3 content-lighten">
+    <h2><i class="fa fa-book fa-fw"></i>int カスタム::On_待機武将登場直前(int 武将番号, int 登場済人数, int 待機武将データ数)</h2>
+    <div class="code">
+        <pre class="brush:cpp;">
+int カスタム::On_待機武将登場直前(int 武将番号, int 登場済人数, int 待機武将データ数) {
+	return -1;
+}
+</pre>
+    </div>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>引数の補足</h3>
+    <ul class="pointlist">
+        <li>
+            <h4>武将番号</h4>
+            「このメソッド後に」、この武将番号へと待機武将が登場する。<br>
+            <span class="negative">
+                よって、 p武将情報[x] や p武将戸籍情報[x] では、該当の武将の情報を取得することはできない。<br>
+                該当の武将はまだ登場しておらず、このメソッドの直後に「武将番号スロット」へと上書き登録されるのである。
+            </span>
+        <li>
+            <h4>登場人数:</h4>
+            現行進行中のシナリオにおいて、「何人の待機武将が、すでに登場済み」なのかの人数。<br>
+            この情報があれば、「次に登場する待機武将」を割り出すことが出来る。<br>
+            <br>
+            なお、この値は、「<span class="keyword">Get_待機武将登場済人数()</span>」という関数の結果と同じ値である。
+        <li>
+            <h4>待機武将データ数:</h4>
+            現行進行中のシナリオにおいて、そもそも「何人の待機武将データ」がシナリオデータとして存在するのか、の情報。<br>
+            ScenarioModには、Get_待機武将戸籍情報リスト() という「現行シナリオの待機武将情報全体」を扱うための関数が存在するが、<br>
+            「各シナリオ」によって、「待機武将データ数」は異なるため、この引数が渡ってくる。<br>
+            <br>
+            なお、この値は、「<span class="keyword">Get_待機武将データ数()</span>」という関数の結果と同じ値である。
+
+    </ul>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>返り値</h3>
+    <ul class="pointlist">
+        <li>
+            <h4>-1</h4>
+            <p>通常通り、登場する。</p>
+        <li>
+            <h4>FALSE や NULL</h4>
+            <p>
+                該当の待機武将は登場せず、スキップされる。<br>
+                一度スキップしてしまうと、２度と登場することはない。
+            </p>
+
+    </ul>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>タイミング</h3>
+    <ul>
+        <li>
+            このメソッドは「待機武将」が登場する直前に実行される。<br>
+    </ul>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>一般的用途</h3>
+    <ul>
+        <li>待機武将の情報を利用して、<b>今登場しようとしている武将が特定の武将であれば、「登場させない」などといった制御をおこなう</b><br>
+    </ul>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>例①</h3>
+    <div class="code">
+        <pre class="brush:cpp;">
+int カスタム::On_待機武将登場直前(int 武将番号, int 登場済人数, int 待機武将データ数) {
+
+    auto p待機武将戸籍情報 = Get_待機武将戸籍情報リスト();
+
+    if (p待機武将戸籍情報) {
+
+        // p待機武将戸籍情報 は インデックスが 0 から始まる登場順にならんでいるので、
+        // 「登場済人数」をインデックスにあてはめると、「これまで登場した武将」の「次の人」、
+        // を指すインデックスとなる
+        auto next武将 = p待機武将戸籍情報[登場済人数];
+
+        if (next武将.顔番号 == 顔番号::明智光秀) {
+
+            // 登場しない
+
+            return FALSE;
+        }
+
+        if (string(next武将._名字) == &quot;ほげげ&quot; &amp;&amp; string(next武将._名前) == &quot;うごご&quot;) {
+
+            // p武将情報とは異なり、姓名の文字列で判定する必要性は、ほとんど無いはずなので、
+            // Get_名字()やGet_名前()といったものは用意されていない。
+
+            return FALSE;
+        }
+
+    }
+
+    return -1;
+}
+</pre>
+    </div>
+</div>

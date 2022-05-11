@@ -1,0 +1,103 @@
+@font-face {
+  font-family: 'FontAwesomePlugin';
+  src: url('../fonts/fontawesome-plugin-webfont.eot?v=0.0.6.3');
+  src: url('../fonts/fontawesome-plugin-webfont.eot?#iefix&v=0.0.6.3') format('embedded-opentype'),
+       url('../fonts/fontawesome-plugin-webfont.woff?v=0.0.6.3') format('woff'),
+       url('../fonts/fontawesome-plugin-webfont.ttf?v=0.0.6.3') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+.fa-ts95:before{
+  content:"\f000";font:normal normal normal 1em FontAwesomePlugin;}
+.fa-tshd:before{
+  content:"\f001";font:normal normal normal 1em FontAwesomePlugin;}
+.fa-internal-link-95:before{
+  content:"\f002";font:normal normal normal 1em FontAwesomePlugin;}
+.fa-python:before{
+  content:"\f003";font:normal normal normal 1em FontAwesomePlugin;}
+.fa-ruby:before{
+  content:"\f004";font:normal normal normal 1em FontAwesomePlugin;}
+.fa-hidemaru:before{
+  content:"\f005";font:normal normal normal 1em FontAwesomePlugin;}
+.fa-lua:before{
+  content:"\f006";font:normal normal normal 1em FontAwesomePlugin;}
+.fa-perl:before{
+  content:"\f007";font:normal normal normal 1em FontAwesomePlugin;}
+.fa-js:before{
+  content:"\f008";font:normal normal normal 1em FontAwesomePlugin;}
+.fa-v8:before{
+  content:"\f009";font:normal normal normal 1em FontAwesomePlugin;}
+.fa-markdown:before{
+  content:"\f00A";font:normal normal normal 1em FontAwesomePlugin;}
+.fa-nodejs:before{
+  content:"\f00B";font:normal normal normal 1em FontAwesomePlugin;}
+.fa-vscode:before {
+  content:"\f00C";font:normal normal normal 1em FontAwesomePlugin;}
+.fa-ps:before {
+  content:"\f00D";font:normal normal normal 1em FontAwesomePlugin;}
+.fa-office-app:before {
+  content:"\f00E";font:normal normal normal 1em FontAwesomePlugin;}
+.fa-excel-app:before {
+  content:"\f00F";font:normal normal normal 1em FontAwesomePlugin;}
+.fa-word-app:before {
+  content:"\f010";font:normal normal normal 1em FontAwesomePlugin;}
+.fa-java:before {
+  content:"\f011";font:normal normal normal 1em FontAwesomePlugin;}
+.fa-dotnet:before {
+  content:"\f012";font:normal normal normal 1em FontAwesomePlugin;}
+.fa-csharp:before {
+  content:"\f013";font:normal normal normal 1em FontAwesomePlugin;}
+.fa-typescript:before {
+  content:"\f014";font:normal normal normal 1em FontAwesomePlugin;}
+.fa-unity:before {
+  content:"\f015";font:normal normal normal 1em FontAwesomePlugin;}
+.fa-unity:before {
+  content:"\f015";font:normal normal normal 1em FontAwesomePlugin;}
+.fa-discord:before {
+  content:"\f016";font:normal normal normal 1em FontAwesomePlugin;}
+.fa-telegram:before {
+  content:"\f017";font:normal normal normal 1em FontAwesomePlugin;}
+.fa-ethereum:before {
+  content:"\f018";font:normal normal normal 1em FontAwesomePlugin;}
+.fa-waves:before {
+  content:"\f019";font:normal normal normal 1em FontAwesomePlugin;}
+.fa-solidity:before {
+  content:"\f01A";font:normal normal normal 1em FontAwesomePlugin;}
+.fa-newedge:before {
+  content:"\f01B";font:normal normal normal 1em FontAwesomePlugin;}
+.fa-php:before {
+  content:"\f01C";font:normal normal normal 1em FontAwesomePlugin;}
+.fa-cplusplus:before {
+  content:"\f01D";font:normal normal normal 1em FontAwesomePlugin;}
+.fa-csharp2:before {
+  content:"\f01E";font:normal normal normal 1em FontAwesomePlugin;}
+.fa-bitcoin2:before {
+  content:"\f01F";font:normal normal normal 1em FontAwesomePlugin;}
+.fa-docker:before {
+  content:"\f020";font:normal normal normal 1em FontAwesomePlugin;}
+.fa-ms-azure:before {
+  content:"\f021";font:normal normal normal 1em FontAwesomePlugin;}
+.fa-ms-teams:before {
+  content:"\f022";font:normal normal normal 1em FontAwesomePlugin;}
+.fa-nvidia:before {
+  content:"\f023";font:normal normal normal 1em FontAwesomePlugin;}
+.fa-playstation:before {
+  content:"\f024";font:normal normal normal 1em FontAwesomePlugin;}
+.fa-rakuten:before {
+  content:"\f025";font:normal normal normal 1em FontAwesomePlugin;}
+.fa-react:before {
+  content:"\f026";font:normal normal normal 1em FontAwesomePlugin;}
+.fa-shopify:before {
+  content:"\f027";font:normal normal normal 1em FontAwesomePlugin;}
+.fa-thunderbird:before {
+  content:"\f028";font:normal normal normal 1em FontAwesomePlugin;}
+.fa-visual-studio:before {
+  content:"\f029";font:normal normal normal 1em FontAwesomePlugin;}
+.fa-nobu7:before {
+  content:"\f02A";font:normal normal normal 1em FontAwesomePlugin;}
+
+
+
+
+

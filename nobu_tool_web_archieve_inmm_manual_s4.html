@@ -1,0 +1,190 @@
+﻿%(hilight)s
+<div class="content-box mb-3 content-lighten">
+    <h2><i class="fa fa-book fa-fw"></i><a name="doc1_inmmini">_inmm.ini</a></h2>
+    <div class="titletoc">
+        <ul>
+            <li>
+                <a href="#doc1_id279">標準形式</a>
+                <ul>
+                    <li> <a href="#doc1_specialtrack">特殊なトラック指定</a>
+                </ul>
+            <li>
+                <a href="#doc1_extform">拡張形式</a>
+                <ul>
+                    <li> <a href="#doc1_id350">[Tracks]セクション</a>
+                    <li> <a href="#doc1_id356">[Players]セクション</a>
+                    <li> <a href="#doc1_id437">[Settings]セクション</a>
+                </ul>
+        </ul>
+    </div>
+    <p class="first_ja">_inmm.iniは、CDの各トラックと、その代わりに再生するファイル名との対応を記述したテキストファイルです。_inmm.dllはこれを見て、CDの代わりにどの曲を再生するかを決めます。このファイルは、ゲーム本体の実行ファイルと同じフォルダに置きます<span class="note"><a href="#doc1_id276" title="_inmm.dllとは違って、windowsフォルダには置けません。"><sup>(4)</sup></a></span>。</p>
+    <p>_inmm.iniの記述のしかたには、標準形式と拡張形式の2種類があります。</p>
+
+    <div class="footnote">
+        <ol>
+            <li id="doc1_id276" value="4"> _inmm.dllとは違って、windowsフォルダには置けません。
+        </ol>
+    </div>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3><a name="doc1_id279">標準形式</a></h3>
+
+    <p class="first_ja">標準形式の_inmm.iniは、再生するファイル名を並べただけの単純なものです。</p>
+
+    <a name="doc1_id281"></a>
+    <div class="caption">標準形式の_inmm.ini</div>
+    <pre class="program" style="margin-top:0">
+c:\mp3\hoge02.mp3       ; 1行目には第2トラックとして再生するファイル名
+c:\mp3\hoge03.mp3       ; 第3トラック
+c:\mp3\hoge04.mp3       ; 第4トラック
+*12                     ; 第5トラックの代わりにCDの12トラック目を再生
+</pre>
+
+    <p>ファイルの先頭から、1行に1つずつファイル名を書いていきます。各行はCDのトラック番号に対応していて、1行目に書いたファイルがCDの第2トラックの代わりに再生されます。同様に、2行目は第3トラック、3行目は第4トラック…に対応します。</p>
+    <p>実はこれはWinampなどが出力する「M3Uプレイリスト」と同じ形式です。Winampなどで.m3u形式のプレイリストを保存して、ファイル名を_inmm.iniに変更するとそのまま使えます。この場合、プレイリストの先頭のファイルがトラック2、次のファイルがトラック3、…のように対応します。</p>
+    <p>ほとんどのゲームでは、第1トラックはデータ部分になっていてBGM再生には使われません。そのため第2トラックからの指定になっています。第1トラックからの指定が必要な場合には、<a href="#doc1_extform">拡張形式</a>の_inmm.iniを使います。</p>
+    <p>ゲームのあるフォルダを基準とした相対パス指定が可能です<span class="note"><a href="#doc1_id287" title="相対パス指定って何？という人は聞かなかったことにしてください:-)"><sup>(5)</sup></a></span>。</p>
+    <p>ファイルではなく、ゲームをしているときCD-ROMドライブに入っているCDから再生することもできます。_inmm.iniにファイル名の代わりに<code>*3</code>と書くと、CDの第3トラックを再生します。再生には、_inmmcnf.exeの<a href="?page=nobu_tool_web_archieve_inmm_manual_s5#doc1_player_select">[再生方法]ページ</a>の[CDオーディオ]で指定したプレイヤーが使われます。CD-ROMドライブが複数ある場合、どのCD-ROMドライブが使われるかも<a
+            href="?page=nobu_tool_web_archieve_inmm_manual_s5#doc1_player_select">[再生方法]ページ</a>で指定します。</p>
+    <p>#で始まる行は読み飛ばされます（EXTM3U形式を読めるようにするため）。また、セミコロン(<code>;</code>)から行の終わりまではコメントとして無視されます。</p>
+    <p>標準形式の_inmm.iniは、_inmmcnf.exeの中にある<a href="?page=nobu_tool_web_archieve_inmm_manual_s5#doc1_inieditor">_inmm.iniエディタ</a>を使うと簡単に作成できます。</p>
+
+    <div class="footnote">
+        <ol>
+            <li id="doc1_id287" value="5"> 相対パス指定って何？という人は聞かなかったことにしてください:-)
+        </ol>
+    </div>
+
+
+    <h4><a name="doc1_specialtrack">特殊なトラック指定</a></h4>
+
+    <p class="first_ja">_inmm.iniでは、ファイル名やトラック番号を単純に指定するほかに、以下のような書式で再生を細かく制御できます。</p>
+
+    <a name="doc1_id307"></a>
+    <div class="caption">CDドライブ指定</div>
+    <pre class="program" style="margin-top:0">
+*Q,11   ; Qドライブの第11トラックを再生
+</pre>
+
+    <p>
+        再生するCD-ROMドライブを_inmm.iniで指定したい場合は<code>
+            *<var>
+                ドライ
+                ブ名
+            </var>,<var>トラック番号</var>
+        </code>と書きます<span class="note"><a href="#doc1_id318" title="Digital CD Playerはこの方法でのドライブ指定に対応していません。Digital CD Playerの設定でCDドライブを変更してください。"><sup>(6)</sup></a></span>。
+    </p>
+
+    <a name="doc1_id321"></a>
+    <div class="caption">プレイリストによる間接指定</div>
+    <pre class="program" style="margin-top:0">
+c:\mp3\album.m3u:9   ; album.m3uの9番目の曲を再生
+</pre>
+
+    <p><code><var>プレイリスト名</var>:<var>数値</var></code>と書くと、プレイリストの指定した位置の曲を再生します。対応しているプレイリスト形式は、m3u形式(.m3u)とcueシート形式(.cue)のみです（拡張子によって判別しています）。</p>
+    <p>再生に使用するプレイヤーは、プレイリストのファイル名で判別されます。上の例で再生にWinampを使いたい場合、_inmmcnfの<a href="?page=nobu_tool_web_archieve_inmm_manual_s5#doc1_player_select">[再生方法]ページ</a>で<code>*.m3u</code>をWinampに関連づけます。</p>
+
+    <a name="doc1_id337"></a>
+    <div class="caption">ランダム再生</div>
+    <pre class="program" style="margin-top:0">
+c:\mp3\hoge.mp3|c:\mp3\fuga.mp3  ; 2曲からランダムに選ぶ
+</pre>
+
+    <p>ファイル名やトラック番号を、<code>|</code>（縦棒）で区切って複数指定できます。こうすると、その中からランダムに選んだ曲を再生します（毎回違った曲がかかるわけです）。</p>
+
+    <div class="footnote">
+        <ol>
+            <li id="doc1_id318" value="6"> Digital CD Playerはこの方法でのドライブ指定に対応していません。Digital CD Playerの設定でCDドライブを変更してください。
+        </ol>
+    </div>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3><a name="doc1_extform">拡張形式</a></h3>
+
+    <p class="first_ja">拡張形式の_inmm.iniを使うと、_inmm.dllの動作を細かく制御できます。</p>
+
+    <a name="doc1_id347"></a>
+    <div class="caption">拡張形式の_inmm.ini</div>
+    <pre class="program" style="margin-top:0">
+; セミコロンから行末まではコメントとして無視される
+[Tracks]
+                            ; [Tracks]の１行目は第１トラックに対応
+C:\MP3\Track02.MP3          ; ２行目は第２トラック
+C:\MP3\Track03.MP3
+C:\MP3\Track04.MP3
+C:\MP3\Track05.MP3|*10      ; 複数指定もできます
+
+[Players]                   ;使用するプレイヤーの設定
+SCMPX  = *.wav              ;  wavファイルはSCMPXで再生
+Winamp = *.mp3|*.vqf        ;  mp3ファイルとvqfファイルはWinampで再生
+cdplayer = DigitalCDPlayer  ;  CDの再生にはDigital CD Playerを使用
+
+[Settings]                  ;各種設定
+WA_OutDll = out_ds.dll      ;  Winampのoutput plug-inを
+                            ;  out_ds.dll(DirectSound plug-in)に設定
+WA_SkipWaveOutCheck = 1     ;  [Winamp]-[Wave出力の空きをチェックしない]と同じ
+</pre>
+
+    <p>拡張形式の_inmm.iniは、[Tracks], [Players], [Settings]の3つのセクションに分かれています。[Tracks]以外のセクションは省略できます。</p>
+
+    <h4><a name="doc1_id350">[Tracks]セクション</a></h4>
+
+    <p class="first_ja">CDの各トラックに対応するファイル名を記述します。</p>
+    <p>1行目（[Tracks]の次の行）には第１トラック、2行目には第2トラック…というようになっています。第1トラックからの指定が可能になっていますので、標準形式の_inmm.iniから移行するときには[Tracks]の1行目を空にしてください。</p>
+    <p><a href="#doc1_specialtrack">特殊なトラック指定</a>で説明した記法も使えます。</p>
+
+    <h4><a name="doc1_id356">[Players]セクション</a></h4>
+
+    <p class="first_ja">ファイル名とプレイヤーの関連づけを記述します。ここでの設定は、_inmmcnf.exeでの<a href="?page=nobu_tool_web_archieve_inmm_manual_s5#doc1_player_select">[再生方法]</a>の設定に優先します。</p>
+    <p>
+        <var>プレイヤー</var><code>=</code><var>ファイル名</var>という形式で、<var>ファイル名</var>に該当するファイルを<var>プレイヤー</var>で再生するよう指示します。<var>プレイヤー</var>には<code>MCI</code>、<code>DirectShow</code>、<code>Winamp</code>、<code>SCMPX</code>、<code>Lilith</code>、<code>Silent</code>（再生しない）のどれかを指定できます。<var>
+            ファイル
+            名
+        </var>にはワイルドカード文字<code>*</code>と<code>?</code>が使用でき、<code>|</code>で区切って複数指定できます。
+    </p>
+    <p><code>cdplayer=</code><var>プレイヤー名</var>で、CDを再生するプレイヤーを設定できます。<var>プレイヤー名</var>は<code>MCI</code>、<code>Winamp</code>、<code>DigitalCDPlayer</code>、<code>Lilith</code>、<code>Silent</code>のいずれかです。</p>
+    <p><code>cddrive=Q:</code>で、CD再生ドライブをQ:に設定します。<code>cddrive=</code>とだけ書くと、CD再生ドライブをプレイヤーの既定値にします。</p>
+
+    <h4><a name="doc1_id437">[Settings]セクション</a></h4>
+
+    <p class="first_ja">_inmm.dllの各種設定を記述します。</p>
+    <p>ここで設定できる項目のほとんどは、_inmmcnf.exeの設定項目に対応しています。各項目は_inmm.iniの記述が優先され、記述のない項目については_inmmcnf.exeの設定が使用されます。</p>
+    <p>記述できる項目（大文字小文字を区別しません）</p>
+    <dl>
+        <dt><code>Enabled=</code><var>数値</var> ; 0=off, 1=on
+        <dd>0(off)にすると[_inmm.dllの全機能を無効にする]オプションと同じ効果になります。
+        <dt><code>VirtualAux=</code><var>数値</var> ; 0=off, 1=on
+        <dd>[仮想AUXデバイスを有効にする]オプションに対応します。
+        <dt><code>Verbose=</code><var>数値</var> ; 0=off, 1=on
+        <dd>[致命的でないエラーメッセージも表示]オプションに対応します。
+        <dt><code>SE_Priority=</code><var>数値</var>
+        <dd>効果音の設定です。0が[鳴らさない]、1が[標準]、2が[BGMを一時的に止めて鳴らす]、3が[DirectSoundから出力]に対応します。
+        <dt><code>SkipFileCheck=</code><var>数値</var> ; 0=off, 1=on
+        <dd>_inmm.dllはファイルを再生する前にそのファイルが存在するかどうか調べますが、<code>SkipFileCheck</code>を1にするとこの検査を行いません。
+        <dt><code>WA_Path=</code><var>パス</var>
+        <dd>Winampのパスを設定します。Winampの[パス]に対応します。
+        <dt><code>WA_OutDll=</code><var>output plug-inのファイル名</var>
+        <dd>Winampのoutput plug-inを設定します。Winampを自動起動した場合にのみ有効です。例えばout_ds.dllにするとDirectSound plug-inに、out_wave.dllにするとデフォルトのwaveOut plug-inになります。
+        <dt><code>WA_Hide=</code><var>数値</var> ; 0=off, 1=on
+        <dd>Winampの[ウィンドウを隠す]オプションに対応します。
+        <dt><code>WA_SkipWaveOutCheck=</code><var>数値</var> ; 0=off, 1=on
+        <dd>Winampの[Wave出力の空きをチェックしない]オプションに対応します。
+        <dt><code>SMX_Path=</code><var>パス</var>
+        <dd>SCMPXのパスを設定します。SCMPXの[パス]に対応します。
+        <dt><code>SMX_Hide=</code><var>数値</var> ; 0=off, 1=on
+        <dd>SCMPXの[ウィンドウを隠す]オプションに対応します。
+        <dt><code>DCDP_Path=</code><var>パス</var>
+        <dd>Digital CD Playerのパスを設定します。Digital CD Playerの[パス]に対応します。
+        <dt><code>DCDP_Hide=</code><var>数値</var> ; 0=off, 1=on
+        <dd>Digital CD Playerの[最小化して起動]オプションに対応します。
+        <dt><code>DCDP_SkipWaveOutCheck=</code><var>数値</var> ; 0=off, 1=on
+        <dd>Digital CD Playerの[Wave出力の空きをチェックしない]オプションに対応します。
+        <dt><code>DCDP_Volume=</code><var>数値</var> ; 0～511
+        <dd>Digital CD Playerから出力するときの音量を設定します。デフォルトは255です。
+        <dt><code>Lilith_Path=</code><var>パス</var>
+        <dd>Lilithのパスを設定します。Lilithの[パス]に対応します。
+        <dt><code>Lilith_Hide=</code><var>数値</var> ; 0=off, 1=on
+        <dd>Lilithの[タスクトレイモードで起動]オプションに対応します。
+    </dl>
+
+</div>

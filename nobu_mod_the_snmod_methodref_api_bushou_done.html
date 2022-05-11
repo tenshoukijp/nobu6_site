@@ -1,0 +1,103 @@
+%(hilight)s
+<div class="content-box mb-3 content-lighten">
+	<h2><i class="fa fa-book fa-fw"></i>武将 - 行動済・会見済</h2>
+	<p>武将の行動済や会見済に関するAPIの説明となります。
+	</p>
+</div>
+
+
+<div class="content-box mb-3 content-lighten">
+	<h3>行動済</h3>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_bushou_36.png"></p>
+	<blockquote>p武将情報[ix].行動済</blockquote>
+
+	<h4>行動済みかどうかの判断の例</h4>
+	<div class="code">
+		<pre class="brush:cpp;highlight:[9]">
+void カスタム::On_プレイヤコマンド完了直前《メイン画面》() {
+
+	// ターンが来ているプレイヤの第１軍団にいる武将一覧を求めて...
+	int iGundanID = pターン情報.現在のターン【軍団番号】 - 1;
+	if (0 &lt;= iGundanID &amp;&amp; iGundanID &lt; 最大数::軍団情報::配列数) {
+		番号リスト型 list = Get_軍団麾下武将番号リスト【配列用】(iGundanID);
+
+		for (int iBushouID : list) {
+			if (p武将情報[iBushouID].行動済) {
+				デバッグ出力 &lt;&lt; Get_名前(iBushouID) + Get_名前(iBushouID) &lt;&lt; &quot;は行動済です&quot; &lt;&lt; endl;
+			}
+			else {
+				デバッグ出力 &lt;&lt; Get_名前(iBushouID) + Get_名前(iBushouID) &lt;&lt; &quot;は未行動です&quot; &lt;&lt; endl;
+			}
+		}
+	}
+
+}
+</pre>
+	</div>
+
+	<h4>プレイヤ担当大名配下の武将は、行動済になっても、まだ行動可能になる例</h4>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤコマンド完了直前《メイン画面》() {
+
+	// プレイヤ担当大名配下の武将(他の軍団も含む)であれば、何かコマンドを実行しても「行動済み」にならない
+	for (int iBushouID = 0; iBushouID &lt; 最大数::武将情報::配列数; iBushouID++) {
+		if (Is_プレイヤ担当武将(iBushouID)) {
+			p武将情報[iBushouID].行動済 = false;
+		}
+	}
+}
+</pre>
+	</div>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>会見済</h3>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_bushou_39.png"></p>
+	<h4>会見済みかどうかの判断の例</h4>
+	<div class="code">
+		<pre class="brush:cpp;highlight:[9]">
+void カスタム::On_プレイヤコマンド完了直前《メイン画面》() {
+
+	// ターンが来ているプレイヤの第１軍団にいる武将一覧を求めて...
+	int iGundanID = pターン情報.現在のターン【軍団番号】 - 1;
+	if (0 &lt;= iGundanID &amp;&amp; iGundanID &lt; 最大数::軍団情報::配列数) {
+		番号リスト型 list = Get_軍団麾下武将番号リスト【配列用】(iGundanID);
+
+		for (int iBushouID : list) {
+			if (p武将情報[iBushouID].会見済) {
+				デバッグ出力 &lt;&lt; Get_名前(iBushouID) + Get_名前(iBushouID) &lt;&lt; &quot;は会見済です&quot; &lt;&lt; endl;
+			}
+			else {
+				デバッグ出力 &lt;&lt; Get_名前(iBushouID) + Get_名前(iBushouID) &lt;&lt; &quot;は未会見です&quot; &lt;&lt; endl;
+			}
+		}
+	}
+
+}
+</pre>
+	</div>
+
+	<h4>プレイヤ担当大名配下の武将は、会見済になっても、まだ会見で再指定可能になる例</h4>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤコマンド完了直前《メイン画面》() {
+
+	// プレイヤ担当大名配下の武将(他の軍団も含む)であれば、何かコマンドを実行しても「会見済み」にならない
+	for (int iBushouID = 0; iBushouID &lt; 最大数::武将情報::配列数; iBushouID++) {
+		if (Is_プレイヤ担当武将(iBushouID)) {
+			p武将情報[iBushouID].会見済 = false;
+		}
+	}
+}
+</pre>
+	</div>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>より詳細を知るには...</h3>
+	<p>
+		「武将 － 行動済・会見済」に関する主な所は以上となります。<br>
+		詳しくは「武将情報型.h」を参照してください。
+	</p>
+</div>

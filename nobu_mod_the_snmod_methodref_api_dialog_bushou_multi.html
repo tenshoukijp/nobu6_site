@@ -1,0 +1,82 @@
+%(hilight)s
+<div class="content-box mb-3 content-lighten">
+	<h2><i class="fa fa-book fa-fw"></i>ダイアログ - 武将ダイアログ(複数選択用）</h2>
+	<p>武将のリストを表示して、そこから<mark>複数人を選択</mark>してもらうためのダイアログを表示するAPIです。</p>
+	<p>大小関わらず、自作の独自イベントなどで利用することになるでしょう。</p>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>int 選択武将ダイアログ表示&lt;選択可能最大人数&gt;(番号リスト型 武将番号【配列用】リスト, long long カラムオプション);</h3>
+	<p><b>選択可能最大数は16、最小数は1</b></p>
+	<div class="code">
+		<pre class="brush:cpp;highlight:[15,17,18]">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+	番号リスト型 ShowBushouList;
+
+	for (int iBushouID = 0; iBushouID &lt; 最大数::武将情報::配列数; iBushouID++) {
+
+		// 宿老もしくは家老である
+		if (p武将戸籍情報[iBushouID].身分 == 身分::宿老 || p武将戸籍情報[iBushouID].身分 == 身分::家老) {
+			// 死亡していない
+			if (p武将戸籍情報[iBushouID].状態 != 状態::死亡) {
+				ShowBushouList.push_back(iBushouID);
+			}
+		}
+	}
+
+	番号リスト型 listSelected = 選択武将ダイアログ表示&lt;5&gt;(ShowBushouList, カラム::武将::デフォルト);
+
+	if (listSelected.size() &gt;= 1) {
+		for (int iSelectedBushouID : listSelected) {
+			デバッグ出力 &lt;&lt; Get_名字(iSelectedBushouID) + Get_名前(iSelectedBushouID) &lt;&lt; &quot;が選択されました&quot; &lt;&lt; endl;
+		}
+	}
+	else {
+		デバッグ出力 &lt;&lt; &quot;武将は選択されませんでした&quot; &lt;&lt; endl;
+	}
+}
+
+		</pre>
+	</div>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_dialog_bushou_multi_01.png"></p>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>選択可能最大数は16、最小数は1</h3>
+	<div class="code">
+		<pre class="brush:cpp;highlight:[15]">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+	番号リスト型 ShowBushouList;
+
+	for (int iBushouID = 0; iBushouID &lt; 最大数::武将情報::配列数; iBushouID++) {
+
+		// 宿老もしくは家老である
+		if (p武将戸籍情報[iBushouID].身分 == 身分::宿老 || p武将戸籍情報[iBushouID].身分 == 身分::家老) {
+			// 死亡していない
+			if (p武将戸籍情報[iBushouID].状態 != 状態::死亡) {
+				ShowBushouList.push_back(iBushouID);
+			}
+		}
+	}
+
+	番号リスト型 listSelected = 選択武将ダイアログ表示&lt;16&gt;(ShowBushouList, カラム::武将::デフォルト);
+
+	if (listSelected.size() &gt;= 1) {
+		for (int iSelectedBushouID : listSelected) {
+			デバッグ出力 &lt;&lt; Get_名字(iSelectedBushouID) + Get_名前(iSelectedBushouID) &lt;&lt; &quot;が選択されました&quot; &lt;&lt; endl;
+		}
+	}
+	else {
+		デバッグ出力 &lt;&lt; &quot;武将は選択されませんでした&quot; &lt;&lt; endl;
+	}
+}
+		</pre>
+	</div>
+</div>
+<div class="content-box mb-3 content-lighten">
+	<h3>より詳細を知るには...</h3>
+	<p>
+		「武将ダイアログ(複数選択用）」に関する主な所は以上となります。
+		詳しくは「ダイアログ情報型.h」を参照してください。
+	</p>
+</div>

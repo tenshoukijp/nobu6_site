@@ -1,0 +1,87 @@
+%(hilight)s
+<div class="content-box mb-3 content-lighten">
+    <h2><i class="fa fa-book fa-fw"></i>プレイヤ担当</h2>
+    <ul>
+        <li>プレイヤが担当する大名
+        <li>プレイヤ担当する大名の麾下の軍団
+        <li>プレイヤが担当する大名の麾下の武将
+			<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_bushou_40.png"></p>
+		</ul>
+    <p>これらを特別視してプログラムすることは、ScenarioModでは非常に多いと言えます。<br>
+    このため、これらを判定しやすい関数が用意されています。</p>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+    <h3>プレイヤ担当大名、プレイヤ担当軍団、プレイヤ担当武将</h3>
+    <blockquote>bool Is_プレイヤ担当大名(WORD 大名番号【配列用】)</blockquote>
+    <blockquote>bool Is_プレイヤ担当軍団(WORD 軍団番号【配列用】)</blockquote>
+    <blockquote>bool Is_プレイヤ担当武将(WORD 武将番号【配列用】)</blockquote>
+    <fieldset class="code">
+        <legend>シナリオ３～５で、織田家の配下から独立できる武将や城を見繕う</legend>
+        <pre class="brush:cpp;highlight:[5,16,33,43]">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+	for (int iDaimyoID = 0; iDaimyoID &lt; 最大数::大名情報::配列数; iDaimyoID++) {
+		// それはプレイヤが担当している大名家である
+		if (Is_プレイヤ担当大名(iDaimyoID)) {
+			int iBushouID = p大名情報[iDaimyoID].大名【武将番号】 - 1;
+
+			if (0 &lt;= iBushouID &amp;&amp; iBushouID &lt; 最大数::武将情報::配列数) {
+				デバッグ出力 &lt;&lt; Get_名字(iBushouID) + Get_名前(iBushouID) &lt;&lt; endl;
+			}
+		}
+	}
+
+	for (int iGundanID = 0; iGundanID &lt; 最大数::軍団情報::配列数; iGundanID++) {
+		// それはプレイヤが担当している大名の麾下の軍団のである
+		if (Is_プレイヤ担当軍団(iGundanID)) {
+
+			int iBushouID = p軍団情報[iGundanID].軍団長【武将番号】 - 1;
+
+			if (0 &lt;= iBushouID &amp;&amp; iBushouID &lt; 最大数::武将情報::配列数) {
+				if (p軍団情報[iGundanID].軍団割当番号 == 1) {
+					デバッグ出力 &lt;&lt; Get_名字(iBushouID) + Get_名前(iBushouID) &lt;&lt; &quot;はプレイヤが実際に操作している軍団&quot; &lt;&lt; endl;
+				} else {
+					デバッグ出力 &lt;&lt; Get_名字(iBushouID) + Get_名前(iBushouID) &lt;&lt; &quot;はプレイヤ担当の軍団ではあるが、第二軍団以下なので、操作はしていません。&quot; &lt;&lt; endl;
+				}
+			}
+		}
+	}
+
+	for (int iBushouID = 0; iBushouID &lt; 最大数::武将情報::配列数; iBushouID++) {
+		// それはプレイヤが担当している大名の麾下の武将である。どこの軍団の武将かは問わない。
+		// 姫や妻は軍団には所属していないため、この「プレイヤ担当武将」の判定ではfalseとなる。
+		if (Is_プレイヤ担当武将(iBushouID)) {
+			int iGundanID = p武将情報[iBushouID].所属軍団【軍団番号】 - 1;
+			if (0 &lt;= iGundanID &amp;&amp; iGundanID &lt; 最大数::軍団情報::配列数) {
+				int 軍団割当番号 = p軍団情報[iGundanID].軍団割当番号;
+				デバッグ出力 &lt;&lt; Get_名字(iBushouID) + Get_名前(iBushouID) &lt;&lt; &quot;はプレイヤの麾下勢力の第&quot; &lt;&lt; 軍団割当番号 &lt;&lt; &quot;軍団に居る武将です。&quot; &lt;&lt; endl;
+			}
+		}
+
+		else if (p武将戸籍情報[iBushouID].状態 == 状態::姫) {
+			int iDaimyoID = p武将情報[iBushouID].所属大名【大名番号】 - 1;
+			if (Is_プレイヤ担当大名(iDaimyoID)) {
+				int i伴侶BushouID = Get_伴侶武将番号【配列用】(iBushouID);
+
+				if (0 &lt;= i伴侶BushouID &amp;&amp; i伴侶BushouID &lt; 最大数::武将情報::配列数) {
+					デバッグ出力 &lt;&lt; Get_名字(iBushouID) + Get_名前(iBushouID) &lt;&lt; &quot;はプレイヤ担当大名に所属する妻で、相手は&quot; &lt;&lt; Get_名字(i伴侶BushouID) + Get_名前(i伴侶BushouID) &lt;&lt; &quot;です。&quot; &lt;&lt; endl;
+				}
+				else {
+					デバッグ出力 &lt;&lt; Get_名字(iBushouID) + Get_名前(iBushouID) &lt;&lt; &quot;はプレイヤ担当大名に所属する姫です。&quot; &lt;&lt; endl;
+				}
+			}
+		}
+	}
+}
+</pre>
+    </fieldset>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+    <h3>より詳細を知るには...</h3>
+    <p>
+        「プレイヤ担当」に関する主な所は以上となります。
+        詳しくは「軍団情報型.h」などを参照してください。
+    </p>
+</div>

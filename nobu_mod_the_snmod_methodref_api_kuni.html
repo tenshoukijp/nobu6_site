@@ -1,0 +1,133 @@
+%(hilight)s
+<div class="content-box mb-3 content-lighten">
+	<h2><i class="fa fa-book fa-fw"></i>地域 － 国</h2>
+	<p>地域とは、日本国の意味ではなく、「大和、丹波、北信濃、備中」などといった、地域のことです。<br>
+		天翔記上では、「国」という言葉が使われていますが、日本国と紛らわしいため<br>
+		地域という表現にしています。
+		</p>
+	<p>地域と一言で言っても３つの概念で構成されます。<br>
+	</p>
+    <ul class="pointlist">
+        <li>
+        <h4>地域</h4>
+        <p>地域という抽象的なカテゴリの概念。</p>
+		<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_kuni_01.png"></p>
+        <li>
+        <h4>「p地域情報」という配列</h4>
+        <p>地域の一覧リストに相当する「地域の配列」の概念。</p>
+		<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_kuni_02.png"></p>
+        <li>
+        <h4>p地域情報[ix] (0 &lt;= ix &lt; 地域の総数)</h4>
+        <p>地域の配列のうち、どれか１つの地域</p>
+		<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_kuni_03.png"></p>
+    </ul>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>特定の地域に所属する城のリストを得る</h3>
+	<p>地域使い方は主に２つしかありません。<br>
+    ひとつは、特定の地域に含まれている城のリストを求める方法です。<br>
+    地域→城を求めるものとなります。</p>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_kuni_05.png"></p>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+	auto obj北信濃国 = p地域情報[地域::地域配列番号::北信濃];
+	番号リスト型 list;
+	if (obj北信濃国.地域内の城１【城番号】 != 0xFFFF) {
+		int iCastleID = obj北信濃国.地域内の城１【城番号】 - 1; // 城番号→城番号【配列用】
+		list.push_back(iCastleID);
+	}
+	if (obj北信濃国.地域内の城２【城番号】 != 0xFFFF) {
+		int iCastleID = obj北信濃国.地域内の城２【城番号】 - 1; // 城番号→城番号【配列用】
+		list.push_back(iCastleID);
+	}
+	if (obj北信濃国.地域内の城３【城番号】 != 0xFFFF) {
+		int iCastleID = obj北信濃国.地域内の城３【城番号】 - 1; // 城番号→城番号【配列用】
+		list.push_back(iCastleID);
+	}
+	if (obj北信濃国.地域内の城４【城番号】 != 0xFFFF) {
+		int iCastleID = obj北信濃国.地域内の城４【城番号】 - 1; // 城番号→城番号【配列用】
+		list.push_back(iCastleID);
+	}
+	if (obj北信濃国.地域内の城５【城番号】 != 0xFFFF) {
+		int iCastleID = obj北信濃国.地域内の城５【城番号】 - 1; // 城番号→城番号【配列用】
+		list.push_back(iCastleID);
+	}
+	if (obj北信濃国.地域内の城６【城番号】 != 0xFFFF) {
+		int iCastleID = obj北信濃国.地域内の城６【城番号】 - 1; // 城番号→城番号【配列用】
+		list.push_back(iCastleID);
+	}
+	if (obj北信濃国.地域内の城７【城番号】 != 0xFFFF) {
+		int iCastleID = obj北信濃国.地域内の城７【城番号】 - 1; // 城番号→城番号【配列用】
+		list.push_back(iCastleID);
+	}
+	if (obj北信濃国.地域内の城８【城番号】 != 0xFFFF) {
+		int iCastleID = obj北信濃国.地域内の城８【城番号】 - 1; // 城番号→城番号【配列用】
+		list.push_back(iCastleID);
+	}
+
+	デバッグ出力 &lt;&lt; &quot;北信濃国に属する城&quot; &lt;&lt; endl;
+	for (int iCastleID : list) {
+		デバッグ出力 &lt;&lt; Get_城名(iCastleID) + Get_城称(iCastleID) &lt;&lt; endl;
+
+	}
+}
+</pre>
+	</div>
+</div>
+<div class="content-box mb-3 content-lighten">
+	<h3>城が所属する地域を求める</h3>
+	<p>
+		もう一つは、逆の流れで城→国を求めるものです。
+	</p>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_kuni_08.png"></p>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_kuni_09.png"></p>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_kuni_10.png"></p>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+	int iCastleID = 城配列番号::室町御所;
+
+	// その室町御所が所属している地域
+	int iChiikiID = p城付加情報[iCastleID].所属地域【地域番号】 - 1; // 地域番号→地域番号【配列用】
+	デバッグ出力 &lt;&lt; &quot;室町御所は&quot; &lt;&lt; Get_地域名(iChiikiID) &lt;&lt; &quot;国にあります&quot; &lt;&lt; endl;
+
+}
+		</pre>
+	</div>
+
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+	int i武田信玄BushouID = Get_武将番号【配列用】(顔番号::武田晴信);
+
+	if (0 &lt;= i武田信玄BushouID &amp;&amp; i武田信玄BushouID &lt; 最大数::武将情報::配列数) {
+
+		// 武田信玄が所属している城
+		int iCastleID = p武将情報[i武田信玄BushouID].所属居城【城番号】 - 1;
+
+		if (0 &lt;= iCastleID &amp;&amp; iCastleID &lt; 最大数::城情報::配列数) {
+
+			// その城が所属している地域
+			int iChiikiID = p城付加情報[iCastleID].所属地域【地域番号】-1;
+
+			デバッグ出力 &lt;&lt; Get_名字(i武田信玄BushouID) + Get_名前(i武田信玄BushouID) &lt;&lt; &quot;は...&quot; &lt;&lt; endl;
+			デバッグ出力 &lt;&lt; Get_地域名(iChiikiID) &lt;&lt; &quot;国の地方に居ます&quot; &lt;&lt; endl;
+
+		}
+	}
+}
+		</pre>
+	</div>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>より詳細を知るには...</h3>
+	<p>
+		「地域 － 国」に関する主な所は以上となります。<br>
+		詳しくは「地域情報型.h」や、「城情報型.h」内の「城付加情報型」などを参照してください。
+	</p>
+</div>

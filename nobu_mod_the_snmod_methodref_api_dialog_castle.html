@@ -1,0 +1,60 @@
+%(hilight)s
+<div class="content-box mb-3 content-lighten">
+	<h2><i class="fa fa-book fa-fw"></i>ダイアログ - 城ダイアログ</h2>
+	<p>城のリストを表示して、そこから選択してもらうためのダイアログを表示するAPIです。</p>
+	<p>大小関わらず、自作の独自イベントなどで利用することになるでしょう。</p>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>int 選択城ダイアログ表示(番号リスト型 城番号【配列用】リスト, int カラムオプション);</h3>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+	番号リスト型 ShowCastleList;
+
+	for (int iCastleID = 0; iCastleID &lt; 最大数::城情報::配列数; iCastleID++) {
+
+		// 居城である
+		if (p城情報[iCastleID].巨城 == TRUE) {
+			ShowCastleList.push_back(iCastleID);
+		}
+	}
+
+	int iSelectedCastleID = 選択城ダイアログ表示(ShowCastleList, カラム::城::デフォルト);
+
+	if (0 &lt; iSelectedCastleID &amp;&amp; iSelectedCastleID &lt; 最大数::城情報::配列数) {
+		デバッグ出力 &lt;&lt; Get_城名(iSelectedCastleID) + Get_城称(iSelectedCastleID ) &lt;&lt; &quot;が選択されました&quot; &lt;&lt; endl;
+	}
+	else {
+		デバッグ出力 &lt;&lt; &quot;城は選択されませんでした&quot; &lt;&lt; endl;
+	}
+}
+		</pre>
+	</div>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_dialog_castle_01.png"></p>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>カラムを指定することで、表示の列をカスタムすることが出来ます</h3>
+	<div class="code">
+		<pre class="brush:cpp;">
+int iSelectedCastleID = 選択城ダイアログ表示(ShowCastleList, カラム::城::城名|カラム::城::城主| カラム::城::兵士);
+		</pre>
+	</div>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_dialog_castle_02.png"></p>
+	<div class="code">
+		<pre class="brush:cpp;">
+int iSelectedCastleID = 選択城ダイアログ表示(ShowCastleList, カラム::城::城名);
+	</pre>
+	</div>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_dialog_castle_03.png"></p>
+</div>
+
+
+<div class="content-box mb-3 content-lighten">
+	<h3>より詳細を知るには...</h3>
+	<p>
+		「城ダイアログ」に関する主な所は以上となります。
+		詳しくは「ダイアログ情報型.h」を参照してください。
+	</p>
+</div>

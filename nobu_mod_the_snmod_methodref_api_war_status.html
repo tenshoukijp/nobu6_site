@@ -1,0 +1,83 @@
+%(hilight)s
+<div class="content-box mb-3 content-lighten">
+	<h2><i class="fa fa-book fa-fw"></i>戦争 - 武将ユニットの状態</h2>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_war_unit_status_06.png"></p>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>武将ユニットの混乱・大混乱・挑発状態</h3>
+	<blockquote>int Get_武将混乱状態(int 武将番号【配列用】)</blockquote>
+	<blockquote>bool Set_武将混乱状態(int 武将番号【配列用】, int 混乱状態)</blockquote>
+	<blockquote>void 武将ユニット状態描画更新《戦争画面》(int 武将番号【配列用】)</blockquote>
+	<p>混乱状態::無し、混乱状態::混乱、混乱状態::大混乱、混乱状態::挑発混乱 を比較や設定に利用できる</p>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_war_unit_status_02.png"></p>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_残りターン変更《戦争画面》(int 残りターン数) {
+	番号リスト型 list = Get_出陣中の武将番号リスト【配列用】《表示中マップ》();
+
+	for (int iBushouID : list) {
+		if (Get_武将混乱状態(iBushouID) == 混乱状態::無し) {
+			Set_武将混乱状態(iBushouID, 混乱状態::大混乱);
+			武将ユニット状態描画更新《戦争画面》(iBushouID);
+		}
+		else if (Get_武将混乱状態(iBushouID) == 混乱状態::混乱) {
+			Set_武将混乱状態(iBushouID, 混乱状態::大混乱);
+			武将ユニット状態描画更新《戦争画面》(iBushouID);
+		}
+		else if (Get_武将混乱状態(iBushouID) == 混乱状態::大混乱) {
+			Set_武将混乱状態(iBushouID, 混乱状態::挑発混乱);
+			武将ユニット状態描画更新《戦争画面》(iBushouID);
+		}
+		else if (Get_武将混乱状態(iBushouID) == 混乱状態::挑発混乱) {
+			Set_武将混乱状態(iBushouID, 混乱状態::無し);
+			武将ユニット状態描画更新《戦争画面》(iBushouID);
+		}
+	}
+}
+</pre>
+	</div>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_war_unit_status_07.png"></p>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>武将ユニットが行動済みかどうかの判定</h3>
+	<p>該当の野戦ターン(あるいは攻城戦ターン)ですでに対象の武将ユニットが行動済みかどうかを判定します。</p>
+	<blockquote>bool Is_武将行動済《戦争画面》(int 武将番号【配列用】)</blockquote>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_war_unit_status_03.png"></p>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_残りターン変更《戦争画面》(int 残りターン数) {
+	// 表示中マップと、表示されてないマップも含めて出陣中の武将のリストを得る
+	番号リスト型 list = Get_出陣中の武将番号リスト【配列用】();
+
+	for (int iBushouID : list) {
+		if (Is_武将行動済《戦争画面》(iBushouID)) {
+			デバッグ出力 &lt;&lt; Get_名字(iBushouID) + Get_名前(iBushouID) &lt;&lt; &quot;は行動済みであり、次のターンまで行動できません&quot; &lt;&lt; endl;
+		}
+	}
+}
+
+void カスタム::On_戦闘コマンド表示直前《戦争画面》(int 武将番号) {
+	// 表示中マップでの出陣中の武将のリストを得る
+	番号リスト型 list = Get_出陣中の武将番号リスト【配列用】《表示中マップ》();
+
+	for (int iBushouID : list) {
+		if (Is_武将行動済《戦争画面》(iBushouID)) {
+			デバッグ出力 &lt;&lt; Get_名字(iBushouID) + Get_名前(iBushouID) &lt;&lt; &quot;は行動済みであり、次のターンまで行動できません&quot; &lt;&lt; endl;
+		}
+	}
+}
+</pre>
+	</div>
+</div>
+
+
+
+<div class="content-box mb-3 content-lighten">
+	<h3>より詳細を知るには...</h3>
+	<p>
+		「戦争 - 武将ユニットの状態」に関する主な所は以上となります。
+		詳しくは「戦場情報型.h」「武将情報型.h」などを参照してください。
+	</p>
+</div>

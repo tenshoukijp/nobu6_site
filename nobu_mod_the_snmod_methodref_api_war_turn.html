@@ -1,0 +1,91 @@
+%(hilight)s
+<div class="content-box mb-3 content-lighten">
+	<h2><i class="fa fa-book fa-fw"></i>戦争 - ターン</h2>
+	<p>戦争におけるターンとは、「野戦での残りターン」と、<br>
+  「攻城戦でのターン」です</p>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>関連するイベントハンドラ</h3>
+	<p>通常、「ターンの切り替わり目」にプログラム処理を入れるのであれば、以下のイベントハンドラに記述するのが良いでしょう。</p>
+		<h4><a href="?page=nobu_mod_the_snmod_methodref_on_turn_change_in_field_battle">On_残りターン変更《戦争画面》</a></h4>
+		<p><img src="./cnt_mod/mod_snmod/cnt_mod_scenario_mod_ref_024.png">
+		<h4><a href="?page=nobu_mod_the_snmod_methodref_on_turn_change_in_castle_battle">On_ターン変更《攻城中画面》</a></h4>
+		<p><img src="./cnt_mod/mod_snmod/cnt_mod_scenario_mod_ref_026.png">
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>戦争中に、さまざまなイベントハンドラで、野戦での残りターンを取得するには？</h3>
+	<blockquote>int Get_戦争残りターン数()</blockquote>
+	<p>戦争中ではない場合には、-1が返ってくる。</p>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_scenario_mod_ref_024.png">
+		<div class="code">
+		<pre class="brush:cpp;">
+string カスタム::On_噴出メッセージ直前(string 武将名, string 元メッセージ, メッセージ関連情報型 メッセージ関連情報) {
+
+	if (武将名 == &quot;真田幸隆&quot;) {
+
+		if (Is_文字列マッチ(元メッセージ, &quot;わが隊はすでに\x0A士気旺盛&quot;)) {
+			int 野戦残りターン = Get_戦争残りターン数();
+			デバッグ出力 &lt;&lt; 野戦残りターン &lt;&lt; endl;
+			return to_string(野戦残りターン) + &quot;ターン&quot;;
+		}
+	}
+
+	// 変更しない場合&quot;&quot;
+	return &quot;&quot;;
+}
+
+void カスタム::On_ターン変更《攻城中画面》(int ターン数) {
+	int 野戦残りターン = Get_戦争残りターン数();
+	デバッグ出力 &lt;&lt; 野戦残りターン &lt;&lt; endl;
+}
+
+void カスタム::On_戦闘コマンド表示直前《戦争画面》(int 武将番号) {
+	int 野戦残りターン = Get_戦争残りターン数();
+	デバッグ出力 &lt;&lt; 野戦残りターン &lt;&lt; endl;
+}
+</pre>
+	</div>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>戦争中に、さまざまなイベントハンドラで、攻城戦でのターン数を取得するには？</h3>
+	<blockquote>int Get_攻城戦ターン数()</blockquote>
+	<p>１～３の値が返ってくる。</p>
+	<p>戦争中ではない場合には、-1が返ってくる。</p>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_scenario_mod_ref_026.png">
+		<div class="code">
+		<pre class="brush:cpp;">
+string カスタム::On_噴出メッセージ直前(string 武将名, string 元メッセージ, メッセージ関連情報型 メッセージ関連情報) {
+
+	if (武将名 == &quot;真田幸隆&quot;) {
+
+		if (Is_文字列マッチ(元メッセージ, &quot;わが隊はすでに\x0A士気旺盛&quot;)) {
+			if (Is_攻城戦中()) {
+				int 攻城戦ターン = Get_攻城戦ターン数();
+				デバッグ出力 &lt;&lt; 攻城戦ターン &lt;&lt; endl;
+				return to_string(攻城戦ターン) + &quot;ターン&quot;;
+			}
+		}
+	}
+
+	// 変更しない場合&quot;&quot;
+	return &quot;&quot;;
+}
+
+void カスタム::On_戦闘コマンド表示直前《戦争画面》(int 武将番号) {
+	int 攻城戦ターン = Get_攻城戦ターン();
+	デバッグ出力 &lt;&lt; 野戦残りターン &lt;&lt; endl;
+}
+</pre>
+	</div>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>より詳細を知るには...</h3>
+	<p>
+		「戦争 - ターン」に関する主な所は以上となります。
+		詳しくは「戦場情報型.h」などを参照してください。
+	</p>
+</div>

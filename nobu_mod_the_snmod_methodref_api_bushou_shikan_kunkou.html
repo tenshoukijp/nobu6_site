@@ -1,0 +1,193 @@
+%(hilight)s
+<div class="content-box mb-3 content-lighten">
+	<h2><i class="fa fa-book fa-fw"></i>武将 - 年齢・寿命・仕官・勲功</h2>
+	<p>武将の行動済や会見済に関するAPIの説明となります。
+	</p>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>武将の年齢の取得・設定</h3>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_bushou_22.png"></p>
+	<p>メモリエディタ上で見えている「生年」の数値を見て不思議に思うかもしれません。<br>
+	これは「年齢」ではなく、何年に生まれたのか？ という年です。<br>
+	そしてそれは「西暦」ではなく「天翔記歴」とでもいう基準です。<br>
+	天翔記歴は、デフォルトだと1454年であり、Get_天翔記基準年() によって取得できます。</p>
+	<blockquote>int Get_武将年齢(int 武将番号【配列用】);</blockquote>
+	<blockquote>bool Set_武将年齢(int 武将番号【配列用】, int 年齢)</blockquote>
+	<p>12～15歳の範囲での年齢の変更は、バグるもとになりやすいです。<br>
+	(登場していた武将や姫が見えなくなったり、過ぎたハズのイベントが再び発生といったことが発生します)<br>
+	原則、処理に自身がない限りは、16歳以上の年齢への変更にとどめましょう。</p>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_相場変更直前() {
+
+	for (int iBushouID = 0; iBushouID &lt; 最大数::武将情報::配列数; iBushouID++) {
+		// 実際には20に固定するというよりも、生年が遅い生まれになるといった処理になる。 
+		if (Get_武将年齢(iBushouID) &gt; 20) {
+			Set_武将年齢(iBushouID, 20);
+		}
+	}
+}
+		</pre>
+	</div>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>寿命</h3>
+	<blockquote>p武将情報[ix].寿命</blockquote>
+	<p>寿命は0～7の値をとります。0なら短命、7は長寿です。</p>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_bushou_50.png"></p>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_相場変更直前() {
+
+	for (int iBushouID = 0; iBushouID &lt; 最大数::武将情報::配列数; iBushouID++) {
+		int 寿命 = p武将情報[iBushouID].寿命;
+
+		デバッグ出力 &lt;&lt; Get_名字(iBushouID) + Get_名前(iBushouID) &lt;&lt; &quot;の寿命は&quot; &lt;&lt; 寿命 &lt;&lt; &quot;です&quot; &lt;&lt; endl;
+	}
+
+	for (int iBushouID = 0; iBushouID &lt; 最大数::武将情報::配列数; iBushouID++) {
+
+		// 家宝などを除いた戦才が160以上(天翔記のデータ的には80以上)であれば、長寿にする
+		if (Get_元最大戦才(iBushouID) &gt;= 80) {
+			p武将情報[iBushouID].寿命 = 7;
+		}
+
+		// 家宝などを除いた戦才が80以下(天翔記のデータ的には40以下)であれば、短命にする
+		if (Get_元最大戦才(iBushouID) &lt;= 40) {
+			p武将情報[iBushouID].寿命 = 0;
+		}
+	}
+}		</pre>
+	</div>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>仕官年数</h3>
+	<blockquote>p武将情報[ix].仕官年数</blockquote>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_bushou_20.png"></p>
+	<p>デフォルトの天翔記では仕官年数はさして意味のある数値ではありませんが、TSModでは、<br>
+	仕官年数が長いほど「軍師」としての評価に有利に働きます。<br>
+	</p>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_相場変更直前() {
+
+	for (int iBushouID = 0; iBushouID &lt; 最大数::武将情報::配列数; iBushouID++) {
+		int 仕官年数 = p武将情報[iBushouID].仕官年数;
+
+		// 仕官年数が30以上は特記すべき。表示。
+		if (仕官年数 &gt;= 30) {
+			デバッグ出力 &lt;&lt; Get_名字(iBushouID) + Get_名前(iBushouID) &lt;&lt; &quot;は仕官年数が&quot; &lt;&lt; 仕官年数 &lt;&lt; &quot;です&quot; &lt;&lt; endl;
+		}
+
+	}
+
+	for (int iBushouID = 0; iBushouID &lt; 最大数::武将情報::配列数; iBushouID++) {
+
+		// 仕官年数が問題となる、現役や軍団長ならば...
+		if (p武将戸籍情報[iBushouID].状態 == 状態::現役 || p武将戸籍情報[iBushouID].状態 == 状態::軍団長) {
+
+			// その武将の年齢-10を仕官年数とする
+			int 年齢 = Get_武将年齢(iBushouID);  // アンダーフローを避けるために 一旦 int で受け取る
+			年齢 = 年齢 - 10;
+			if (年齢 &lt; 0) { 年齢 = 0; }
+			p武将情報[iBushouID].仕官年数 = 年齢;
+		}
+	}
+}
+		</pre>
+	</div>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>勲功</h3>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_bushou_11.png"></p>
+	<blockquote>p武将情報[ix].勲功</blockquote>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_相場変更直前() {
+
+	for (int iBushouID = 0; iBushouID &lt; 最大数::武将情報::配列数; iBushouID++) {
+		int 勲功 = p武将情報[iBushouID].勲功;
+
+		// 勲功が問題となる、現役や軍団長ならば...
+		if (p武将戸籍情報[iBushouID].状態 == 状態::現役 || p武将戸籍情報[iBushouID].状態 == 状態::軍団長) {
+
+			// 勲功が900以上は特記すべき。表示。
+			if (勲功 &gt;= 900) {
+				デバッグ出力 &lt;&lt; Get_名字(iBushouID) + Get_名前(iBushouID) &lt;&lt; &quot;は勲功が&quot; &lt;&lt; 勲功 &lt;&lt; &quot;です&quot; &lt;&lt; endl;
+			}
+		}
+	}
+
+	for (int iBushouID = 0; iBushouID &lt; 最大数::武将情報::配列数; iBushouID++) {
+
+		// 勲功が問題となる、現役や軍団長ならば...
+		if (p武将戸籍情報[iBushouID].状態 == 状態::現役 || p武将戸籍情報[iBushouID].状態 == 状態::軍団長) {
+
+			// その武将の年齢の10倍を勲功とする。ただし、999を超えない範囲
+			int 年齢 = Get_武将年齢(iBushouID); // オーバーフローを避けるため、一旦intで受け取る
+			int 新勲功 = 年齢 * 10;
+			if (新勲功 &gt; 999) { 新勲功 = 999; }
+			p武将情報[iBushouID].勲功 = 新勲功;
+		}
+	}
+}
+		</pre>
+	</div>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>忠誠</h3>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_bushou_10.png"></p>
+	<blockquote>p武将情報[ix].忠誠</blockquote>
+	<p>０～100の値を取ります。0は内応や裏切りをしやすい状態です。<br>
+		一方、やや裏切りやすい性格であっても忠誠100があれば、いきなり裏切るといったことは起きにくいと言えます。</p>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_相場変更直前() {
+
+	for (int iBushouID = 0; iBushouID &lt; 最大数::武将情報::配列数; iBushouID++) {
+
+		// 一般の「宿老・家老・部将・侍大将・足軽頭」、そして「軍団長」 が対象
+		if (p武将戸籍情報[iBushouID].状態 == 状態::現役 || p武将戸籍情報[iBushouID].状態 == 状態::軍団長) {
+
+			// 義理が4以下の武将は相場が切り替わるごとに（＝季節ごとに）、忠誠が5減っていく
+			if (p武将情報[iBushouID].義理 &lt;= 4) {
+
+				int 忠誠 = p武将情報[iBushouID].忠誠; // アンダーフローを防止するため、一旦 int で受け取る
+				忠誠 = 忠誠 - 5;
+				if (忠誠 &lt; 0) {
+					忠誠 = 0;
+				}
+				p武将情報[iBushouID].忠誠 = 忠誠;
+
+			}
+			// 義理が11以上の武将は相場が切り替わるごとに（＝季節ごとに）、忠誠が5増える
+			else if (p武将情報[iBushouID].義理 &gt;= 11) {
+
+				int 忠誠 = p武将情報[iBushouID].忠誠; // オーバーフローを防止するため、一旦 int で受け取る
+				忠誠 = 忠誠 + 5;
+				if (忠誠 &gt; 100) {
+					忠誠 = 100;
+				}
+				p武将情報[iBushouID].忠誠 = 忠誠;
+
+			}
+		}
+	}
+}
+		</pre>
+	</div>
+</div>
+
+
+<div class="content-box mb-3 content-lighten">
+	<h3>より詳細を知るには...</h3>
+	<p>
+		「武将 － 年齢・寿命・仕官・勲功」に関する主な所は以上となります。<br>
+		詳しくは「武将情報型.h」を参照してください。
+	</p>
+</div>

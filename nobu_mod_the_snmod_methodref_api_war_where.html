@@ -1,0 +1,133 @@
+%(hilight)s
+<div class="content-box mb-3 content-lighten">
+	<h2><i class="fa fa-book fa-fw"></i>戦争 - 野戦と攻城戦</h2>
+	<p>戦争を大きなくくりで判定したいことがあります。<br>
+  戦争中なのか、野戦中なのか、攻城戦中なのか、などです。</p>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>最も大きなくくりでの「戦争中」とは</h3>
+	<blockquote>void カスタム::On_戦争開始(戦争開始パラメタ型 パラメタ)</blockquote>
+  <p>から戦争が始まり、</p>
+	<blockquote>void カスタム::On_戦争終了()</blockquote>
+  <p>で戦争が終わります。</p>
+  <p><mark>戦争中は、各種対応するイベントハンドラが呼ばれるため、その中で記述すればよい</mark>ため、<br>
+  Is_戦争中()　といった判定関数は用意されていませんが、下記のようにすれば簡単に実現できまます。</p>
+	<div class="code">
+		<pre class="brush:cpp;">
+bool g戦争中 = false;
+void カスタム::On_戦争開始(戦争開始パラメタ型 パラメタ) {
+	g戦争中 = true;
+}
+
+void カスタム::On_戦争終了() {
+	g戦争中 = false;
+}
+</pre>
+	</div>
+  <p>各イベントハンドラのタイミングの詳細は、</p>
+  <ul>
+  <li><a href="?page=nobu_mod_the_snmod_methodref_on_battle_start">On_戦争開始</a>
+  <li><a href="?page=nobu_mod_the_snmod_methodref_on_battle_end">On_戦争終了</a>
+  </ul>
+  <p>を、参照してください。</p>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>野戦中の画面であることの判定</h3>
+	<blockquote>bool Is_野戦中()</blockquote>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_war_turn_01.png"></p>
+	<h3>攻城戦中の画面であることの判定</h3>
+	<blockquote>bool Is_攻城戦中()</blockquote>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_war_turn_02.png"></p>
+	<h4>例１</h4>
+	<div class="code">
+		<pre class="brush:cpp;">
+string カスタム::On_噴出メッセージ直前(string 武将名, string 元メッセージ, メッセージ関連情報型 メッセージ関連情報) {
+
+	// 武将番号【配列用】がはいってて、かつ、名前も渡ってきている
+	int iBushouID = メッセージ関連情報.第１人称【武将番号】 - 1;
+	if (武将名 == &quot;真田幸隆&quot;) {
+
+		if (Is_文字列マッチ(元メッセージ, &quot;わが隊はすでに\x0A士気旺盛&quot;)) {
+			if (Is_野戦中()) {
+				return &quot;野戦中です&quot;;
+			}
+			else if (Is_攻城戦中()) {
+				return &quot;攻城戦中です&quot;;
+			}
+		}
+	}
+
+	// 変更しない場合&quot;&quot;
+	return &quot;&quot;;
+}
+</pre>
+	</div>
+	<h4>例２</h4>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_残りターン変更《戦争画面》(int 残りターン数) {
+	if (Is_野戦中()) {
+		デバッグ出力 &lt;&lt; &quot;野戦中です&quot; &lt;&lt; endl;
+	}
+	else if (Is_攻城戦中()) {
+		デバッグ出力 &lt;&lt; &quot;攻城戦中です&quot; &lt;&lt; endl;
+	}
+}
+
+void カスタム::On_ターン変更《攻城中画面》(int ターン数) {
+	if (Is_野戦中()) {
+		デバッグ出力 &lt;&lt; &quot;野戦中です&quot; &lt;&lt; endl;
+	}
+	else if (Is_攻城戦中()) {
+		デバッグ出力 &lt;&lt; &quot;攻城戦中です&quot; &lt;&lt; endl;
+	}
+}
+</pre>
+	</div>
+
+	<p>ゲーム中に通過する全てのイベントハンドラで判定可能ですが、<br>
+		通常は「戦争時に通過するイベントハンドラ内で、使用することとなるでしょう。</p>
+	
+</div>
+
+
+<div class="content-box mb-3 content-lighten">
+	<h3>現在、攻城戦中なら、どこの城の攻城戦中なのかを取得する</h3>
+	<blockquote>WORD Get_攻城戦中の城番号()</blockquote>
+	<p><mark>「城番号」を得る関数ですので、「城番号【配列用】」を得るためには「-1」する必要があり</mark>ます。</p>
+	<div class="code">
+		<pre class="brush:cpp;">
+string カスタム::On_噴出メッセージ直前(string 武将名, string 元メッセージ, メッセージ関連情報型 メッセージ関連情報) {
+
+	if (武将名 == &quot;真田幸隆&quot;) {
+
+		if (Is_文字列マッチ(元メッセージ, &quot;わが隊はすでに\x0A士気旺盛&quot;)) {
+			if (Is_攻城戦中()) {
+				int iCastleID = Get_攻城戦中の城番号() -1; // 城番号→城番号【配列用】
+				string 城名 = Get_城名(iCastleID) + Get_城称(iCastleID) ;
+				return 城名;
+			}
+		}
+	}
+
+	// 変更しない場合&quot;&quot;
+	return &quot;&quot;;
+}
+
+void カスタム::On_ターン変更《攻城中画面》(int ターン数) {
+	int iCastleID = Get_攻城戦中の城番号() - 1; // 城番号→城番号【配列用】
+	デバッグ出力 &lt;&lt; Get_城名(iCastleID) + Get_城称(iCastleID) &lt;&lt; endl;
+}
+</pre>
+	</div>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>より詳細を知るには...</h3>
+	<p>
+		「戦争 - 戦争と野戦と攻城戦」に関する主な所は以上となります。
+		詳しくは「戦場情報型.h」などを参照してください。
+	</p>
+</div>

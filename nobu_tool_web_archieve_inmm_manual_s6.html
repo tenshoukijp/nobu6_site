@@ -1,0 +1,155 @@
+﻿%(hilight)s
+<div class="content-box mb-3 content-lighten">
+    <h2><i class="fa fa-book fa-fw"></i><a name="doc1_reginfo">対応ソフトを増やす</a></h2>
+    <div class="titletoc">
+        <ul>
+            <li> <a href="#doc1_id866">登録情報の形式</a>
+            <li>
+                <a href="#doc1_id917">インストール先フォルダの情報</a>
+                <ul>
+                    <li> <a href="#doc1_id925">アンインストール情報からフォルダを取得</a>
+                    <li> <a href="#doc1_id940">レジストリからフォルダを取得</a>
+                    <li> <a href="#doc1_id978">iniファイルからフォルダを取得</a>
+                </ul>
+            <li> <a href="#doc1_id994">登録情報ができたら</a>
+        </ul>
+    </div>
+    <p class="first_ja">_inmmcnfに未登録のソフトにパッチを当てて動かすことができたら、そのソフトの情報を_inmmcnf.iniに追加して（登録ソフトとして加えて）、次回からは自動的にパッチを当てられるようにしてみましょう（パッチは一度しか当てる必要ないんですけどね:-p）。その登録情報を_inmm.dllのサポートページの掲示板に書き込んでくださると、すべてのユーザーがその情報を利用でき大変ハッピーです。_inmm.dll対応ソフトを増やすために、どうかご協力をお願いします。</p>
+    <p>この節では、_inmmcnf.iniに書く情報（歴史的な理由から「登録情報」という変な呼び名がついています）の作り方について説明します。今ある_inmmcnf.iniを参照しながら読み進めていくと分かり易いと思います。</p>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+    <h3><a name="doc1_id866">登録情報の形式</a></h3>
+
+    <p class="first_ja">_inmmcnf.iniの登録情報は次のような形式です。</p>
+
+    <a name="doc1_id868"></a>
+    <div class="caption">登録情報の例</div>
+    <pre class="program" style="margin-top:0">
+[ソフト名]
+Group=メーカー名
+File=パッチを当てるファイル名
+Message1=パッチを当てる前に表示される文章（省略可）
+Message2=パッチを当てた後に表示される文章（省略可）
+;（必要に応じて）コメント
+</pre>
+
+    <p>このほかに、ゲームのインストール先を調べるための情報が加わることもあります。これについては次の節で説明します。</p>
+    <p>登録情報は<code>[<var>ソフト名</var>]</code>の行から始まります。他の行の順番は任意です。</p>
+    <p>
+        <var>ソフト名</var>は、_inmmcnf.exeの<a href="?page=nobu_tool_web_archieve_inmm_manual_s5#doc1_patch_page">
+            [パッチ]ペー
+            ジ
+        </a>で[タイトル]として表示されます。
+    </p>
+    <p><code>Group=</code>は、メーカー毎にタイトルをまとめるために使われます。大文字と小文字、全角と半角の違いだけでも別のグループとして認識されてしまうので注意してください。</p>
+    <p><code>File=</code>には、パッチを当てるファイルの名前を書きます。ゲームをインストールするフォルダは人によって違うので、ここにはフォルダ名は書きません。ただし、(ゲームのフォルダ)\sys\xxxx.xxxのように、インストールフォルダより下層のファイルにパッチを当てたいときは、<code>File=sys\xxxx.xxx</code>という風にサブフォルダを含めて書きます。複数のファイルにパッチを当てる場合は、それぞれのファイル名を半角のコンマ(,)で区切ってください。</p>
+    <p><a href="?page=nobu_tool_web_archieve_inmm_manual_s3#doc1_specialpatch">特殊なパッチ</a>を使用する場合、<code>File=</code>の代わりに<code>ImportTablePatch=</code>や<code>VfwPatch=</code>と書きます。</p>
+    <p><code>Message1=</code>と<code>Message2=</code>には、当該ゲームに_inmm.dllを使う際の注意などを書いておきます。Message1はパッチを当てる前、Message2はパッチを当てた後に表示されます。文中に改行を入れたい場合は、代わりに<code>#</code>（半角シャープ）をその位置に入れてください。本物の改行が入っていると、改行後の文が切れてしまいます。注意事項が特になければ、Message1, Message2の行は省略できます。</p>
+    <p>セミコロン(<code>;</code>)から行の最後まではコメントとして無視されます。パッチを当てる際に表示されたりはしませんので、注意事項などにはMessage1, Message2を使ってください。</p>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+    <h3><a name="doc1_id917">インストール先フォルダの情報</a></h3>
+
+    <p class="first_ja">さて、これだけでも登録情報として使えますが、<code>File=</code>にはフォルダ名が含まれていないので、パッチをあてるべきファイルがどのフォルダにあるのか_inmmcnf.exeにはわかりません。この登録情報でパッチをあてようとすると、「(ソフト名)をインストールしたフォルダを指定してください」と言われて、フォルダを自分で指定しなければなりません。</p>
+    <p>「ボタン一つ」でパッチをあてるためには、ゲームがインストールされているフォルダを_inmmcnf.exeが知っている必要があります。</p>
+    <p>多くのゲームは、レジストリやwindowsフォルダのiniファイルに、インストール先フォルダの情報を記録しています。また、「アプリケーションの追加と削除」で使われる情報からインストール先フォルダを特定できることもあります。これを_inmmcnf.exeに読ませることで、フォルダを自分で指定する必要がなくなります<span class="note"><a href="#doc1_id922"
+                title="インストール先フォルダの情報が見つからないときは、すっぱり諦めましょう（もとから情報が存在しないゲームもあります）。どうせフォルダ指定なんてたいした手間ではありません。:-)"><sup>(10)</sup></a></span>。</p>
+
+    <div class="footnote">
+        <ol>
+            <li id="doc1_id922" value="10"> インストール先フォルダの情報が見つからないときは、すっぱり諦めましょう（もとから情報が存在しないゲームもあります）。どうせフォルダ指定なんてたいした手間ではありません。:-)
+        </ol>
+    </div>
+
+
+    <h4><a name="doc1_id925">アンインストール情報からフォルダを取得</a></h4>
+
+    <p class="first_ja">レジストリにあるアンインストール情報（「アプリケーションの追加と削除」で使われるやつです）からインストール先フォルダを取得します。最近はこの方法でフォルダを取得できるゲームが多いようです。</p>
+    <p>コントロールパネルの[アプリケーションの追加と削除]を開くと、インストールしたソフトの一覧が出てきますよね。その中から目的のゲームを探して、そこに表示されている名前（大抵はゲーム名と一緒でしょう）を登録情報に<code>UninstallReg=</code>として追加します。例えばこんな感じです。</p>
+
+    <a name="doc1_id930"></a>
+    <pre class="program">
+UninstallReg=こみっくパ～ティ～
+</pre>
+
+    <p>大文字と小文字、全角半角などを厳密に区別するので注意が必要です<span class="note"><a href="#doc1_id933" title="この例の場合、&quot;こみっくパーティー&quot;では駄目です。なぜだかわかりますか？"><sup>(11)</sup></a></span>。</p>
+    <p>レジストリ内での、アンインストール情報の場所を直接指定することもできます。</p>
+
+    <a name="doc1_id936"></a>
+    <pre class="program">
+UninstallReg=HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Uninstall\こみっくパ～ティ～
+</pre>
+
+    <p>が、これはあまり意味がないかもしれません…</p>
+    <p>アンインストール情報からのフォルダ取得は、InstallShieldを使っているソフトでしか使えません。自前でアンインストーラーを用意しているソフトの場合は、フォルダの取得に失敗してエラーとなります。</p>
+
+    <div class="footnote">
+        <ol>
+            <li id="doc1_id933" value="11"> この例の場合、&quot;こみっくパーティー&quot;では駄目です。なぜだかわかりますか？
+        </ol>
+    </div>
+
+
+    <h4><a name="doc1_id940">レジストリからフォルダを取得</a></h4>
+
+    <p class="first_ja">windowsのレジストリに、インストール先のフォルダが記録されていることがあります。レジストリを覗くにはレジストリエディタ（windowsフォルダにあるregedit.exe）を使います。レジストリはWindowsのファイルシステムのような階層構造になっていて、フォルダにあたるものを「キー」、ファイルに当たるもの（つまり、キーの中にある各々のデータ）を「値」と呼びます。</p>
+    <p>
+        さて、レジストリの中でゲームの情報がありそうなのは<code>HKEY_CURRENT_USER</code>か<code>HKEY_LOCAL_MACHINE</code>です。その下の<code>
+            Software\<var>メーカー名</var>\<var>
+                ソフト名
+            </var>
+        </code>というキーを探してみてください。キーが見つかったら、その中の値を眺めて、ゲームをインストールしたフォルダ名を探します。見つかりましたか<span class="note"><a href="#doc1_id956" title="レジストリエディタの検索機能で、フォルダ名を片っ端から探していくのもいいかもしれません。"><sup>(12)</sup></a></span>？フォルダ名の最後に\記号は付いていてもいなくてもかまいません。ファイル名まで付いてるって？大丈夫、その場合は_inmmcnf.exeがファイル名を自動的に削ってくれます。：-)
+    </p>
+    <p>レジストリからの情報を登録情報に追加するには、<code>RegKey=</code>と<code>Value=</code>という行を書き加えます。例えば<code>HKEY_CURRENT_USER\Software\Leaf\ToHeart</code>というキーの<code>DataDir</code>という値にフォルダの情報があったら、</p>
+
+    <a name="doc1_id971"></a>
+    <pre class="program">
+RegKey=HKEY_CURRENT_USER\Software\Leaf\ToHeart
+Value=DataDir
+</pre>
+
+    <p>この2行を登録情報に追加すればOKです。</p>
+    <p>値の名前が(標準)のときは、<code>Value=</code>は省略するか、空にしておいてください。</p>
+
+    <div class="footnote">
+        <ol>
+            <li id="doc1_id956" value="12"> レジストリエディタの検索機能で、フォルダ名を片っ端から探していくのもいいかもしれません。
+        </ol>
+    </div>
+
+
+    <h4><a name="doc1_id978">iniファイルからフォルダを取得</a></h4>
+
+    <p class="first_ja">
+        古いゲームでは、windowsフォルダにiniファイルを作成して、そこに情報を記録していることがあります。大抵は<var>ソフト名</var>.iniか<var>
+            メーカー
+            名
+        </var>.iniというファイル名になっていると思います。ファイルの構造は_inmmcnf.iniと似たような感じで、例えばsizuku.iniにこんな記述があったら
+    </p>
+
+    <a name="doc1_id986"></a>
+    <pre class="program">
+[雫]
+SizukuDir=c:\game\leaf\sizuku
+</pre>
+
+    <p>登録情報に以下の行を追加します。</p>
+
+    <a name="doc1_id989"></a>
+    <pre class="program">
+INI=sizuku.ini
+Section=雫
+Key=SizukuDir
+</pre>
+
+</div>
+
+<div class="content-box mb-3 content-lighten">
+    <h3><a name="doc1_id994">登録情報ができたら</a></h3>
+
+    <p class="first_ja">作成した登録情報を_inmmcnf.iniに追加して_inmmcnf.exeを起動し、パッチを実行してみましょう。グループ名やソフト名がリストボックスに正しく表示されていますか？インストール先フォルダをちゃんと取得できているようですか？パッチを当てるべきファイル名は合っていますか？</p>
+    <p>おめでとうございます！あなたは_inmm.dll対応ゲームを１つ増やしたのです。：-)さあ、登録情報を_inmm.dllサポート掲示板に書き込んで皆をハッピーにしてください。</p>
+    <p>ご報告いただいた登録情報は、以後のリリースの_inmmcnf.iniに追加されます。また、_inmm.dllの仕様変更などのために、こちらで登録情報に手を加える場合がありますのでご了承ください。</p>
+</div>

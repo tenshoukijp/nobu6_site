@@ -1,0 +1,208 @@
+%(hilight)s
+<div class="content-box mb-3 content-lighten">
+	<h2><i class="fa fa-book fa-fw"></i>戦争 - ヘックス位置 - 広域</h2>
+	<p>ヘックス位置を１つ１つ指定するのではなく、ざっくりと特定の条件を満たすヘックス位置群を取り出すためのAPIです。</p>
+
+	<h4>野戦のヘックス</h4>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_war_hex_07.png"></p>
+	<h4>攻城戦のヘックス</h4>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_war_hex_06.png"></p>
+
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>野戦の特定の条件を満たすヘックス位置リストを取り出す</h3>
+	<blockquote>ヘックス位置リスト型 Get_特定の役割の野戦ヘックス位置リスト(int 野戦ヘックス役割)</blockquote>
+	<h4>野戦で城にへばり付いている武将を探す</h4>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_残りターン変更《戦争画面》(int 残りターン数) {
+
+	if (Is_野戦中()) {
+		// 指定の役割を満たす「位置座標」のリスト
+		ヘックス位置リスト型 list = Get_特定の役割の野戦ヘックス位置リスト(野戦ヘックス役割::城);
+
+		番号リスト型 blist = Get_出陣中の武将番号リスト【配列用】《表示中マップ》();
+		for (int iBushouID : blist) {
+
+			// 武将の位置と、城の役割を満たす、位置の距離が１以内なら、その武将は城チップにへばり付いている。
+			ヘックス位置型 pos武将 = Get_武将の野戦ヘックス位置(iBushouID);
+			for (ヘックス位置型 pos城 : list) {
+				if (Get_ヘックス間隔(pos武将, pos城) &lt;= 1) {
+					デバッグ出力 &lt;&lt; Get_名字(iBushouID) + Get_名前(iBushouID) &lt;&lt; &quot;は城の近くに居ます&quot; &lt;&lt; endl;
+					break;
+				}
+			}
+		}
+	}
+}
+</pre>
+	</div>
+	<h4>野戦で海岸沿いの陸に居る武将を探す</h4>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_残りターン変更《戦争画面》(int 残りターン数) {
+
+	if (Is_野戦中()) {
+		// 指定の役割を満たす「位置座標」のリスト
+		ヘックス位置リスト型 list = Get_特定の役割の野戦ヘックス位置リスト(野戦ヘックス役割::海);
+
+		番号リスト型 blist = Get_出陣中の武将番号リスト【配列用】《表示中マップ》();
+		for (int iBushouID : blist) {
+
+			// 武将の位置と、海の役割を満たす、位置の距離が１以内なら、その武将は城チップにへばり付いている。
+			ヘックス位置型 pos武将 = Get_武将の野戦ヘックス位置(iBushouID);
+			for (ヘックス位置型 pos海 : list) {
+				// 
+				if (Get_ヘックス間隔(pos武将, pos海) &lt;= 1) {
+					// 本人自身は海チップに居ない
+					if (Get_野戦ヘックス役割(pos武将) != 野戦ヘックス役割::海) {
+						デバッグ出力 &lt;&lt; Get_名字(iBushouID) + Get_名前(iBushouID) &lt;&lt; &quot;は海岸に沿いの陸に居ます&quot; &lt;&lt; endl;
+						break;
+					}
+				}
+			}
+		}
+	}
+}
+</pre>
+	</div>
+
+</div>
+
+
+<div class="content-box mb-3 content-lighten">
+	<h3>攻城戦の特定の条件を満たすヘックス位置リストを取り出す</h3>
+	<blockquote>ヘックス位置リスト型 Get_特定の役割の攻城戦ヘックス位置リスト(int 攻城戦ヘックス役割)</blockquote>
+	<h4>攻城戦で閉まっている門にへばり付いている武将を探す</h4>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_ターン変更《攻城中画面》(int ターン数) {
+
+	if (Is_攻城戦中()) {
+
+		// 指定の役割を満たす「位置座標」のリスト
+		ヘックス位置リスト型 list閉門 = Get_特定の役割の攻城戦ヘックス位置リスト(攻城戦ヘックス役割::閉門);
+
+		番号リスト型 blist = Get_出陣中の武将番号リスト【配列用】《表示中マップ》();
+		for (int iBushouID : blist) {
+
+			// 武将の位置と、海の役割を満たす、位置の距離が１以内なら、その武将は城チップにへばり付いている。
+			ヘックス位置型 pos武将 = Get_武将の攻城戦ヘックス位置(iBushouID);
+			for (ヘックス位置型 pos閉門 : list閉門) {
+				// 
+				if (Get_ヘックス間隔(pos武将, pos閉門) &lt;= 1) {
+
+					デバッグ出力 &lt;&lt; Get_名字(iBushouID) + Get_名前(iBushouID) &lt;&lt; &quot;は閉門の側に居ます&quot; &lt;&lt; endl;
+				}
+			}
+		}
+
+		ヘックス位置リスト型 list開門 = Get_特定の役割の攻城戦ヘックス位置リスト(攻城戦ヘックス役割::開門);
+
+		// 門が１つ以上ある城で、かつ、閉門が無くなった == 全ての門が開いてしまった
+		if (list閉門.size() == 0 &amp;&amp; list開門.size() &gt;= 1) {
+			デバッグ出力 &lt;&lt; &quot;全ての門が開きました&quot; &lt;&lt; endl;
+		}
+	}
+}
+</pre>
+	</div>
+	<h4>攻城戦で閉門・開門の具合を調べる</h4>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_ターン変更《攻城中画面》(int ターン数) {
+
+	if (Is_攻城戦中()) {
+
+		// 指定の役割を満たす「位置座標」のリスト
+		ヘックス位置リスト型 list閉門 = Get_特定の役割の攻城戦ヘックス位置リスト(攻城戦ヘックス役割::閉門);
+		ヘックス位置リスト型 list開門 = Get_特定の役割の攻城戦ヘックス位置リスト(攻城戦ヘックス役割::開門);
+
+		// 門が１つ以上ある城で、かつ、閉門が無くなった == 全ての門が開いてしまった
+		if (list閉門.size() == 0 &amp;&amp; list開門.size() &gt;= 1) {
+			デバッグ出力 &lt;&lt; &quot;全ての門が開きました&quot; &lt;&lt; endl;
+		}
+	}
+}
+</pre>
+	</div>
+
+</div>
+
+
+<div class="content-box mb-3 content-lighten">
+	<h3>攻城戦で炎上しているヘックス位置リストを取り出す</h3>
+	<blockquote>ヘックス位置リスト型 Get_炎上の攻城戦ヘックス位置リスト(int 攻城戦ヘックス炎上)</blockquote>
+	<p>基本的に引数には何もしないしなくても良い。<br>
+		もしも「炎上しいている位置リスト」ではなく、「炎上していない位置リスト」が欲しい場合は、<br>「攻城戦ヘックス炎上::無し」を指定すればよい。</p>
+	<h4>炎上度合いを調べる</h4>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_ターン変更《攻城中画面》(int ターン数) {
+
+	if (Is_攻城戦中()) {
+
+		// 炎上の役割を満たす「位置座標」のリスト
+		ヘックス位置リスト型 list = Get_炎上の攻城戦ヘックス位置リスト();
+
+		if (1 &lt;= list.size() &amp;&amp; list.size() &lt; 2) {
+			デバッグ出力 &lt;&lt; &quot;小さく炎上しています&quot; &lt;&lt; endl;
+		}
+		else if (3 &lt;= list.size() &amp;&amp; list.size() &lt; 7) {
+			デバッグ出力 &lt;&lt; &quot;炎上が少し広がってきました&quot; &lt;&lt; endl;
+		}
+		else if (7 &lt;= list.size() &amp;&amp; list.size() &lt; 15) {
+			デバッグ出力 &lt;&lt; &quot;炎上がかなり広がってきました&quot; &lt;&lt; endl;
+		}
+		else if (15 &lt;= list.size()) {
+			デバッグ出力 &lt;&lt; &quot;大炎上中であります!!&quot; &lt;&lt; endl;
+		}
+	}
+}
+</pre>
+	</div>
+	<h4>本丸付近が炎上しているか調べる</h4>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_ターン変更《攻城中画面》(int ターン数) {
+
+	if (Is_攻城戦中()) {
+
+		// 炎上の役割を満たす「位置座標」のリスト
+		ヘックス位置リスト型 炎上list = Get_炎上の攻城戦ヘックス位置リスト();
+
+		ヘックス位置リスト型 本丸list = Get_特定の役割の攻城戦ヘックス位置リスト(攻城戦ヘックス役割::本丸);
+
+		int count = 0;
+		// 本丸自身と、周囲１マスまでなら本丸周辺とする
+		for (ヘックス位置型 炎上pos : 炎上list) {
+			for (ヘックス位置型 本丸pos : 本丸list) {
+				if (Get_ヘックス間隔(本丸pos, 炎上pos) &lt;= 1) {
+					count++;
+				}
+			}
+		}
+
+		if (1 &lt;= count &amp;&amp; count &lt;= 2) {
+			デバッグ出力 &lt;&lt; &quot;本丸周辺に火の手があがっています&quot; &lt;&lt; endl;
+		}
+		if (3 &lt;= count) {
+			デバッグ出力 &lt;&lt; &quot;本丸を取り囲むように火の手があがっています&quot; &lt;&lt; endl;
+		}
+
+	}
+}
+
+</pre>
+	</div>
+</div>
+
+
+<div class="content-box mb-3 content-lighten">
+	<h3>より詳細を知るには...</h3>
+	<p>
+		「戦争 - ヘックス位置 - 広域」に関する主な所は以上となります。
+		詳しくは「戦場情報型.h」「戦場情報列挙.h」などを参照してください。
+	</p>
+</div>

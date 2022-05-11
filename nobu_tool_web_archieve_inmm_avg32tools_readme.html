@@ -1,0 +1,283 @@
+﻿%(hilight)s
+<div class="content-box mb-3 content-lighten">
+    <h1 class="title"><i class="fa fa-book fa-fw"></i>avg32tools</h1>
+
+    <div class="author">irori</div>
+    <div class="email"><a href="mailto:irori@gmx.net">irori@gmx.net</a></div>
+    <div class="hp">元サイト：http://www.geocities.co.jp/Playtown-Domino/8282/</div>
+    <div class="summary">
+
+        <pre>
+2001/04/09  公開
+2001/04/21  koemp3を追加
+2003/12/08  RealLiveに対応
+2004/01/11  RealLive編に「音声のwav化は可能？」を追加
+</pre>
+
+    </div>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+    <h2>目次</h2>
+
+    <div class="toc">
+        <ul>
+            <li> <a href="#doc1_23">これって？</a>
+            <li>
+                <a href="#doc1_26">AVG32編</a>
+                <ul>
+                    <li> <a href="#doc1_55">avgini.exe - GAMEEXE.INIを書き換える</a>
+                    <li> <a href="#doc1_91">koeunpac.exe - KOEファイルをwavファイルに変換する</a>
+                    <li> <a href="#doc1_94">koemp3.exe - SCMPXでwavファイルをMP3-WAVEに変換する</a>
+                    <li> <a href="#doc1_97">結局何をすればいいのさ？</a>
+                </ul>
+            <li>
+                <a href="#doc1_116">RealLive編</a>
+                <ul>
+                    <li> <a href="#doc1_133">avgini.exeでGAMEEXE.INIを書き換える</a>
+                    <li> <a href="#doc1_174">CDチェック</a>
+                    <li> <a href="#doc1_183">音声のwav化は可能？</a>
+                    <li> <a href="#doc1_192">結局何をすればいいのさ？</a>
+                </ul>
+            <li> <a href="#doc1_214">謝辞</a>
+            <li> <a href="#doc1_223">さいごに</a>
+        </ul>
+    </div>
+
+</div>
+<div class="content-box mb-3 content-lighten">
+
+    <h2 id="doc1_23">これって？</h2>
+
+    <p class="first_ja">エロゲーマーにはお馴染み、Visual Art'sのAVG32/RealLiveシステムですが、このシステムを使っているゲームでも最近、BGMがCD-DAでないものが多くなってきています。これらのゲームをCD音源化することによって、_inmmを使ってBGMファイルのサイズを小さくしたり、曲を差し替えたりできるようにしようというものです。</p>
+
+</div>
+
+<div class="content-box mb-3 content-lighten">
+
+    <h2 id="doc1_26">AVG32編</h2>
+
+    <p class="first_ja">AVG32の動作は、GAMEEXE.INIの書き換えによってある程度変更できます。BGMとしてwavファイルを使うゲームのGAMEEXE.INIには、</p>
+
+    <pre id="doc1_28" class="program">
+  #MUSIC_TYPE=002
+</pre>
+
+    <p>という行があります。これを</p>
+
+    <pre id="doc1_31" class="program">
+  #MUSIC_TYPE=003
+</pre>
+
+    <p>に変えると、BGMとしてwavではなくCDを再生するようになります。曲の位置情報とかそういったものもGAMEEXE.INIに書いてあるので、それも適切にCD用に書き換えてやれば（avgini.exeがやってくれるので詳しくは説明しません）、_inmmパッチを当ててmp3でもなんでも鳴らせるというわけです。</p>
+    <p>ところが、ひとつ困ったことが出てきます。上記の変更を加えると、ゲーム中の音声が出なくなるのです。</p>
+    <p>AVG32で使われている音声ファイルは、拡張子.KOEの独自の圧縮形式です。<span class="note"><a href="#doc1_34"
+                title="音声がwav形式で入っているゲームもあるかもしれません。その場合は、上記の変更だけで問題なくプレイできると思います。"><sup>(1)</sup></a></span><code>#MUSIC_TYPE=003</code>（変更前）であれば、AVG32はKOEファイルを自分でデコードして鳴らすのですが、<code>#MUSIC_TYPE=002</code>に変更すると、AVG32はKOEファイルをそのままWindowsの機能で再生しようとします。結局再生は失敗し、音声は出力されません。</p>
+    <p>そこで、KOEファイルをWindowsが再生できる形式に変換する必要があります。これはkoeunpac.exeで行います。koeunpac.exeはKOEファイルをwavファイルに変換しますが、要はWindowsが鳴らせる形式であればいいので（ただし拡張子.wavであることが必要）、MP3-WAVE等にして置いておけばKOEファイルよりもさらにサイズを小さくすることができます。</p>
+    <p>最後に、AVG32がKOEファイルではなくwavファイルを使うように、GAMEEXE.INIの<code>#KOE_DOUBLE_PAC=001</code>を<code>#KOE_DOUBLE_PAC=000</code>に書き換えます。</p>
+    <p>
+        この辺りの詳しい説明は、<a href="http://kei.s31.xrea.com/" target="_top">Ｋｅｉさん</a>による<a href="http://kei.s31.xrea.com/labo/avg32/index.html" target="_top">
+            解説
+            ページ
+        </a>を参照してください。
+    </p>
+
+    <div class="footnote">
+        <ol>
+            <li id="doc1_34" value="1"> 音声がwav形式で入っているゲームもあるかもしれません。その場合は、上記の変更だけで問題なくプレイできると思います。
+        </ol>
+    </div>
+
+</div>
+<div class="content-box mb-3 content-lighten">
+
+    <h3 id="doc1_55">avgini.exe - GAMEEXE.INIを書き換える</h3>
+
+    <p class="first_ja">GAMEEXE.INIのあるフォルダで実行すると、</p>
+
+    <ol>
+        <li> <code>#MUSIC_TYPE=002</code>を<code>#MUSIC_TYPE=003</code>に
+        <li> <code>#DSTRACK=...</code>を<code>#CDTRACK=...</code>に
+        <li> <code>#KOE_DOUBLE_PAC=001</code>を<code>#KOE_DOUBLE_PAC=000</code>に
+    </ol>
+
+    <p>それぞれ書き換えます。</p>
+    <p>1.によって、BGM・効果音・音声がDirectSoundではなくMCIを使って再生されるようになります。</p>
+    <p>2.では、BGMの情報(開始位置、停止位置、再開位置)をwav形式用からCD用に変換します。</p>
+    <p>3.では、音声の再生にKOEファイルではなくwavファイルを使うようにします。（これはkoeunpac.exeでやるべきことのような…手抜きです）</p>
+    <p>ついでに、<code>#DSTRACK=</code>に設定されていたファイルを登録した_inmm.iniも作成します。古いGAMEEXE.INIや（もしあれば）_inmm.iniは、拡張子.orgで保存されます。</p>
+    <p>トラックの位置決めのためにBGMファイルの再生レートが必要なので、このプログラムは、レジストリからBGMフォルダの位置を調べて、そこにあるBGMファイルから再生レートを取得しています。ですので実行するときは、ゲームがインストールされていて、BGMファイルが読める状態になければなりません。要するにゲームをインストールして、CDを入れたままで実行してね、ってことです。</p>
+    <p>実際には使われないBGMがGAMEEXE.INIに書いてあると、「wavを開けない」といわれますが、[無視]を選んでください。<span class="note"><a href="#doc1_87" title="「恋ごころ」のBGM18がこれにあたるようです。"><sup>(2)</sup></a></span></p>
+
+    <div class="footnote">
+        <ol>
+            <li id="doc1_87" value="2"> 「恋ごころ」のBGM18がこれにあたるようです。
+        </ol>
+    </div>
+
+</div>
+
+<div class="content-box mb-3 content-lighten">
+
+    <h3 id="doc1_91">koeunpac.exe - KOEファイルをwavファイルに変換する</h3>
+
+    <p class="first_ja">GAMEEXE.INIのあるフォルダで実行すると、GAMEEXE.INIとレジストリからKOEファイルのある場所を調べて、全てのKOEファイルをwavファイルに変換します。</p>
+    <p>1つのKOEファイルには通常、複数の音声が含まれています。このプログラムは、実行したフォルダにまずkoewavというサブフォルダを作り、さらにその下に、KOEファイルごとにフォルダを作成します。wavファイルはその中に作成します。</p>
+    <p>また、ゲームのレジストリ項目の&quot;KOE_FOLDER&quot;を書き換えます。これは音声ファイルの位置を指定するもので、例えば&quot;Q:\KOE&quot;という風になっていますが、これを&quot;koewav&quot;にします。つまり作成したwavのほうを使う設定にするわけです。同時にkoe_restore.regというファイルを作成します。これをダブルクリックするとレジストリを書き換え前に戻せます。</p>
+    <p>フォルダ名やwavファイル名はAVG3217D.EXEが使う規則にしたがって決められています。名前を変更するとAVG3217D.EXEがwavを見つけられなくなって音声が出なくなりますので注意してください。</p>
+    <p>作成されるwavファイルの総サイズは、KOEファイルの3～4倍程度になります。ディスクの空き容量に注意してください。</p>
+    <p>変換したwavファイルは個人で使用する範囲にとどめておきましょう。</p>
+
+</div>
+
+<div class="content-box mb-3 content-lighten">
+
+    <h3 id="doc1_94">koemp3.exe - SCMPXでwavファイルをMP3-WAVEに変換する</h3>
+
+    <p class="first_ja">上のkoeunpac.exeで生成されたwavファイルをMP3-WAVE（MP3ファイルにRIFF/WAVEヘッダをつけたもの）に変換します。変換にはSCMPXを使用します。</p>
+    <p>koeunpac.exeが作成したkoewavフォルダで実行すると、サブフォルダのwavファイルを全てMP3-WAVE形式に変換します。変換前のwavファイルは削除されます。</p>
+    <p>SCMPXの場所は、_inmmcnf.exeのレジストリ項目から読みとります。_inmmcnf.exeにSCMPXのパスを設定していない場合は、koewavフォルダにscmpx.exeをコピーしてから実行してください。</p>
+    <p>MP3-WAVE形式のファイルをAVG32で再生するには、この形式用のコーデックが必要です。コーデックは_inmm.dllのホームページからダウンロードできます。</p>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+
+    <h3 id="doc1_97">結局何をすればいいのさ？</h3>
+
+
+    <ol>
+        <li> ゲームをインストールしてください。
+        <li> インストールしたフォルダにavgini.exeをコピーして実行してください。
+        <li> 同じくkoeunpac.exeをコピーして実行してください。
+        <li> AVG3217D.EXEに_inmmパッチを当ててください。
+    </ol>
+
+    <p class="first_ja">2～4はどの順番で実行してもかまいません。</p>
+    <p>これで、とりあえずゲームが動く状態になります。ただしBGMの巨大なwavファイルは_inmm.dll経由で、また音声にはKOEファイルではなく、変換されたwavが使われます。</p>
+    <p>あとはBGMを差し替えるなり、（koemp3.exeを使って）声をMP3-WAVEにするなりしてください。</p>
+
+</div>
+
+<div class="content-box mb-3 content-lighten">
+
+
+    <h2 id="doc1_116">RealLive編</h2>
+
+    <p class="first_ja">RealLiveもAVG32と同様、GAMEEXE.INIを書き換えることでCD音源化することができますが、AVG32をCD音源化する場合とは以下の違いがあります。</p>
+
+    <ol>
+        <li> GAMEEXE.INIの書き換えるべき項目が違う。
+        <li> BGMをCD-DAかDirectSoundか設定可能にできる。
+        <li> KOEファイルから音声が出なくなる副作用がない。
+        <li> GAMEEXE.INIを適切に書き換えても、CDチェックに通らないとCD音源が無効になってしまう。
+    </ol>
+
+    <p>3.より、RealLiveの場合はkoeunpac.exeとkoemp3.exeは不要で、avgini.exeだけを使用します。</p>
+
+</div>
+
+<div class="content-box mb-3 content-lighten">
+
+
+    <h3 id="doc1_133">avgini.exeでGAMEEXE.INIを書き換える</h3>
+
+    <p class="first_ja">GAMEEXE.INIとREALLIVE.EXEのあるフォルダで実行すると、avgini.exeはRealLive用の書き換えを行います。書き換える内容は以下の通りです。</p>
+
+    <ol>
+        <li>
+            <p><code>#DSTRACK=...</code>の行があったら、対応する<code>#CDTRACK=</code>の行を追加する。</p>
+            <p>CD-DA用の曲データを追加します。AVG32の場合と違って、DirectSound用の曲データも残しておきます。</p>
+        <li>
+            <p><code>#SYSCOM.011=N:&quot;...&quot;</code>を<code>#SYSCOM.011=U:&quot;...&quot;</code>に書き換える。</p>
+            <p>RealLiveの右クリックメニューの設定で、BGMの再生方法としてCD-DAを選べるようにします。ただし、起動時のCDチェック（後述）にパスしないとこの設定は無効になってしまいます。</p>
+        <li>
+            <p><code>#CDDA_xxx_SETUP_NEED=1</code>を<code>#CDDA_xxx_SETUP_NEED=0</code>に書き換える。</p>
+            <p>xxxにはMOV, KOE, BGM, DATのいずれかが入ります。ゲームのデータを全てインストールしなかった場合、CD再生が無効にされてしまうことがあります（CD再生と同時に必要なデータがインストールされていないと判断される場合）。上のように書き換えるとこのチェックを外して、たとえ最小インストールでもCD再生が有効になるようにします。</p>
+        <li>
+            <p><code>#BGM_MODE=0</code>を<code>#BGM_MODE=1</code>に書き換える。</p>
+            <p>BGMのデフォルトの再生方法をCD-DAにします。ただしセーブデータがある場合、そちらの設定が優先されます。</p>
+    </ol>
+
+    <p>AVG32の場合と同様、<code>#DSTRACK=</code>に設定されていたファイルを登録した_inmm.iniを作ります（BGMがnwa形式の場合、拡張子をwavに変えて登録します）。古いGAMEEXE.INIや（もしあれば）_inmm.iniは、拡張子.orgで保存されます。また、レジストリやBGMファイルの情報を使用しますので、ゲームをインストールしてCDを入れた状態で実行してください。</p>
+
+</div>
+
+<div class="content-box mb-3 content-lighten">
+
+
+    <h3 id="doc1_174">CDチェック</h3>
+
+    <p class="first_ja">RealLiveは起動時にCDがあるかチェックして、チェックに通らないとCD再生を強制的に無効にしてしまいます。</p>
+    <p>CDチェックには、レジストリのDISK_MARKの値が関係しています。レジストリのキー名はGAMEEXE.INIのREGNAMEにあります（<code>#REGNAME=&quot;MAKER\TITLE&quot;</code>ならHKEY_CURRENT_USER\Software\MAKER\TITLE）。</p>
+    <p>CDドライブで、かつルートにDISK_MARKの名前のファイルが存在するドライブがあれば、RealLiveはそこからCDを再生します。そのようなドライブがなければ、CD再生は無効化されます。<span class="note"><a href="#doc1_179" title="DISK_MARKを書き換えても、CDドライブしか見に行かないので面倒です。CD再生が無効化されないスマートな方法はありませんかね？"><sup>(3)</sup></a></span></p>
+
+    <div class="footnote">
+        <ol>
+            <li id="doc1_179" value="3"> DISK_MARKを書き換えても、CDドライブしか見に行かないので面倒です。CD再生が無効化されないスマートな方法はありませんかね？
+        </ol>
+    </div>
+
+</div>
+
+<div class="content-box mb-3 content-lighten">
+
+
+    <h3 id="doc1_183">音声のwav化は可能？</h3>
+
+    <p class="first_ja">AVG32では、KOEファイルの音声をMP3-WAVEなどのより圧縮率の高い形式に変換することで、音声のサイズを減らすことができました。RealLiveでも同じことが出来ないでしょうか？</p>
+    <p>結論から言うと、音声のwavファイル化は可能ですが、圧縮wavを使えないため、高圧縮化はできません。</p>
+    <p>GAMEEXE.INIの</p>
+
+    <pre id="doc1_185" class="program">
+#FOLDNAME.KOE = &quot;KOE&quot; = 1 : &quot;&quot;
+</pre>
+
+    <p>という行を</p>
+
+    <pre id="doc1_188" class="program">
+#FOLDNAME.KOE = &quot;KOE&quot; = 0 : &quot;&quot;
+</pre>
+
+    <p>にすると、RealLiveは例えばZ1234.KOEの56789番の音声を出そうとするときに、KOE\Z1234.KOEがなければKOE\1234\Z123456789.wavから音声を読み込みます。ただしAVG32とは違って、WindowsのWAVEファイル再生機能は使わずに自前で再生します。この再生ルーチンが圧縮wavに対応していないようで、MP3-WAVEなどを鳴らそうとすると「圧縮されたウェーブデータです。再生できません。」と言われてしまいます。</p>
+    <p>WindowsのWAVEファイル再生機能で音声を再生する機能はRealLive（1.0.2.9で調査）には実装されていないようで、設定をいじってMP3-WAVEなどを再生するのは無理のようです。</p>
+
+</div>
+
+<div class="content-box mb-3 content-lighten">
+
+
+    <h3 id="doc1_192">結局何をすればいいのさ？</h3>
+
+
+    <ol>
+        <li> ゲームをインストールしてください。
+        <li> インストールしたフォルダにavgini.exeをコピーして実行してください。
+        <li> BGMがnwa形式の場合、wav形式に変換して同じフォルダに置いてください。
+        <li> REALLIVE.EXEに_inmmパッチを当ててください。
+    </ol>
+
+    <p class="first_ja">2～4はどの順番で実行してもかまいません。</p>
+    <p>nwa形式からwav形式への変換ツールは、<a href="http://www.angelfire.com/ks3/kaede/avg2k/" target="_top">http://www.angelfire.com/ks3/kaede/avg2k/</a>などから入手できます。</p>
+    <p>これで、ゲームを起動して右クリックメニューで「BGM設定」→「CD-DA」を選択すると、_inmm経由でBGMが再生されるようになります。</p>
+    <p>あとはBGMを圧縮するなり差し替えるなりしてください。CDレス化する場合は、上の「CDチェック」の項を参考にしてください。</p>
+
+</div>
+
+<div class="content-box mb-3 content-lighten">
+
+    <h2 id="doc1_214">謝辞</h2>
+
+    <p class="first_ja">発案者のたくまんさん、いろいろな助言をくださったＫｅｉさんに感謝いたします。</p>
+    <p>KOEのデコードルーチンはKenjo氏の<a href="http://waffle.bunkasha.co.jp/" target="_top">「わっふる」</a>を参考にさせていただきました。また、nwaファイルからの情報取得にはjagarl氏の<a href="http://www.creator.club.ne.jp/~jagarl/" target="_top">nwatowav</a>を参考にさせていただきました。ありがとうございます。</p>
+
+</div>
+
+<div class="content-box mb-3 content-lighten">
+
+    <h2 id="doc1_223">さいごに</h2>
+
+    <p class="first_ja">どこか間違ってたら教えてください。</p>
+    <p>改変・再配布は制限しません。「プログラム使いやすくしたよ」等は大歓迎です。超歓迎です。</p>
+    <p>このプログラムを使用した結果については作者は一切責任もてません。このプログラムについてVisual Art'sやゲーム制作元に問い合わせをしないでください。</p>
+
+</div>

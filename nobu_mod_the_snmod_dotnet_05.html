@@ -1,0 +1,156 @@
+%(hilight)s
+<div class="content-box mb-3 content-lighten">
+    <h2><i class="fa fa-image fa-fw"></i>天翔記の画面の別プロセスで画像を描く</h2>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>～応用編～</h3>
+    <p>
+        ここは、天翔記の画面に上に、別プロセスで起動して<br>
+        画像を表示する例となります。
+    </p>
+    <p><img src="./cnt_mod/mod_spritewpf/cnt_spritewpf_01.png"><br>
+    </p>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>前準備</h3>
+    <p>
+        天翔記ディレクトリに「haru.png」というファイル名で用意してください。<br>
+    </p>
+</div>
+<div class="content-box mb-3 content-lighten">
+
+    <h3>ダウンロード</h3>
+    <div class="card mb-3 ml-3" style="max-width: 30rem;">
+        <!-- カード本文：card-body -->
+        <div class="card-body text-center">
+            <div class="row">
+                <div class="col-12"><small>更新日 %(year)04d/%(mon)02d/%(mday)02d</small></div>
+            </div>
+            <a href="%(file)s" class="btn btn-primary"><i class="fa fa-download fa-fw"></i>SpriteWPFTS95.zip</a>
+        </div>
+    </div>
+    <p>
+        ネット経由でzipをダウンロードするわけですから、<span class="negative">zipに対して「プロック解除」する</span>こと。<br>
+        SpriteWPFTS95.zipを解凍すると、SpriteWPFTS95.exeが入っています。<br>
+    </p>
+    <p>このexeを天翔記フォルダに入れてください。</p>
+    <p>
+        SpriteWPFTS95.exeは、
+    </p>
+    <blockquote>何かのウィンドウの上に画像をフェイドインして表示し、フェイドアウトで自動で消える</blockquote>
+    <p>といった汎用目的で利用可能なプログラムとなります。</p>
+    <p>
+        <span class="negative">
+            別プロセスでありながら、天翔記の上に確かに表示されますが、<br>
+            まるでそこに画像は存在しないかのような、Windowsにおいてあまり見たことが無い挙動となります。
+        </span>
+    </p>
+</div>
+<div class="content-box mb-3 content-lighten">
+
+    <h3>ScenarioMod側のソース内容</h3>
+    <p>
+        応用編なため、内容の詳細について触れることはしません。<br>
+        コメント等を参考に、ご自身で中身をチェックしてください。
+    </p>
+    <ul class="pointlist">
+        <li>
+            <h4>カスタム駆動関数.cppの上部</h4>
+            <p>
+                カスタム駆動関数.cppの上部に以下のように追記してみましょう。<br>
+                独立したヘッダーファイルにしてincludeするようにしても良いでしょう。(むしろそっちの方が理想的)
+            </p>
+            <div class="code">
+                <pre class="brush:cpp;">
+#include &quot;カスタム駆動関数.h&quot;
+
+using namespace System;
+
+using namespace System::Collections::Generic;
+using namespace System::Diagnostics;
+
+ref class GlobalSpriteProcess {
+private:
+    static Dictionary&lt;String^, Process^&gt;^ hashSpriteProcess = gcnew Dictionary&lt;String^, Process^&gt;();
+    static HWND hTenshouWnd;
+public:
+    // プロセスの開始
+    static Process^ StartProcess(String^ strProcessHashKey, String^ strImageFileName, int timeFadeIn, int timeFadeKeep, int timeFadeOut) {
+        if (!hTenshouWnd) {
+            hTenshouWnd = FindWindow(&quot;Tenshouki95&quot;, NULL);
+        }
+        UpdateProcessList();
+
+        try {
+            ProcessStartInfo^ psi = gcnew ProcessStartInfo();
+            psi-&gt;FileName = &quot;SpriteWPFTS95.exe&quot;;
+            psi-&gt;Arguments = String::Format(&quot;{0} {1} {2} {3} {4} {5}&quot;, (Int64)hTenshouWnd, strImageFileName, &quot;png&quot;, timeFadeIn, timeFadeKeep, timeFadeOut);
+            psi-&gt;UseShellExecute = false;
+
+            auto p = gcnew Process;
+            hashSpriteProcess[strProcessHashKey] = p;
+            p-&gt;Start(psi);
+            return p;
+        }
+        catch (Exception^) {
+
+        }
+
+        return nullptr;
+    }
+
+    // プロセスを明示的に終了
+    static void CloseProcess(String^ strProcessHashKey) {
+        try {
+            auto p = hashSpriteProcess[strProcessHashKey];
+            if (p != nullptr &amp;&amp; !p-&gt;HasExited) {
+                p-&gt;Close();
+            }
+            hashSpriteProcess[strProcessHashKey] = nullptr;
+        }
+        catch (Exception^ e) {
+
+        }
+    }
+
+
+private:
+    static void UpdateProcessList() {
+        for each (auto kvp in hashSpriteProcess) {
+            try {
+                auto p = kvp.Value;
+                // もし該当プロセスがすでに実行を終了してるならば、辞書からは削除しておく。
+                if (p-&gt;HasExited) {
+                    hashSpriteProcess-&gt;Remove(kvp.Key);
+                }
+            }
+            catch (Exception^) {
+
+            }
+        }
+    }
+};
+
+カスタム::カスタム() {
+    // 各メソッドの具体的な解説は「http://天翔記.jp/?page=nobu_mod_the_snmod_methodref_index」にて記述されています。
+}
+
+// ・・・
+</pre>
+            </div>
+            <p>みたいな形で、「SpriteWPFTS95.exe」を外部プログラムとしてScenarioMod内から呼び出しやすい(マネージ)クラスを作成しましょう。</p>
+        <li>
+            <h4>利用してみる。</h4>
+            <div class="code">
+                <pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+    if (p年情報.季節 == 季節::春) {
+
+        GlobalSpriteProcess::StartProcess(&quot;kisetu_haru&quot;, &quot;haru.png&quot;, 200, 2000, 200);
+    }
+}
+
+</pre>
+            </div>
+    </ul>
+</div>

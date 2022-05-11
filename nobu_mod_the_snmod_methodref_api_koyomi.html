@@ -1,0 +1,78 @@
+%(hilight)s
+<div class="content-box mb-3 content-lighten">
+  <h2><i class="fa fa-book fa-fw"></i>暦</h2>
+  <p>暦の概念は、主として年・季節を取得するためのAPIです。<br>
+    西暦と和暦の両方が得られる仕組みとなっています。</p>
+  </p>
+  <p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_koyomi_01.png"></p>
+</div>
+<div class="content-box mb-3 content-lighten">
+  <h3>例①</h3>
+  <div class="code">
+    <pre class="brush:cpp">
+void カスタム::On_相場変更直前() {
+	// このゲームの基準となっている年。「天翔記というゲームの紀元年」とも言える。デフォルトでは1454年。
+	// 生データを取り扱うようなシーンではこの数値を利用することがある。
+	int baseYear = Get_天翔記基準年();
+	デバッグ出力 &lt;&lt; &quot;天翔記基準年:&quot; &lt;&lt; baseYear &lt;&lt; endl;
+
+	// 現在の西暦を得る
+	int year = Get_西暦();
+	デバッグ出力 &lt;&lt; &quot;西暦:&quot; &lt;&lt; year &lt;&lt; endl;
+
+	// 現在の季節を得て比較する
+	string 季節のリスト[] = { &quot;春&quot;, &quot;夏&quot;, &quot;秋&quot;, &quot;冬&quot; };
+	int 今の季節 = p年情報.季節;
+	if (季節::春 &lt;= 今の季節 &amp;&amp; 今の季節 &lt;= 季節::冬)
+	{
+		デバッグ出力 &lt;&lt; &quot;季節:&quot; + 季節のリスト[今の季節] &lt;&lt; endl;;
+	}
+
+	デバッグ出力 &lt;&lt; &quot;天翔記の現在の和暦&quot; &lt;&lt; endl;
+	auto w = Get_和暦();
+	デバッグ出力 &lt;&lt; &quot;元号:&quot; &lt;&lt; w.元号 &lt;&lt; endl;
+	デバッグ出力 &lt;&lt; &quot;数値紀年:&quot; &lt;&lt; w.年 &lt;&lt; endl;
+	デバッグ出力 &lt;&lt; &quot;漢字紀年:&quot; &lt;&lt; w.年漢字 &lt;&lt; endl;
+
+	デバッグ出力 &lt;&lt; &quot;天翔記の1520年7月21の和暦&quot; &lt;&lt; endl;
+	auto cw = Get_和暦(1520, 7, 21);
+	デバッグ出力 &lt;&lt; &quot;元号:&quot; &lt;&lt; cw.元号 &lt;&lt; endl;
+	デバッグ出力 &lt;&lt; &quot;数値紀年:&quot; &lt;&lt; cw.年 &lt;&lt; endl;
+	デバッグ出力 &lt;&lt; &quot;漢字紀年:&quot; &lt;&lt; cw.年漢字 &lt;&lt; endl;
+
+	デバッグ出力 &lt;&lt; &quot;天翔記の1950年3月3の和暦&quot; &lt;&lt; endl;
+	auto kw = Get_和暦(1950, 3, 3);
+	デバッグ出力 &lt;&lt; &quot;元号:&quot; &lt;&lt; kw.元号 &lt;&lt; endl;
+	デバッグ出力 &lt;&lt; &quot;数値紀年:&quot; &lt;&lt; kw.年 &lt;&lt; endl;
+	デバッグ出力 &lt;&lt; &quot;漢字紀年:&quot; &lt;&lt; kw.年漢字 &lt;&lt; endl;
+}
+</pre>
+  </div>
+  <h3>出力①</h3>
+  <div class="code">
+    <pre class="brush:ps">
+天翔記基準年:1454
+西暦:1560
+季節:夏
+天翔記の現在の和暦
+元号:永禄
+数値紀年:3
+漢字紀年:三
+天翔記の1520年7月21の和暦
+元号:永正
+数値紀年:17
+漢字紀年:十七
+天翔記の1950年3月3の和暦
+元号:昭和
+数値紀年:25
+漢字紀年:二十五
+  </pre>
+  </div>
+</div>
+<div class="content-box mb-3 content-lighten">
+  <h3>より詳細を知るには...</h3>
+  <p>
+    暦に関する主な所は以上となります。
+    詳しくは「暦情報型.h」や「暦情報列挙.h」などを参照してください。
+  </p>
+</div>

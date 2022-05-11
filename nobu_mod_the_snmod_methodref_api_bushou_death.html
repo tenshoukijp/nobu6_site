@@ -1,0 +1,170 @@
+%(hilight)s
+<div class="content-box mb-3 content-lighten">
+	<h2><i class="fa fa-book fa-fw"></i>武将 － 死亡</h2>
+	<p>メイン画面、戦争画面にかかわらず、武将を強制的に死亡させるためのAPIです。
+	</p>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>武将が死亡しているかどうかの正しい判定</h3>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+	int iBushouID = Get_武将番号【配列用】(顔番号::武田晴信);
+	if (0 &lt;= iBushouID &amp;&amp; iBushouID &lt; 最大数::武将情報::配列数) {
+		// (この季節)戦場で戦死したか、もしくは、死亡状態
+		if (p武将戸籍情報[iBushouID].戦死 == TRUE || p武将戸籍情報[iBushouID].状態 == 状態::死亡) {
+			デバッグ出力 &lt;&lt; &quot;武田晴信は死亡しています&quot; &lt;&lt; endl;
+		}
+	}
+}
+</pre>
+	</div>
+
+	<h4>死亡状態は長続きしない</h4>
+	<p><mark>死亡した武将は、そのうち天翔記というゲーム枠から外さるため、やがて「判定しようにもそもそも存在してない」</mark>状態となります。</p>
+	<p>死亡状態は最短だと１季節です。<br>
+		それ以降、「待機武将や仮想武将が登場」する際、武将スロットの532枠のうち、「空きスロット」や「死亡している武将スロット」から選択されて、<br>
+		新たな武将用のスロットとして再使用されます。</p>
+
+		<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_bushou_death_01.png"></p>
+
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>いかなる身分の武将でも正規手順にて死亡させることが可能な関数</h3>
+	<blockquote>bool Set_武将状態《→死亡》(int 死亡武将番号【配列用】, int 犯人武将番号【配列用】=-1)</blockquote>
+	<p>第２引数はあまり気にしなくても良く、特に指定する必要はない。<br>
+		その死亡が誰の仕業かが分かっている場合には指定することにより、将来、内部処理的により適切になる可能性がある。
+	</p>
+
+	<ul>
+		<li>この関数は死亡処理、及び、死亡後に必要な処理を天翔記仕様を踏襲して全て行う。<br>
+		<li><b>この関数自体は、「いかなる理由で死亡したのか？」のダイアログは当然出さない(出しようもない)ので、注意すること。</b><br>
+			病死したのか、戦死したのか、暗殺しに行ったら、逆に暗殺されたのか、<br>
+			それらは、別途、「情報ダイアログ表示」関数や、「確認ダイアログ表示」関数で、状況に応じて、<br>
+			プログラムを組む人間で判断し、必要であればダイアログや効果音を出す必要がある。<br>
+
+		<li>この関数は、<b>あくまでも、「死亡処理」と「それに伴う必要な後処理(例えば大名を殺したのであれば、引き継ぎ処理)」などを行う。</b>
+
+		<li>この関数はデリケートであるため、使用タイミングがかなり制限されるであろう。<br>
+			不用意なタイミングでこの関数を呼び出すと、処理が先へと進まなくなったり、不正に落ちたりといったこととなる。<br>
+		</li>
+	</ul>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>メイン画面</h3>
+
+	<p>メイン画面では、通常下記のように、「On_軍団ターン変更」や、「On_プレイヤ担当ターン」など、<br>
+		<b>メイン画面の「ターン切り替わり目」系であれば安全</b>に呼び出せる。<br>
+		その他のタイミングは危険である。<br>
+	</p>
+	<ul class="arrowlist">
+		<li>
+			<h4>例①</h4>
+			<div class="code">
+				<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+    int iBushouID = Get_武将番号【配列用】(顔番号::織田信長);
+    Set_武将状態《→死亡》(iBushouID);
+}
+</pre>
+			</div>
+		<li>
+			<h5>例②</h5>
+			<div class="code">
+				<pre class="brush:cpp;">
+void カスタム::On_軍団ターン変更《メイン画面》(int 軍団番号) {
+    int iBushouID = Get_武将番号【配列用】(顔番号::毛利元就);
+    Set_武将状態《→死亡》(iBushouID);
+}
+</pre>
+			</div>
+	</ul>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>戦争画面</h3>
+	<p><b>戦争画面では、<span class="keyword">On_噴出メッセージ直前</span></b>や<br>
+		<span class="keyword">On_残りターン変更《戦争画面》</span>時に安全に呼び出せる。<br>
+		<ul class="arrowlist">
+			<li>
+				<h4>例①</h4>
+				<div class="code">
+					<pre class="brush:cpp;">
+string カスタム::On_噴出メッセージ直前(string 武将名, string 元メッセージ, メッセージ関連情報型 メッセージ関連情報) {
+
+  // 混乱をしかけたら勝手に死亡。
+  if ( 武将名 == &quot;真田幸隆&quot; &amp;&amp; Is_正規表現マッチ(元メッセージ, &quot;そうやすやすとは|技をもってしても|分別がつかなく&quot;) ) {
+    int iBushouID = Get_武将番号【配列用】(顔番号::真田幸隆);
+    Set_武将状態《→死亡》(iBushouID);
+  }
+  // 変更しない場合&quot;&quot;
+  return &quot;&quot;;
+}
+</pre>
+				</div>
+
+			<li>
+				<h4>例②</h4>
+				<div class="code">
+					<pre class="brush:cpp;">
+void カスタム::On_残りターン変更《戦争画面》(int 残りターン数) {
+    // ターン切り替わり時に今表示中の戦場マップの誰かが「フッ…」と死亡。
+    番号リスト型 list = Get_出陣中の武将番号リスト【配列用】《表示中マップ》();
+    if ( list.size() &gt; 0 ) {
+        Set_武将状態《→死亡》(list[0]);
+    }
+}
+</pre>
+				</div>
+		</ul>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>武将の戦場での戦死と死亡状態</h3>
+	<p>武将が戦場で死亡したからといって、突然ただちに、<br>
+	</p>
+	<div class="code">
+		<pre class="brush:cpp;">
+p武将戸籍情報[i].状態 == 状態::死亡
+</pre>
+	</div>
+	<p>になったりはしないので注意すること!!<br>
+	</p>
+	<p>天翔記の本来の動作でも、そのようなことにはならない。<br>
+	</p>
+	<p><mark>武将が戦場で死亡した場合、</mark><br>
+	</p>
+	<div class="code">
+		<pre class="brush:cpp;">
+p武将戸籍情報[i].戦死 == TRUE
+</pre>
+	</div>
+	<p>というように「一端戦死」という状態となり、<br>
+		戦争が終わったタイミングで、初めて正式に、<br>
+	</p>
+	<div class="code">
+		<pre class="brush:cpp;">
+p武将戸籍情報[i].状態 == 状態::死亡 となり、
+</pre>
+	</div>
+	<p>代わりに、</p>
+	<div class="code">
+		<pre class="brush:cpp;">
+p武将戸籍情報[i].戦死 == FALSE
+</pre>
+	</div>
+	<p>と<b>値がFALSEへと戻る</b>。</p>
+	</ul>
+
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>より詳細を知るには...</h3>
+	<p>
+		「武将 － 死亡」に関する主な所は以上となります。<br>
+		詳しくは「武将情報型.h」や「武将情報列挙.h」などを参照してください。
+	</p>
+</div>

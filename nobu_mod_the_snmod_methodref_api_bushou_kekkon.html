@@ -1,0 +1,67 @@
+%(hilight)s
+<div class="content-box mb-3 content-lighten">
+	<h2><i class="fa fa-book fa-fw"></i>武将 - 婚姻</h2>
+	<p>武将の結婚関連のAPIの説明となります。
+	</p>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_bushou_21.png"></p>
+</div>
+
+
+<div class="content-box mb-3 content-lighten">
+	<h3>結婚・離婚・伴侶がいるかどうか</h3>
+	<blockquote>int Get_伴侶武将番号【配列用】(int 武将番号【配列用】)</blockquote>
+	<blockquote>bool Set_姫結婚( int 姫武将番号【配列用】, int 夫武将番号【配列用】, BOOL 天蓋孤独死亡処理=TRUE )</blockquote>
+	<blockquote>bool Set_姫離婚( int 姫武将番号【配列用】, BOOL 天蓋孤独死亡処理=TRUE )</blockquote>
+
+	<h4>結婚</h4>
+	<p>もしも、別の人とすでに結婚している場合は、その人とは離婚して、<br>
+		改めて新しい人と結婚する形となります。</p>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+	int iOttoBushouID = Get_武将番号【配列用】(顔番号::柴田勝家);
+	int iHimeBushouID = Get_武将番号【配列用】(顔番号::織田市);
+
+	if (0 &lt;= iOttoBushouID &amp;&amp; iOttoBushouID &lt; 最大数::武将情報::配列数 &amp;&amp;
+		0 &lt;= iHimeBushouID &amp;&amp; iHimeBushouID &lt; 最大数::武将情報::配列数 ) {
+
+		// 二人が独身ならば
+		if (Get_伴侶武将番号【配列用】(iOttoBushouID) == 0xFFFF &amp;&amp;
+			Get_伴侶武将番号【配列用】(iHimeBushouID) == 0xFFFF	) {
+			bool success = Set_姫結婚(iHimeBushouID, iOttoBushouID);
+			if (success) {
+				デバッグ出力 &lt;&lt; &quot;二人は結婚しました&quot; &lt;&lt; endl;
+			}
+		}
+	}
+}
+</pre>
+	</div>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_bushou_koseki_17.png"></p>
+	<h4>離婚</h4>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+	int iOttoBushouID = Get_武将番号【配列用】(顔番号::織田信長);
+	int iHimeBushouID = Get_武将番号【配列用】(顔番号::長井帰蝶);
+
+	if (0 &lt;= iOttoBushouID &amp;&amp; iOttoBushouID &lt; 最大数::武将情報::配列数 &amp;&amp;
+		0 &lt;= iHimeBushouID &amp;&amp; iHimeBushouID &lt; 最大数::武将情報::配列数 ) {
+
+		// 二人は結婚しているならば...
+		if (Get_伴侶武将番号【配列用】(iHimeBushouID) == iOttoBushouID) {
+			bool success = Set_姫離婚(iHimeBushouID);
+		}
+	}
+}
+</pre>
+	</div>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>より詳細を知るには...</h3>
+	<p>
+		「武将 － 婚姻」に関する主な所は以上となります。<br>
+		詳しくは「武将情報型.h」を参照してください。
+	</p>
+</div>

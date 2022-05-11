@@ -1,0 +1,152 @@
+﻿%(hilight)s
+<div class="content-box mb-3 content-lighten">
+    <h2><i class="fa fa-book fa-fw"></i><a name="doc1_id17">導入</a></h2>
+    <div class="titletoc">
+        <ul>
+            <li> <a href="#doc1_id19">はじめに</a>
+            <li> <a href="#doc1_id40">動作環境</a>
+            <li> <a href="#doc1_mechanism">仕組み</a>
+            <li> <a href="#doc1_id61">制限</a>
+            <li>
+                <a href="#doc1_id73">インストール</a>
+                <ul>
+                    <li> <a href="#doc1_id75">インストーラ版</a>
+                    <li> <a href="#doc1_id78">Zip版</a>
+                </ul>
+            <li> <a href="#doc1_id150">アンインストール</a>
+        </ul>
+    </div>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3><a name="doc1_id19">はじめに</a></h3>
+
+    <p class="first_ja">_inmm.dllは、BGMの再生にCD-DAを使っているゲームソフトを、むりやり他の音源、たとえばMP3やMIDIなどに対応させてしまうプログラムです。</p>
+    <p>例えばゲームCDの音楽トラックをMP3にコンバートしてHDDに置いておけば、わざわざCDを入れなくても音楽つきでゲームを楽しめます。特定のトラックだけ別の曲に差し替えたり、いくつかの曲の中からランダムに演奏させたりといったこともできます。</p>
+    <p>_inmm.dllは自分で曲を再生することもできますが、Winampなど外部のプレイヤーを制御して曲を再生する機能も持っています。そのため、外部プレイヤーが対応している全ての形式を再生できます。</p>
+    <p>以下のような音源を、CD-DAの代わりに再生できます。</p>
+
+    <ul>
+        <li> MP3
+        <li> MIDI
+        <li> CD-DA
+        <li> Windows Media Playerが再生できる形式(DirectShow使用)
+        <li> その他、外部プレイヤーが対応している全ての形式
+    </ul>
+
+    <p>上のリストにCD-DAが入っているのを不思議に思うかもしれません。これはトラックの順番を変えたいときや、一部の曲だけをMP3等に差し替えて、他の曲はCD-DAのままにしたいときに使います。</p>
+    <p>CDのデジタル出力をサポートする外部プレイヤーを使えば、WAVE出力からCDを再生できます。これによって、Windows2000/XPで曲の切り替えに時間がかかる(ドライブのスピンアップ遅延)問題も解消できます。</p>
+
+    <h3><a name="doc1_id40">動作環境</a></h3>
+
+    <p class="first_ja">Windows95/98/Me/2000で動作します。XPでの動作チェックは行っていませんが、おおむね問題なく動いているようです。</p>
+    <p>動作確認を行っている外部プレイヤーのバージョンは以下の通りです。</p>
+
+    <ul>
+        <li> Winamp 5.21
+        <li> SCMPX 1.51
+        <li> Digital CD Player 1.07
+        <li> SoundPlayer Lilith Ver.0.991b
+    </ul>
+
+    <p>SCMPXは1.20以降、Digital CD Playerは1.05以降、Lilithは0.987 pre-release.5以降であれば動くと思います。</p>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3><a name="doc1_mechanism">仕組み</a></h3>
+
+    <p class="first_ja">Windowsのサウンド関連の機能は、windows\systemフォルダ（NT系ではwinnt\system32フォルダ）のWINMM.DLLというDLLにまとめられています。ゲームなどのアプリケーションがCDや効果音を再生するとき、アプリケーションは「CDの5番目のトラックを再生せよ」というような命令をWINMM.DLLに送ります。</p>
+    <p>_inmm.dllは、アプリケーションからWINMM.DLLへ行く命令を横取りします。これはアプリケーションのプログラムを書き換えることで実現しています。「CDを再生しろ」「効果音を出せ」といった命令はWINMM.DLLではなく_inmm.dllに渡るようになるので、_inmm.dllでその命令を解釈して、CDを再生する代わりに別の処理を行うことができるのです。</p>
+    <p>プログラムを書き替えるといっても、いわゆる機械語コードの部分をを書き替えるのではありません。_inmmのパッチは、実行形式ファイル中の「WINMM.DLL」という文字列を「_inmm.dll」に、またWINMM.DLLが提供するAPI名の先頭を_（アンダーバー）に変えるだけです（例えば、mciSendCommandA→_ciSendCommandA）。この方式は汎用性が高いので、多くのゲームで_inmm.dllを使うことができます。</p>
+    <p>書き換えの作業はファイルをドラッグ＆ドロップするだけの簡単なものですが、大抵の場合はそれさえも必要ありません。_inmmユーザーからの情報をもとに300以上のゲームがデータベースに登録されていて、その中にあるゲームについてはボタン1つで必要なファイルの書き替えが行われます。</p>
+    <div></div>
+    <div class="content-box mb-3 content-lighten"></div>
+    <h3><a name="doc1_id61">制限</a></h3>
+
+    <p class="first_ja">CD-DA以外の方法でBGMを鳴らしているゲームには使えません。</p>
+    <p>
+        残念ながら、すべてのゲームでうまく動くわけではありません。<a href="?page=nobu_tool_web_archieve_inmm_title_t">動作確認済のソフト一覧</a>と<a href="?page=nobu_tool_web_archieve_inmm_naranai">
+            動作し
+            ないことが確認されたソフト一覧
+        </a>が公式サイトにありますので参考にしてください。
+    </p>
+    <p>_inmm.dllは、ゲームのCDチェックを回避するものではありません。起動時にCDをチェックするゲームをCDなしで遊ぶには、<a href="?page=nobu_tool_web_archieve_inmm_faq#cdcheck">仮想CDソフト</a>と併用してください。</p>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3><a name="doc1_id73">インストール</a></h3>
+
+
+    <h4><a name="doc1_id75">インストーラ版</a></h4>
+
+    <p class="first_ja">_inmm238.exeを実行し、インストーラの手順に従ってください。すでに旧バージョンの_inmm.dllがインストールされている場合、上書きインストールされます。</p>
+
+    <h4><a name="doc1_id78">Zip版</a></h4>
+
+    <p class="first_ja">_inmm238.zipを展開すると、以下のファイルが出てきます。</p>
+
+    <div class="table">
+        <a name="doc1_id80"></a>
+        <table class="data" rules="groups">
+            <colgroup span="2">
+                <col>
+                <col>
+            </colgroup>
+            <thead>
+                <tr class="even">
+                    <th align="center">ファイル</th>
+                    <th align="center">説明</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="even">
+                    <td>_inmm.dll</td>
+                    <td>本体</td>
+                </tr>
+                <tr class="odd">
+                    <td>_inmmcnf.exe</td>
+                    <td>設定＆パッチユーテリティ</td>
+                </tr>
+                <tr class="even">
+                    <td>_inmmcnf.ini</td>
+                    <td>パッチ用の登録情報ファイル</td>
+                </tr>
+                <tr class="odd">
+                    <td>_inmmserv.exe</td>
+                    <td>プレイヤーを制御するプログラム</td>
+                </tr>
+                <tr class="even">
+                    <td>doc\manual.html</td>
+                    <td>マニュアル</td>
+                </tr>
+                <tr class="odd">
+                    <td>doc\faq.html</td>
+                    <td>FAQ（よくある質問と答え）</td>
+                </tr>
+                <tr class="even">
+                    <td>doc\history.html</td>
+                    <td>変更履歴</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <p>この中で、_inmm.dllだけはwindowsフォルダかwindows\systemフォルダ（NT系ではwinntフォルダかwinnt\system32フォルダ）にコピーしておいてください<span class="note"><a href="#doc1_id145"
+                title="_inmm.dllはゲームの実行ファイルと同じフォルダに置いてもかまいませんが、複数のゲームで_inmm.dllを使うようになると最新バージョンへの置き換えが面倒になりますから、windowsフォルダに置くことをお勧めします。"><sup>(1)</sup></a></span>。ほかのファイルは適当なフォルダにまとめておきましょう。</p>
+    <p>_inmmserv.exeはプレイヤーの制御を行うプログラムで、_inmm.dllから起動されます。_inmmserv.exeは_inmmcnf.exeと同じフォルダに置いてください。</p>
+    <p>以前のバージョンの_inmm.dllを使っている方は、それぞれのファイルを以前のものと置き換えてください（別のフォルダにコピーした_inmm.dllも更新するのを忘れないように！）。</p>
+
+    <div class="footnote">
+        <ol>
+            <li id="doc1_id145" value="1"> _inmm.dllはゲームの実行ファイルと同じフォルダに置いてもかまいませんが、複数のゲームで_inmm.dllを使うようになると最新バージョンへの置き換えが面倒になりますから、windowsフォルダに置くことをお勧めします。
+        </ol>
+    </div>
+
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3><a name="doc1_id150">アンインストール</a></h3>
+
+
+    <ul>
+        <li> まず、パッチを当てた実行ファイルを<a href="?page=nobu_tool_web_archieve_inmm_manual_s3#doc1_revert">元に戻します</a>。
+        <li> インストーラを使った場合は、スタートメニューか[アプリケーションの追加と削除]からアンインストールできます。
+        <li> Zipから手作業でインストールした場合は、圧縮ファイルに含まれていたファイルと、レジストリの<code>HKEY_CURRENT_USER\Software\irori\_inmm.dll</code>以下のキーをすべて削除してください。
+    </ul>
+</div>

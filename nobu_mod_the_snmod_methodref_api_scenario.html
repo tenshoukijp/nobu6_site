@@ -1,0 +1,59 @@
+%(hilight)s
+<div class="content-box mb-3 content-lighten">
+	<h2><i class="fa fa-book fa-fw"></i>シナリオ</h2>
+	<p>今実行しているゲームのシナリオ番号（１～６）や、シナリオ名「信長の誕生　(１５３４年)」などを得るためのAPIです。</p>
+	<p>シナリオによって、処理を変更する必要性が出た、といった場合に利用してください。</p>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_scenario_01.png"></p>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>シナリオに関するイベントハンドラ</h3>
+	<p>
+		シナリオのタイトルや説明文を変更するには<br>
+		<a href="?page=nobu_mod_the_snmod_methodref_on_viewscenariodetail">On_シナリオ説明表示直前</a> を利用してください。
+	</p>
+	<p>
+		シナリオで設定されている値を変更するには<br>
+		<a href="?page=nobu_mod_the_snmod_methodref_on_selectscenarioafter">On_シナリオデータ反映直後</a> を利用してください。
+	</p>
+	<p>
+		シナリオで演出などを入れるのは<br>
+		<a href="?page=nobu_mod_the_snmod_methodref_on_selectscenariodaimyo">On_シナリオ大名選択直前</a> が適している場合もあります。
+	</p>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>メイン画面中だけではなく、戦争中も同様に機能する。</h3>
+          <div class="code">
+            <pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+	int iScenarioNo = Get_現在のシナリオ番号();
+	string curScenarioName = Get_シナリオ名(iScenarioNo);
+
+	デバッグ出力 &lt;&lt; &quot;シナリオはメニューの上から、&quot; &lt;&lt; iScenarioNo &lt;&lt; &quot;番目です&quot; &lt;&lt; endl;
+	デバッグ出力 &lt;&lt; &quot;シナリオ名は、&quot; &lt;&lt; curScenarioName &lt;&lt; &quot;です&quot; &lt;&lt; endl;
+
+}
+</pre>
+	</div>
+</div>
+
+
+<div class="content-box mb-3 content-lighten">
+	<h3>メイン画面中だけではなく、戦争中も同様に機能する。</h3>
+          <div class="code">
+            <pre class="brush:ps;">
+シナリオはメニューの上から、3番目です
+シナリオ名は、 桶狭間の合戦 （１５６０年） です
+</pre>
+	</div>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>より詳細を知るには...</h3>
+	<p>
+		「シナリオ」に関する主な所は以上となります。
+		詳しくは「シナリオ情報型.h」を参照してください。
+	</p>
+</div>

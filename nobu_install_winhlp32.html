@@ -1,0 +1,120 @@
+<div class="content-box mb-3 content-lighten">
+    <h2><i class="fa fa-question fa-fw"></i>ヘルプファイル(ten95.hlp)が見れない場合の対処</h2>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>概要</h3>
+    <p>
+        以下の説明は、Windows 10以降など、「.hlp」ファイルの表示が「完全に未サポート」となったOSを使用している人に向けて、<br>
+        天翔記において、.hlpファイルを表示するための対処方法を記載しています。<br>
+    </p>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>Windows Vista ～ Windows8.0/8.1の人</h3>
+    <p>
+        Windows Vista ～ Windows 8.1 は「<a href="https://support.microsoft.com/ja-jp/kb/917607">こちら</a>」の マイクロソフトのページでサポートされています。<br>
+    </p>
+</div>
+<div class="content-box mb-3 content-lighten">
+
+    <h3>Windows10以降の人は、WinHlp32.exeインストールバッチファイルが有力な方法</h3>
+    <p><a href="https://www.google.co.jp/search?hl=ja&q=Windows10%E7%94%A8WinHlp32.exe%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB%E3%83%90%E3%83%83%E3%83%81%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB&lr=lang_ja&rlz=&gws_rd=ssl">Windows10用WinHlp32.exeインストールバッチファイル</a>などを使用するのは１つの有力な手法です。</p>
+    <p>
+        但し、大きなWindows 10 更新のタイミングでは、ファイル構成の手戻りが発生することもあり、<br>
+        再度インストールする必要性もあることでしょう。
+    </p>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>Windows10以降の人は、Windows XP用のWinHlp32.exeをコピーする方法も有力な方法</h3>
+    <p>
+        Windows XP の「C:\Windowsフォルダ」内にある「WinHlp32.exe」のファイルをWindows10以降へとコピーして、<br>
+        単純に利用する方法です。
+    </p>
+    <fieldset class="alert alert-info">
+        <legend>古いOSからではなく直接Microsoftのサイトから入手する方法</legend>
+        <a href="https://www.catalog.update.microsoft.com/Search.aspx?q=%28KB936929%29">https://www.catalog.update.microsoft.com/Search.aspx?q=%28KB936929%29</a><br>
+        ここから「WinXPSP3アップデータ(KB936929)」を右端の「ダウンロード」を押してダウンロード。<br>
+        <br>
+        .exeファイルですが、実際は「cab圧縮」なので、拡張子を「.cab」へと変更する。<br>
+        &nbsp;&nbsp;↓<br>
+        「<a href="https://sevenzip.osdn.jp/">7-zip</a>」など「比較的強力な解凍ツール」で解凍する。<br>
+        (<font color="red">Windows10以降の標準のExplorerの解凍機能では解凍できないので注意</font>)<br>
+        &nbsp;&nbsp;↓<br>
+        解凍し、i386フォルダ内の「winhlp32.ex_」があるので取り出す。<br>
+        &nbsp;&nbsp;↓<br>
+        実は、<font color="red">この「<b>winhlp32.ex_も圧縮されたファイル(cab圧縮)</b></font>」なので、拡張子を「.cab」へと変更し、「winhlp32.cab」とする。<br>
+        &nbsp;&nbsp;↓<br>
+        この「winhlp32.cab」を<font color="red"><b>再び解凍ツール</b></font>で解凍。<br>
+        &nbsp;&nbsp;↓<br>
+        「黄色い？アイコン」の「winhlp32.exe」を天翔記フォルダーにコピー。<br>
+        &nbsp;&nbsp;↓<br>
+        （以下の解説へ続く）<br>
+    </fieldset>
+    <ul>
+        <li>
+            Windows XP～Windows7の「C:\Windowsフォルダ」から、<b>WinHlp32.exe </b>を、 <br>
+            天翔記フォルダ(tenshou.exeと同じフォルダ)にコピーします。<br>
+            <br>
+            その際、後々同名ファイル問題などが起きないよう、<span class="negative">「WinHlpXP.exe」</span>とファイル名を変更してください。
+        <li>
+            ten95.hlpファイルを、WinHlpXP.exeファイルへとドラッグすることで、閲覧できるようになります。<br>
+            <br>
+        <li>
+            TSModを導入している場合は、Windows8.1以前同様に、「天翔記起動時のヘルプメニューの操作ガイド」から直接閲覧可能となります。<br>
+            <br>
+            <img src="./cnt_init/cnt_install_winhlpxp_02.png"><br>
+            <br>
+    </ul>
+    </ul>
+
+    <!--
+
+<a href="https://ja.wikipedia.org/wiki/Microsoft_WinHelp">WinHelp</!--a>は2015年8月現在、既にマイクロソフトのサポートから外れた仕組みとなります。<br>
+ </p>
+ <li><h3>ダウンロード</h3>
+ <p><span class="negative">以下のファイルはChromeやFirefoxで開くと、ウィルスに誤爆されやすいようです。</span><br>
+     <span class="positive">IE系だと無事にダウンロードしやすいようです。</span></p>
+ <dl>
+     <dt>
+     <div class="download_file">DOWNLOAD ⇒ <a href="%(file)s">WinHlpXP.zip</a>ファイル。</div>
+     </dt>
+     <dd>
+     <div class="update_time">└更新日 %(year)04d/%(mon)02d/%(mday)02d</div>
+     </dd>
+ </dl>
+
+ <li><h3>対象プラットフォーム</h3>
+ <ul>
+     <li>Windows 10。<br>
+
+     <li>Windows Vista ～ Windows 8.1 は「<a href="https://support.microsoft.com/ja-jp/kb/917607">こちら</a>」の マイクロソフトのページでサポートされています。<br>
+ </ul>
+
+ <li><h3>使い方</h3>
+ <ol>
+     <li>上記プログラムを、ダウンロード。zipを解凍し、<b>WinHlpXP.exe </b>を、 <br>
+     天翔記フォルダ(tenshou.exeと同じフォルダ)にコピーします。<br>
+     <br>
+
+     <li>ten95.hlpファイルを、WinHlpXP.exeファイルへとドラッグすることで、閲覧できるようになります。<br>
+     <br>
+     <li>TSModを導入している場合は、Windows8.1以前同様に、「天翔記起動時のヘルプメニューの操作ガイド」から直接閲覧可能となります。<br>
+     <br>
+     <img src="./cnt_init/cnt_install_winhlpxp_02.png"><br>
+     <br>
+</ol>
+<li><h3>補足</h3>
+<ol>
+     <li>必要性に応じて、.hlpファイルの「アプリの関連付け」を先ほどのWinHlpXP.exeに変更してください。<br>
+     (この変更は天翔記の範囲ではなく、「.hlp」という拡張子のファイルをどのように扱うか？ という問題への対処となります。)<br>
+     <img src="./cnt_init/cnt_install_winhlpxp_01.png"><br>
+     <br>
+     <div style="margin-left: 280px">↓</div>
+     <br>
+     <img src="./cnt_init/cnt_install_winhlpxp_03.png"><br>
+     <br>
+     <br>
+     <li>あまりお勧めしませんが、全ての.hlpの動作に関して、かつての動作を希望する、という場合は、Windows10のWinHlp32.exeを、古いファイルで上書きするという強引な手段をとる必要があります。<br>
+     即ち、この「WinHlpXP.exe」のファイル名を「<b>WinHlp32.exe</b>」と変更し、「C:\Windows ディレクトリ に既に存在するWinHlp32.exe」を上書きしてください。<br>
+ </ol>
+
+< -->

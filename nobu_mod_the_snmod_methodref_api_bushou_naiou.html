@@ -1,0 +1,204 @@
+%(hilight)s
+<div class="content-box mb-3 content-lighten">
+	<h2><i class="fa fa-book fa-fw"></i>武将 - 内応・遺恨</h2>
+	<p>武将の内応や恨みに関するAPIの説明となります。
+	</p>
+</div>
+
+
+<div class="content-box mb-3 content-lighten">
+	<h3>内応状態 と 内応先の大名</h3>
+	<p>内応先の大名があることを示す。「内応先の大名」のデータだけあれば内応状態かどうかはわかるのであるが、<br>
+	データはなぜか２つで１セットである。</p>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_bushou_37.png"></p>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_bushou_16.png"></p>
+	<blockquote>p武将情報[ix].内応状態</blockquote>
+	<blockquote>p武将情報[ix].内応先大名【大名番号】</blockquote>
+	<p>内応状態がtrueなら、内応先大名【大名番号】 には内応先の大名の番号が格納されている。</p>
+	<p>内応状態がfalseなら、内応先大名【大名番号】は0xFFFFであるべきである。</p>
+	<h4>全ての現役と軍団長の中で、内応している武将、内応先はどの大名なのか確かめる</h4>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+	// 内応状態の時、内応先の大名がおり、その大名が存命ならば、その名前を表示する
+	for (int iBushouID = 0; iBushouID &lt; 最大数::武将情報::配列数; iBushouID++) {
+		if (p武将戸籍情報[iBushouID].状態 == 状態::現役 || p武将戸籍情報[iBushouID].状態 == 状態::軍団長) {
+			if (p武将情報[iBushouID].内応状態) {
+
+				デバッグ出力 &lt;&lt; Get_名字(iBushouID) + Get_名前(iBushouID) &lt;&lt; &quot;は内応状態にあります。&quot; &lt;&lt; endl;
+
+				bool 内応先大名は有効である = false;
+				int iDaimyoID = p武将情報[iBushouID].内応先大名【大名番号】 - 1;
+				if (0 &lt;= iDaimyoID &amp;&amp; iDaimyoID &lt; 最大数::大名情報::配列数) {
+					int iDaimyoBushouID = p大名情報[iDaimyoID].大名【武将番号】 - 1;
+
+					if (0 &lt;= iDaimyoBushouID &amp;&amp; iDaimyoBushouID &lt; 最大数::武将情報::配列数) {
+
+						内応先大名は有効である = true;
+						デバッグ出力 &lt;&lt; &quot;内応先の大名は、&quot; &lt;&lt; Get_名字(iDaimyoBushouID) + Get_名前(iDaimyoBushouID) &lt;&lt; &quot;が支配する大名家です。&quot; &lt;&lt; endl;
+					}
+				}
+
+				// 
+				if (内応先大名は有効である == false) {
+					デバッグ出力 &lt;&lt; &quot;しかしながら、内応先の大名は有効ではありません。&quot; &lt;&lt; endl;
+				}
+			}
+		}
+	}
+}
+</pre>
+	</div>
+
+	<h4>特定の武将を特定の大名へと内応させる</h4>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+	int i勝家BushouID = Get_武将番号【配列用】(顔番号::柴田勝家);
+	int i信玄BushouID = Get_武将番号【配列用】(顔番号::武田晴信);
+
+	// 勝家も信玄も532枠にいる
+	if (0 &lt;= i勝家BushouID &amp;&amp; i勝家BushouID &lt; 最大数::武将情報::配列数 &amp;&amp;
+		0 &lt;= i信玄BushouID &amp;&amp; i信玄BushouID &lt; 最大数::武将情報::配列数) {
+
+		// 勝家が現役 もしくは 勝家が軍団長
+		if (p武将戸籍情報[i勝家BushouID].状態 == 状態::現役 || p武将戸籍情報[i勝家BushouID].状態 == 状態::軍団長) {
+
+			// 信玄が大名なら
+			if (p武将戸籍情報[i信玄BushouID].状態 == 状態::大名) {
+
+				p武将情報[i勝家BushouID].内応状態 = true;
+
+				// 大名たる信玄が所属している大名家の番号を、勝家の内応先大名番号として入れる
+				p武将情報[i勝家BushouID].内応先大名【大名番号】 = p武将情報[i信玄BushouID].所属大名【大名番号】;
+
+				デバッグ出力 &lt;&lt; &quot;柴田勝家は武田晴信に内応しました&quot; &lt;&lt; endl;
+			}
+		}
+	}
+}
+</pre>
+	</div>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_bushou_54.png"></p>
+
+	<h4>特定の武将の内応状態をクリア</h4>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+	int i勝家BushouID = Get_武将番号【配列用】(顔番号::柴田勝家);
+
+	if (0 &lt;= i勝家BushouID &amp;&amp; i勝家BushouID &lt; 最大数::武将情報::配列数) {
+		p武将情報[i勝家BushouID].内応状態 = false;
+		p武将情報[i勝家BushouID].内応先大名【大名番号】 = 0xFFFF;
+	}
+}
+</pre>
+	</div>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>遺恨状態</h3>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_bushou_38.png"></p>
+	<p>遺恨状態は、武将が「現在、仕えている」大名に対してのみ有効なフラグ。</p>
+	<p>５等級以上の家宝を没収した場合や、大名死後の家督相続で、新大名との相性差がとても大きい場合、<br>
+		遺恨状態となる。</p>
+	<p>大名家から出奔し浪人化したり、一度、他の大名家に仕えると遺恨状態ではなくなる。</p>
+	<blockquote>p武将情報[ix].遺恨状態</blockquote>
+	<h4>遺恨状態の参照</h4>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+	for (int iBushouID = 0; iBushouID &lt; 最大数::武将情報::配列数; iBushouID++) {
+
+		if (p武将情報[iBushouID].遺恨状態) {
+
+			デバッグ出力 &lt;&lt; Get_名字(iBushouID) + Get_名前(iBushouID) &lt;&lt; &quot;は&quot; &lt;&lt; &quot;遺恨状態です&quot; &lt;&lt; endl;
+
+			int iDaimyoID = p武将情報[iBushouID].所属大名【大名番号】 - 1;
+			if (0 &lt;= iDaimyoID &amp;&amp; iDaimyoID &lt; 最大数::大名情報::配列数) {
+				int iDaimyoBushouID = p大名情報[iDaimyoID].大名【武将番号】 - 1;
+				if (0 &lt;= iDaimyoBushouID &amp;&amp; iDaimyoBushouID &lt; 最大数::武将情報::配列数) {
+
+					デバッグ出力 &lt;&lt; &quot;怒りの矛先の大名は自身が仕える、&quot; &lt;&lt; Get_名字(iDaimyoBushouID) + Get_名前(iDaimyoBushouID) &lt;&lt; &quot;です&quot; &lt;&lt; endl;
+
+				}
+			}
+		}
+	}
+}
+		</pre>
+	</div>
+
+	<h4>現役や軍団長を全員、遺恨状態にする</h4>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+	// 全ての現役や軍団長が遺恨状態。
+	for (int iBushouID = 0; iBushouID &lt; 最大数::武将情報::配列数; iBushouID++) {
+		if (p武将戸籍情報[iBushouID].状態 == 状態::現役 || p武将戸籍情報[iBushouID].状態 == 状態::軍団長) {
+			p武将情報[iBushouID].遺恨状態 = 1;
+		}
+	}
+}
+		</pre>
+	</div>
+
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>忠誠</h3>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_bushou_10.png"></p>
+	<blockquote>p武将情報[ix].忠誠</blockquote>
+	<p>０～100の値を取ります。0は内応や裏切りをしやすい状態です。<br>
+		一方、やや裏切りやすい性格であっても忠誠100があれば、いきなり裏切るといったことは起きにくいと言えます。</p>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_相場変更直前() {
+
+	for (int iBushouID = 0; iBushouID &lt; 最大数::武将情報::配列数; iBushouID++) {
+
+		// 一般の「宿老・家老・部将・侍大将・足軽頭」、そして「軍団長」 が対象
+		if (p武将戸籍情報[iBushouID].状態 == 状態::現役 || p武将戸籍情報[iBushouID].状態 == 状態::軍団長) {
+
+			// 義理が4以下の武将は相場が切り替わるごとに（＝季節ごとに）、忠誠が5減っていく
+			if (p武将情報[iBushouID].義理 &lt;= 4) {
+
+				int 忠誠 = p武将情報[iBushouID].忠誠; // アンダーフローを防止するため、一旦 int で受け取る
+				忠誠 = 忠誠 - 5;
+				if (忠誠 &lt; 0) {
+					忠誠 = 0;
+				}
+				p武将情報[iBushouID].忠誠 = 忠誠;
+
+			}
+			// 義理が11以上の武将は相場が切り替わるごとに（＝季節ごとに）、忠誠が5増える
+			else if (p武将情報[iBushouID].義理 &gt;= 11) {
+
+				int 忠誠 = p武将情報[iBushouID].忠誠; // オーバーフローを防止するため、一旦 int で受け取る
+				忠誠 = 忠誠 + 5;
+				if (忠誠 &gt; 100) {
+					忠誠 = 100;
+				}
+				p武将情報[iBushouID].忠誠 = 忠誠;
+
+			}
+		}
+	}
+}
+		</pre>
+	</div>
+</div>
+
+
+<div class="content-box mb-3 content-lighten">
+	<h3>より詳細を知るには...</h3>
+	<p>
+		「武将 － 内応・遺恨」に関する主な所は以上となります。<br>
+		詳しくは「武将情報型.h」を参照してください。
+	</p>
+</div>

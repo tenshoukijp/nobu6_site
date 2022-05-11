@@ -1,0 +1,121 @@
+%(hilight)s
+<div class="content-box mb-3 content-lighten">
+	<h2><i class="fa fa-book fa-fw"></i>ダイアログ - 大名ダイアログ</h2>
+	<p>大名のリストを表示して、そこから選択してもらうためのダイアログを表示するAPIです。</p>
+	<p>大小関わらず、自作の独自イベントなどで利用することになるでしょう。</p>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>int 選択大名ダイアログ表示(番号リスト型 大名番号【配列用】リスト, int カラムオプション, int 主観大名番号【配列用】)</h3>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+	// 朝廷との友好が60を超える大名家のリストを表示し、選択する
+	番号リスト型 ShowDaimyoList;
+
+	for (int iDaimyoID = 0; iDaimyoID &lt; 最大数::大名情報::配列数; iDaimyoID++) {
+
+		if ((p大名情報[iDaimyoID].朝廷) &gt; 60) {
+			ShowDaimyoList.push_back(iDaimyoID);
+		}
+	}
+
+	int iSelectedDaimyoID = 選択大名ダイアログ表示(ShowDaimyoList, カラム::大名::デフォルト);
+
+	if (0 &lt; iSelectedDaimyoID &amp;&amp; iSelectedDaimyoID &lt; 最大数::大名情報::配列数) {
+
+		int iBushouID = p大名情報[iSelectedDaimyoID].大名【武将番号】 - 1;
+		if (0 &lt;= iBushouID &amp;&amp; iBushouID &lt; 最大数::武将情報::配列数) {
+			デバッグ出力 &lt;&lt; Get_名字(iBushouID) + Get_名前(iBushouID) &lt;&lt; &quot;の支配する大名が選択されました&quot; &lt;&lt; endl;
+		}
+	}
+	else {
+		デバッグ出力 &lt;&lt; &quot;大名は選択されませんでした&quot; &lt;&lt; endl;
+	}
+}
+		</pre>
+	</div>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_dialog_daimyo_01.png"></p>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>カラムを指定することで、表示の列をカスタムすることが出来ます</h3>
+	<div class="code">
+		<pre class="brush:cpp;">
+// このカラム項目は ScenarioMod 2.7.9.7 で追加された。
+int iSelectedDaimyoID = 選択大名ダイアログ表示(ShowDaimyoList, カラム::大名::友好|カラム::大名::同盟|カラム::大名::朝廷|カラム::大名::朝廷官位| カラム::大名::幕府役職);
+		</pre>
+	</div>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_dialog_daimyo_02.png"></p>
+	<div class="code">
+		<pre class="brush:cpp;">
+int iSelectedDaimyoID = 選択大名ダイアログ表示(ShowDaimyoList, カラム::大名::大名);
+	</pre>
+	</div>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_dialog_daimyo_03.png"></p>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>ターン大名視点ではなく、別大名視点の一覧を表示することも出来ます。</h3>
+
+	<p>例えば「武田信玄のターン」でありながらも、 「織田信長の治める国」の視点から見た大名リストを見せたいと思うかも知れない。<br>
+		そういった場合は以下のようにする。<br>
+	  </p>
+
+	  <div class="code">
+		<pre class="brush:cpp;">
+番号リスト型 myList;
+myList = Get_大名番号リスト【配列用】();
+int iSelectedDaimyoID2 = 選択大名ダイアログ表示(myList, カラム::大名::デフォルト, 30); // 30 は織田信長の「大名番号【配列用】」だと仮定した場合(実際には決め打ちではなく計算が必要)
+</pre>
+	  </div>
+	  <p>実践では、30といった数字は以下のように計算して出すことになるでしょう。</p>
+
+	<div class="code">
+		<pre class="brush:cpp;highlight:[20]">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+	// 朝廷との友好が60を超える大名家のリストを表示し、選択する
+	番号リスト型 ShowDaimyoList;
+
+	for (int iDaimyoID = 0; iDaimyoID < 最大数::大名情報::配列数; iDaimyoID++) {
+
+		if ((p大名情報[iDaimyoID].朝廷) > 60) {
+			ShowDaimyoList.push_back(iDaimyoID);
+		}
+	}
+
+	// 織田信長が所属する大名番号を取得する
+	int i織田信長BushouID = Get_武将番号【配列用】(顔番号::織田信長);
+	if (0 &lt;= i織田信長BushouID &amp;&amp; i織田信長BushouID &lt; 最大数::武将情報::配列数) {
+		if (p武将戸籍情報[i織田信長BushouID].身分 = 身分::大名) {
+			int i織田信長が所属する大名番号【配列用】 = p武将情報[i織田信長BushouID].所属大名【大名番号】 - 1;
+			if (0 &lt;= i織田信長が所属する大名番号【配列用】 &amp;&amp; i織田信長が所属する大名番号【配列用】 &lt; 最大数::大名情報::配列数) {
+
+				// だれのプレイヤーターンかは関係なく「織田信長(の所属する大名家)」基準の表示を見る。
+				int iSelectedDaimyoID = 選択大名ダイアログ表示(ShowDaimyoList, カラム::大名::デフォルト, i織田信長が所属する大名番号【配列用】);
+
+				if (0 &lt; iSelectedDaimyoID &amp;&amp; iSelectedDaimyoID &lt; 最大数::大名情報::配列数) {
+
+					int iBushouID = p大名情報[iSelectedDaimyoID].大名【武将番号】 - 1;
+					if (0 &lt;= iBushouID &amp;&amp; iBushouID &lt; 最大数::武将情報::配列数) {
+						デバッグ出力 &lt;&lt; Get_名字(iBushouID) + Get_名前(iBushouID) &lt;&lt; &quot;の支配する大名が選択されました&quot; &lt;&lt; endl;
+					}
+				}
+				else {
+					デバッグ出力 &lt;&lt; &quot;大名は選択されませんでした&quot; &lt;&lt; endl;
+				}
+			}
+		}
+	}
+}		</pre>
+	</div>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_dialog_daimyo_04.png"></p>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>より詳細を知るには...</h3>
+	<p>
+		「大名ダイアログ」に関する主な所は以上となります。
+		詳しくは「ダイアログ情報型.h」を参照してください。
+	</p>
+</div>

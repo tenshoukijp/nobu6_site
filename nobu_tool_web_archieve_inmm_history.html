@@ -1,0 +1,527 @@
+﻿<div class="content-box mb-3 content-lighten">
+    <h1>
+        <i class="fa fa-history fa-fw"></i>更新履歴
+    </h1>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>2006/04/08 Version 2.38</h3>
+    <ul>
+        <li>プレイリスト(m3u, cue)再生に対応。</li>
+    </ul>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>2006/02/27 Version 2.37</h3>
+    <ul>
+        <li>MinDeaD BlooD に対応。</li>
+    </ul>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>2005/11/06 Version 2.36</h3>
+    <ul>
+        <li>初回起動時にプレイヤーの設定が正しく初期化されていなかった。</li>
+        <li>Winampで曲停止時にボリュームを元に戻すのをやめた。</li>
+        <li>デフォルトのパッチ方式を変更。</li>
+        <li>既にパッチが当てられている場合、元のファイルに戻せるようにした。</li>
+        <li>TRACEログレベルを追加。</li>
+    </ul>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>2004/07/27 Version 2.35</h3>
+    <ul>
+        <li>エラーをログファイルに書き出せるようにした。</li>
+        <li>_inmmservの出すメッセージボックスが最前面に来るようにした。</li>
+        <li>[仮想AUXデバイスを有効にする]オプションを廃止した。</li>
+    </ul>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>2004/05/23 Version 2.34a</h3>
+    <ul>
+        <li>_inmmcnfにファイルをドロップしてパッチを当てたときもレジストリを更新するようにした。</li>
+        <li>_inmmのレジストリ設定が無い状態でゲームを起動するとランタイムエラーとなるバグを修正。</li>
+    </ul>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>2004/04/30 Version 2.34</h3>
+    <ul>
+        <li>_inmm.ini のトラック指定で、# で始まる行を読み飛ばすようにした。（EXTM3U形式を読めるように）</li>
+        <li>Digital CD Player で、実際に再生が始まってからゲームに処理を返すようにした。</li>
+        <li>Digital CD Player の「再生位置取得機能を使わない」オプションを追加。</li>
+        <li>_inmmcnf のエディタに _inmm.ini をドロップすると開くようにした。</li>
+    </ul>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>2003/11/17 Version 2.33</h3>
+    <ul>
+        <li>CommandString関係を強化(「黒の図書館」に対応)。</li>
+        <li>トラック0を再生しようとしたときエラーを表示しないようにした。</li>
+        <li>_inmm.iniエディタのソート機能を復活。</li>
+    </ul>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>2003/08/24 Version 2.32</h3>
+    <ul>
+        <li>DirectShowでの再生機能を追加。</li>
+        <li>_svfw32.dllに対応した機能拡張。</li>
+        <li>CommandString関係を強化。</li>
+    </ul>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>2003/04/03 Version 2.31</h3>
+    <ul>
+        <li>mciSendStringとmciSendCommandの両方を使うプログラムに対応。</li>
+        <li>_inmm.iniのWA_OutDllの指定が反映されないバグを修正。</li>
+        <li>インポートテーブル以外の部分も書き換えるパッチ機能を追加。</li>
+        <li>_inmmcnfの[パッチ]ページの検索機能を改良。</li>
+        <li>_inmmcnf.iniの Group= の指定を必須にした。</li>
+    </ul>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>2002/11/28 Version 2.30b</h3>
+    <ul>
+        <li>変なトラック番号を再生しようとするバグを修正。</li>
+        <li>Nscripterで曲の先頭でループする不具合を修正。</li>
+        <li>「無効なMCIデバイスID」エラーが出るバグを修正。</li>
+        <li>_inmm.iniのデフォルトの保存先の規則を変えた。</li>
+    </ul>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>2002/11/23 Version 2.30a</h3>
+    <ul>
+        <li>D.O.系ゲームでLilithを使う設定にすると起動しない不具合を修正。</li>
+        <li>範囲外のトラックの長さを取得しようとした場合、メッセージを表示しないようにした。</li>
+        <li>_inmm.iniが存在しないときランタイムエラーが出るのを修正。</li>
+        <li>_inmm.iniの保存先フォルダの自動設定が壊れていた。</li>
+    </ul>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>2002/11/12 Version 2.30</h3>
+    <ul>
+        <li>処理の一部を別のプログラム_inmmserv.exeに分離した。</li>
+        <li>_inmmcnfの[プレイヤー]ページのインターフェースを変更。</li>
+    </ul>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>2002/03/14 Version 2.29</h3>
+    <ul>
+        <li>KanonのOP,EDが鳴らないバグを修正。</li>
+        <li>Lilithのボリューム変更がおかしかった。</li>
+    </ul>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>2001/12/18 Version 2.28</h3>
+    <ul>
+        <li>LilithでのCD-DA再生に対応。</li>
+        <li>Watcomのリンカで作成されたexe/dllにパッチを当てようとするとアクセス違反していた。</li>
+        <li>プレイヤーにコマンドライン引数を渡せるようにした。</li>
+        <li>ファイルの存在検査をスキップできるようにした。</li>
+    </ul>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>2001/09/30 Version 2.27</h3>
+    <ul>
+        <li>WinampでのCD再生に対応。</li>
+        <li>CDを再生するドライブを選べるようにした。</li>
+    </ul>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>2001/08/03 Version 2.26</h3>
+    <ul>
+        <li>SoundPlayer Lilithに対応。</li>
+        <li>mciSendStringでseekコマンドを処理していなかった。</li>
+    </ul>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>2001/07/07 Version 2.25</h3>
+    <ul>
+        <li>1トラックに対して複数ファイルを指定するとランダムで再生する機能を追加。</li>
+        <li>WinampとSCMPXのリピートをオフにするようにした。</li>
+        <li>効果音をDirectSoundにリダイレクトするときACMを通すようにした。</li>
+    </ul>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>2001/05/23 Version 2.24a</h3>
+    <ul>
+        <li>曲がループしないバグを修正。</li>
+    </ul>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>2001/05/05 Version 2.24</h3>
+    <ul>
+        <li>CDオーディオの位置情報の扱いを改良。</li>
+        <li>アンインストール情報をHKEY_CURRENT_USERからも探すようにした。</li>
+        <li>[再生方法]-[ファイルの種類]で、形式の区切りの|が使えていなかった。</li>
+    </ul>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>2001/04/09 Version 2.23</h3>
+    <ul>
+        <li>古いSYSTEM35.EXEにもパッチを当てられるようにした。</li>
+        <li>mciSendString()で、すべてのalias指定をcdaudioのものとしてしまっていたバグを修正。</li>
+    </ul>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>2001/03/27 Version 2.22</h3>
+    <ul>
+        <li>曲の変わり目でフリーズすることがあった。</li>
+        <li>DSOUND.DLLを自前でロードするのをやめた。</li>
+        <li>_inmmcnf.exeのアイコンを変更。</li>
+        <li>Digital CD Playerのオプションに「wave出力の空きをチェックしない」を追加。</li>
+    </ul>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>2001/03/02 Version 2.21</h3>
+    <ul>
+        <li>再生終了を別スレッドで待つようにした。</li>
+        <li>MCIのエミュレーション（mciSendString()関係、MCI_NOTIFY関係）を改善。</li>
+        <li>「再生方法」のインターフェイスを変更。</li>
+        <li>都合によりヘルプがHTML形式に。</li>
+    </ul>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>2000/11/28 Version 2.20</h3>
+    <ul>
+        <li>_inmm.iniエディタの[追加]ボタンで間違ったファイル名を追加してしまうことがあった。</li>
+        <li>mciSendString()でのwait、notifyフラグに対応。</li>
+    </ul>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>2000/11/12 Version 2.19</h3>
+    <ul>
+        <li>MCI_SEEKしてからMCI_PLAYを発行するゲームに対応。</li>
+        <li>16ビットexeにパッチを当てようとしたときのメッセージを変更。</li>
+        <li>_inmmcnf.iniの読み込み方をちょっと変える。</li>
+    </ul>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>2000/10/25 Version 2.18</h3>
+    <ul>
+        <li>日本語環境以外では英語でメッセージを表示するようにした。</li>
+        <li>ファイルタイプにWMA形式を追加。</li>
+        <li>ボリューム変更関連のbugfix。</li>
+    </ul>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>2000/10/06 Version 2.17c</h3>
+    <ul>
+        <li>Win2000で、dllにパッチを当てるゲームの一部が起動できない不具合を修正。</li>
+    </ul>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>2000/09/27 Version 2.17b</h3>
+    <ul>
+        <li>Win2000でゲームが起動できなくなるバグを修正。</li>
+    </ul>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>2000/09/16 Version 2.17a</h3>
+    <ul>
+        <li>MCIでボリューム変更が効くようにした。</li>
+        <li>ちょっとした修正をいくつか。</li>
+    </ul>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>2000/09/07 Version 2.17</h3>
+    <ul>
+        <li>仮想auxデバイス機能を追加。（win2000でCDフェードが効かないゲーム対策）</li>
+        <li>CD再生に使うプレイヤーを_inmm.iniに記述できるようにした。</li>
+        <li>_inmmcnfのiniエディタに、CDのトラック番号記述のための機能を追加。ソート機能は廃止。</li>
+    </ul>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>2000/09/05 Version 2.16a</h3>
+    <ul>
+        <li>MCIからの再生に失敗することがあるバグを修正。</li>
+    </ul>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>2000/09/02 Version 2.16</h3>
+    <ul>
+        <li>オーディオミキサによるCDボリューム変更に対応。</li>
+        <li>_inmm.iniでDigital CD Playerの音量を設定可能にした。</li>
+        <li>_inmmcnfの[パッチ]ページに「全タイトルを表示」と検索ボタンを追加。</li>
+    </ul>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>2000/07/25 Version 2.15</h3>
+    <ul>
+        <li>Digital CD Playerに対応。(もろぼし☆らむさんに感謝！）</li>
+        <li>トラックの長さを要求されたとき、ちゃんと計算して返すようにした(笑)。</li>
+    </ul>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>2000/03/20 Version 2.14a</h3>
+    <ul>
+        <li>排他制御が不完全だった。</li>
+    </ul>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>2000/03/07 Version 2.14</h3>
+    <ul>
+        <li>マニュアルをWinHelp形式にした。</li>
+        <li>こまごまとした修正。</li>
+    </ul>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>2000/02/22 Version 2.13</h3>
+    <ul>
+        <li>パッチを当てるファイルのバックアップを自動的にとるようにした。</li>
+        <li>パッチを当てる対象のファイルが書き込み禁止だった場合、書き換えるかどうか尋ねるようにした。</li>
+        <li>Winamp2.60でページ違反が起こる不具合を修正。</li>
+        <li>再生方法を_inmm.iniに記述できるようにした。</li>
+        <li>WINMM.DLLを遅延ロードするようにした（欠落エクスポート対策）。</li>
+    </ul>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>Version 2.12</h3>
+    <ul>
+        <li>レジストリのアンインストール情報から登録情報を取得可能にした。</li>
+        <li>登録情報にファイル名まで含まれていたとき、ファイル名を削るようにした。</li>
+    </ul>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>2000/01/15 Version 2.11</h3>
+    <ul>
+        <li>[効果音]オプションに[DirectSoundから出力]を追加。</li>
+    </ul>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>Version 2.10a</h3>
+    <ul>
+        <li>複数のスレッドから_inmm.dllを使用したときの不具合を修正。</li>
+        <li>[致命的でないエラーメッセージも表示]の値が_inmmcnfのチェックボックスの初期値に反映されていなかった。</li>
+    </ul>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>Version 2.10</h3>
+    <ul>
+        <li>日本語以外の環境でも誤動作しないようにした（つもり）。</li>
+        <li>_inmm.iniの形式を拡張。</li>
+        <li>Winampで再生後waveの音量が0になる不具合を修正。</li>
+        <li>拡張子.rmiもMIDIファイルとして認識するようにした。</li>
+        <li>[致命的でないエラーメッセージも表示]オプションを追加。</li>
+    </ul>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>1999/08/02 Version 2.08</h3>
+    <ul>
+        <li>設定プログラムに簡易_inmm.iniエディタを搭載。</li>
+    </ul>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>1999/07/28 Version 2.07</h3>
+    <ul>
+        <li>効果音の検出の強化。</li>
+        <li>2.06ではSCMPXで演奏に失敗することがあった。</li>
+    </ul>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>1999/07/14 Version 2.06</h3>
+    <ul>
+        <li>ボリューム関係のバグ取り。</li>
+        <li>パスにスペースを含むファイルがSCMPXで鳴らなかった。</li>
+        <li>[SCMPXのウィンドウを隠す]オプションを追加。</li>
+    </ul>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>1999/07/01 Version 2.05</h3>
+    <ul>
+        <li>IE4未導入のWindows95で_inmmcnf.exeが動かなくなってた(;_;)</li>
+        <li>一部のゲームでCDのAutoRunから起動すると_inmm.iniを見つけられない不具合に対処。</li>
+        <li>_inmmcnfへのDrag&amp;Dropでパッチを当てられるようにする。</li>
+    </ul>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>1999/06/20 Version 2.04</h3>
+    <ul>
+        <li>こみっくパ～ティ～でCD演奏がうまくいっていなかった。</li>
+        <li>CD指定で最後のトラックを演奏できない不具合を修正。</li>
+        <li>_inmmcnf.iniにMessage1とMessage2を導入。</li>
+        <li>パッチのグループリストをソートするようにした。</li>
+    </ul>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>1999/06/05 Version 2.03</h3>
+    <ul>
+        <li>曲の変わり目で再生コマンドを連発するバグを取る。</li>
+        <li>_inmm.iniに64個を超えたファイルが登録されていると死ぬバグを取る。</li>
+        <li>MCIエミュレートをちょっとだけ改善。</li>
+        <li>パッチを当てるファイルがRead Onlyだったとき、「ファイルが見つかりません」というメッセージが出ていた不具合を修正。</li>
+    </ul>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>1999/05/07 Version 2.02</h3>
+    <ul>
+        <li>WinAMPでのボリューム変更に対応。</li>
+        <li>SCMPXの参照ボタンでWinAMPのパスが設定されてしまうバグを取る。</li>
+        <li>ファイルが見つからないときのメッセージをフルパス表示にする。</li>
+        <li>C++Builder4でコンパイルしたらサイズが小さくなった。（らっき）</li>
+    </ul>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>1999/03/19 Version 2.01</h3>
+    <ul>
+        <li>SCMPXに対応。</li>
+        <li>WinAMPのオプションに[Wave出力の空きをチェックしない]を追加。</li>
+        <li>ちょっとしたBUGFIX。</li>
+    </ul>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>1999/03/14 Version 2.00</h3>
+    <ul>
+        <li>作り直し(^^;</li>
+        <li>WinAMPで曲がループせず終わってしまう不具合の修正</li>
+        <li>_inmmcnf.iniの導入など……いろいろ変わってます(^^;;</li>
+    </ul>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>1998/12/18 Version 1.55</h3>
+    <ul>
+        <li>雪色のカルテに対応。</li>
+        <li>PALETTEに対応。</li>
+        <li>ぱすてるチャイムに対応。</li>
+    </ul>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>1998/12/13 Version 1.54</h3>
+    <ul>
+        <li>ぴあきゃろTOYBOXに対応。</li>
+    </ul>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>1998/11/14 Version 1.53</h3>
+    <ul>
+        <li>ＭＯＯＮ．ＲＥＮＥＷＡＬに対応。</li>
+    </ul>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>Version 1.52</h3>
+    <ul>
+        <li>WithYouの場所をレジストリから探り当てるようにする。</li>
+        <li>WhiteAlbumで絵と音のタイミングが合わないエンバグを直す(;_;)</li>
+    </ul>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>1998/11/01 Version 1.51</h3>
+    <ul>
+        <li>Piaキャロットへようこそ!!２に対応。</li>
+    </ul>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>1998/10/11 Version 1.50</h3>
+    <ul>
+        <li>ＭＯＯＮ．に正式対応。</li>
+        <li>With Youに対応(一曲しかないけどね)。</li>
+        <li>登録情報が無いとき、インストールしたフォルダを自分で指定できるようにする。</li>
+        <li>パッチ当て処理をさらにかしこく。</li>
+    </ul>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>1998/09/15 Version 1.46</h3>
+    <ul>
+        <li>リーフファイト97でロード時にページ違反を起こす不具合を修正。</li>
+    </ul>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>Version 1.45</h3>
+    <ul>
+        <li>MIDIとMP3の切り替えがうまくいかないバグを修正。</li>
+    </ul>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>Version 1.44</h3>
+    <ul>
+        <li>「 が見つかりません」というエラーが出るバグを修正。</li>
+    </ul>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>1998/08/22 Version 1.43</h3>
+    <ul>
+        <li>_inmmcnfが設定を間違えて保存することがあった。</li>
+        <li>演奏するファイルが見つからないときエラーを出すようにする。</li>
+    </ul>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>1998/08/19 Version 1.42</h3>
+    <ul>
+        <li>↓の致命的なバグを修正。(;_;)</li>
+    </ul>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>Version 1.41</h3>
+    <ul>
+        <li>_inmm.iniが見つからないとゲーム終了時に死ぬバグを修正。</li>
+    </ul>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>1998/08/05 Version 1.40</h3>
+    <ul>
+        <li>ONEに対応。</li>
+        <li>初音のないしょでmp3が演奏できないバグに対処。</li>
+        <li>CD音源対応。(^^;</li>
+        <li>細かなバグ修正。</li>
+    </ul>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>1998/07/01 Version 1.32</h3>
+    <ul>
+        <li>さおりんといっしょ!!に対応。</li>
+    </ul>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>1998/06/28 Version 1.31</h3>
+    <ul>
+        <li>WHITE ALBUMへのパッチが死んでた。</li>
+    </ul>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>1998/06/27 Version 1.30</h3>
+    <ul>
+        <li>初音のないしょ!!に対応。</li>
+        <li>mp3codecで鳴らせるようにする。</li>
+        <li>パッチ当て処理をバージョンに依存しないよう改良。</li>
+        <li>WAでデモと音の同期がとれてなかった。</li>
+        <li>その他もろもろ（忘れた(笑)）</li>
+    </ul>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>1998/06/01 Version 1.20</h3>
+    <ul>
+        <li>White Albumに対応。</li>
+        <li>「WinAMPのウィンドウを隠す」オプションの追加。</li>
+    </ul>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>1998/05/18 Version 1.11</h3>
+    <ul>
+        <li>WinAMPの自動起動・終了を改良。</li>
+    </ul>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>1998/05/16 Version 1.10</h3>
+    <ul>
+        <li>WinAMPの自動起動機能を追加。</li>
+        <li>「MP3演奏時に優先的に効果音を鳴らす」オプションの追加。</li>
+        <li>パッチ当てプログラムをGUIに。</li>
+    </ul>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>1998/05/03 Version 1.00</h3>
+    <ul>
+        <li>MP3に対応。</li>
+        <li>パッチ当てプログラムの軽量化。</li>
+    </ul>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>1998/04/29 Version 0.91</h3>
+    <ul>
+        <li>To Heartに対応。</li>
+        <li>パッチ当てプログラムを１つにまとめた。</li>
+        <li>LeafのHPから入手できる最新バージョンに対応。</li>
+    </ul>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>1998/04/25 Version 0.90</h3>
+    <ul>
+        <li>初公開バージョン。</li>
+    </ul>
+</div>

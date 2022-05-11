@@ -1,0 +1,449 @@
+%(hilight)s
+<div class="content-box mb-3 content-lighten">
+	<h2><i class="fa fa-book fa-fw"></i>城</h2>
+	<p>城とは、「二条城」や「躑躅ヶ崎館」や「春日山城」などといった、城のことです。<br>
+	</p>
+	<p>城と一言で言っても３つの概念で構成されます。<br>
+	</p>
+	<ul class="pointlist">
+		<li>
+			<h4>城</h4>
+			<p>城という抽象的なカテゴリの概念。</p>
+			<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_castle_01.png"></p>
+		<li>
+			<h4>「p城情報」という配列</h4>
+			<p>城の一覧リストに相当する「城の配列」の概念。</p>
+			<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_castle_02.png"></p>
+		<li>
+			<h4>p城情報[ix] (0 &lt;= ix &lt; 城の総数)</h4>
+			<p>城の配列のうち、どれか１つの城</p>
+			<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_castle_03.png"></p>
+	</ul>
+	<h4>p城付加情報</h4>
+	<p>城の位置や最大石高など、一部の情報は「p城情報」ではなく「p城付加情報」にあります。</p>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>特定の城に居る武将を求める</h3>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+	int iTargetCastleID = 城配列番号::二条城;
+
+	番号リスト型 list;
+	for (int iBushouID = 0; iBushouID &lt; 最大数::武将情報::配列数; iBushouID++) {
+		int iCastleID = p武将情報[iBushouID].所属居城【城番号】 - 1;
+
+		if (iTargetCastleID == iCastleID) {
+			// 大名・軍団長・現役 を対象としてかき集める
+			if (p武将戸籍情報[iBushouID].状態 &lt;= 状態::現役) {
+				list.push_back(iBushouID);
+			}
+		}
+	}
+
+	// かき集めたリストに対して
+	for (int iBushouID : list) {
+		デバッグ出力 &lt;&lt; iBushouID &lt;&lt; &quot;:&quot; &lt;&lt; Get_名字(iBushouID) &lt;&lt; Get_名前(iBushouID) &lt;&lt; endl;
+	}
+}
+</pre>
+	</div>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>城郭・石高・商業・人口・民忠・徴兵可</h3>
+	<blockquote>p城情報[ix].城郭</blockquote>
+	<blockquote>p城情報[ix].石高</blockquote>
+	<blockquote>p城情報[ix].商業</blockquote>
+	<blockquote>p城情報[ix].人口</blockquote>
+	<blockquote>p城情報[ix].民忠</blockquote>
+	<blockquote>p城情報[ix].徴兵可</blockquote>
+
+	<p>それぞれの最大値・最小値は、ゲーム内のプレイでの最大値、最小値に合わせてください。<br>
+		ゲーム内の最大値を超えて設定した場合にどのような影響が出るのかは未知数です。</p>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_castle_04.png"></p>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+	int CastleID = 城配列番号::二条城;
+
+	p城情報[CastleID].城郭 = 200;
+
+	// 石高の最大値については、p城付加情報 にある
+	int 石高max = p城付加情報[CastleID].最大石高÷10 * 10;
+	p城情報[CastleID].石高 = 石高max;
+
+	// 商業の最大値については、p城付加情報 にある
+	int 商業max = p城付加情報[CastleID].最大商業値;
+	p城情報[CastleID].商業 = 商業max;
+
+	p城情報[CastleID].人口 = 3000;
+
+	p城情報[CastleID].民忠 = 100;
+
+	p城情報[CastleID].徴兵可 = 999;
+}
+</pre>
+	</div>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_castle_13.png"></p>
+	<p>ゲーム上で表示される「人口」の欄は「本来の人口＋徴兵可」の合計値が表示されます。</p>
+	<h4>最大石高や最大商業値は、「p城付加情報」にある</h4>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_castle_09.png"></p>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+	int CastleID = 城配列番号::二条城;
+
+	p城付加情報[CastleID].最大石高÷10 = 250;
+	p城情報[CastleID].石高 = p城付加情報[CastleID].最大石高÷10 * 10;
+
+	p城付加情報[CastleID].最大商業値 = 250;
+	p城情報[CastleID].商業 = p城付加情報[CastleID].最大商業値;
+}
+</pre>
+	</div>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>兵質・鍛冶・馬産地・港・国際港・銀山・金山・一揆扇動</h3>
+	<blockquote>p城情報[ix].兵質</blockquote>
+	<p> (悪=0, 普=1, 良=2)「兵質::悪」～「兵質::良」に対応する。</p>
+	<blockquote>p城情報[ix].鍛冶</blockquote>
+	<blockquote>p城情報[ix].馬産地</blockquote>
+	<blockquote>p城情報[ix].港</blockquote>
+	<blockquote>p城情報[ix].国際港</blockquote>
+	<blockquote>p城情報[ix].銀山</blockquote>
+	<blockquote>p城情報[ix].金山</blockquote>
+	<blockquote>p城情報[ix].一揆扇動</blockquote>
+
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_castle_06.png"></p>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+	int CastleID = 城配列番号::二条城;
+
+	p城情報[CastleID].兵質 = 兵質::良;
+
+	p城情報[CastleID].鍛冶 = true;
+
+	p城情報[CastleID].馬産地 = true;
+
+	p城情報[CastleID].港 = true;
+
+	p城情報[CastleID].国際港 = true;
+
+	p城情報[CastleID].銀山 = true;
+
+	p城情報[CastleID].金山 = true;
+
+	p城情報[CastleID].一揆扇動 = true;
+
+	番号リスト型 城リスト;
+	for (int iCastleID = 0; iCastleID &lt; 最大数::城情報::配列数; iCastleID++) {
+		if (p城情報[iCastleID].国際港 == true) {
+			城リスト.push_back(iCastleID);
+		}
+	}
+	if (城リスト.size() &gt; 0) {
+		int iSelectedCastleID = 選択城ダイアログ表示(城リスト, カラム::城::外貿);
+		if (iSelectedCastleID != 0xFFFF) {
+			デバッグ出力 &lt;&lt; Get_城名(iSelectedCastleID) &lt;&lt; Get_城称(iSelectedCastleID) &lt;&lt; &quot;が選択されました。&quot; &lt;&lt; endl;
+		}
+	}
+}
+</pre>
+	</div>
+	<h4>金山と銀山</h4>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_castle_14.png"></p>
+	<ul>
+		<li>銀山を持っていると、その城の「金山」の評価がＢとなる。
+		<li>金山を持っていると、その城の「金山」の評価がＡとなる。
+		<li>銀山と金山の両方を持っていると、その城の「金山」の評価がＳとなる。
+		<li>両方もっていない場合は、その城の「金山」の評価は×となる。
+	</ul>
+
+</div>
+
+
+<div class="content-box mb-3 content-lighten">
+	<h3>巨城・城絵背景</h3>
+	<blockquote>p城情報[ix].巨城</blockquote>
+	<p>(安土城のような超巨城にグラフィックを変更する方法はまだわかっていません)</p>
+	<blockquote>p城情報[ix].城絵背景</blockquote>
+
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_castle_08.png"></p>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+	int CastleID = 城配列番号::今浜城;
+
+	p城情報[CastleID].巨城 = 1; // 城郭の最大数が200→250へとアップし、画面上のアイコンも大きくなる。
+	画面更新(); // 城を大きくしただけではアイコンが大きくならないので、更新する。
+
+	if (p城情報[CastleID].城絵背景 == 城絵背景::海) {
+		デバッグ出力 &lt;&lt; &quot;この城は海もしくは湖に面している可能性が高いです&quot; &lt;&lt; endl;
+	}
+	else if (p城情報[CastleID].城絵背景 == 城絵背景::山) {
+		デバッグ出力 &lt;&lt; &quot;この城は山にある城の可能性が高いです&quot; &lt;&lt; endl;
+	}
+	else if (p城情報[CastleID].城絵背景 == 城絵背景::平野) {
+		デバッグ出力 &lt;&lt; &quot;この城は平地の開けた場所に存在する可能性が高いです&quot; &lt;&lt; endl;
+	}
+	else if (p城情報[CastleID].城絵背景 == 城絵背景::林) {
+		デバッグ出力 &lt;&lt; &quot;この城は林や森の中に存在する可能性が高いです&quot; &lt;&lt; endl;
+	}
+}
+</pre>
+	</div>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_castle_15.png"> <img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_castle_16.png"></p>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>城名の取得や変更</h3>
+	<blockquote>string Get_城名( int 城番号【配列用】)</blockquote>
+	<blockquote>void Set_城名( int 城番号【配列用】, string 城名 )</blockquote>
+	<blockquote>string Get_城称(int 城番号【配列用】)</blockquote>
+	<blockquote>void Set_城称(int 城番号【配列用】, string 城称)</blockquote>
+	<p>城称には、「"城"、"御坊"、"寺"、"御所"、"館"、"町"」のいずれかの指定する。"町"の代わりに""でもよい。</p>
+	<p>Get_城名(...) や Get_城称(...)については、すでにあちこちで記載されているので問題はないでしょう。</p>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_castle_12.png"></p>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+	int iCastleID = 城配列番号::観音寺城;
+
+	if (Get_城名(iCastleID) == &quot;観音寺&quot;) {
+		Set_城名(iCastleID, &quot;観念寺&quot;);
+	}
+}
+</pre>
+	</div>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_castle_18.png"></p>
+	<h4>ScenarioMod 2.8.0.1 以降</h4>
+	<div class="code">
+		<pre class="brush:cpp;">
+	void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+		int iCastleID = 城配列番号::二条城;
+	
+		Set_城名(iCastleID, &quot;三条&quot;);
+		Set_城称(iCastleID, &quot;館&quot;);
+	}
+</pre>
+	</div>	
+	<h4>ScenarioMod 2.8.0.0 以下では、一部の城名を変更できない</h4>
+	<p>どのような仕組みなのかは判然としませんが、途中で城名が変化する城のうち、ごく一部の城名だけが例外的な場所で管理されており、<br>
+		Set_城名(...)では変更できないことがあります。</p>
+
+	<p>メモリに、p城情報によって管理されている214個の城リストとは別に、</p>
+	<div class="code">
+		<pre class="brush:cpp;">
+004BB88C %s様、..%sをいくら.%sますか.兵..家..軍団....甲府....躑躅ヶ崎....
+004BB8CC 徳山....長島....長島願証....金沢....尾山....伏見....二条....室町
+004BB90C ....石山....石山本願....大坂....城..館..御所....寺..御坊....%*s.
+</pre>
+	</div>
+	<p>といったものがメモリ上で展開されており、そちらを参照しながら条件を見ながらハードコーディングで文字列が構築されています。 </p>
+
+	<div class="code">
+		<pre class="brush:cpp;">
+char *p = (char *)0x4BB8CC; // 城リストとは別の場所で確保されている徳山の文字列
+strcpy(p, "北海道");
+</pre>
+	</div>
+	<p>といった方法にて強引に書き換えることが出来ます。</p>
+
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>城名から城番号【配列用】を逆引きする</h3>
+	<p>通常は城名から逆引きはせず、</p>
+	<div class="code">
+		<pre class="brush:cpp;">
+int iCastleID = 城配列番号::稲葉山城;
+</pre>
+	</div>
+	<p>のような形で城番号【配列用】を取得します。<br>
+		城番号【配列用】とはとどのつまり城214個の「位置」に割り当てられた番号と言ってもよく、<br>
+		どのようなシナリオでも固定であり、同じ位置にある城の番号が入れ替わったりはしません。</p>
+	<p>しかしながら、なんらかの都合により「文字列から逆引き」するシーンが出るかもしれないため、<br>
+		この関数が用意されています。</p>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+	int iCastleID = Get_城番号【配列用】(&quot;観音寺&quot;);
+
+	// そのような城は存在した
+	if (0 &lt;= iCastleID &amp;&amp; iCastleID &lt; 最大数::城情報::配列数) {
+		デバッグ出力 &lt;&lt; &quot;観音寺城の配列用の城番号は&quot; &lt;&lt; iCastleID &lt;&lt; &quot;です。&quot; &lt;&lt; endl;
+	}
+	else {
+		デバッグ出力 &lt;&lt; &quot;そのような城は存在しません。&quot; &lt;&lt; endl;
+	}
+}
+</pre>
+	</div>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>ある「軍団」が持つ城の一覧</h3>
+	<blockquote>int Get_軍団所持城数(int 軍団番号【配列用】)</blockquote>
+	<blockquote>番号リスト型 Get_軍団所持城番号リスト【配列用】(int 軍団番号【配列用】)</blockquote>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+	// 明智光秀が軍団長のとき、その城数と城番号【配列用】のリストを得る
+	int iBushouID = Get_武将番号【配列用】(顔番号::明智光秀);
+
+	if (0 &lt;= iBushouID &amp;&amp; iBushouID &lt; 最大数::武将情報::配列数) {
+		if (p武将戸籍情報[iBushouID].状態 == 状態::軍団長) {
+			int iGundanID = p武将情報[iBushouID].所属軍団【軍団番号】 - 1;
+
+			if (0 &lt;= iGundanID &amp;&amp; iGundanID &lt; 最大数::軍団情報::配列数) {
+				int 城数 = Get_軍団所持城数(iGundanID);
+				デバッグ出力 &lt;&lt; &quot;明智光秀の軍団の城数は&quot; &lt;&lt; 城数 &lt;&lt; endl;
+
+				番号リスト型 list = Get_軍団所持城番号リスト【配列用】(iGundanID);
+				for (int iCastleID : list) {
+					デバッグ出力 &lt;&lt; Get_城名(iCastleID) + Get_城称(iCastleID) &lt;&lt; endl;
+				}
+			}
+		}
+	}
+}
+</pre>
+	</div>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>ある「大名」が持つ城の一覧</h3>
+	<blockquote>int Get_大名所持城数(int 大名番号【配列用】)</blockquote>
+	<blockquote>番号リスト型 Get_大名所持城番号リスト【配列用】(int 大名番号【配列用】)</blockquote>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+	// 織田信長が大名のとき、その城数と城番号【配列用】のリストを得る
+	int iBushouID = Get_武将番号【配列用】(顔番号::織田信長);
+
+	if (0 &lt;= iBushouID &amp;&amp; iBushouID &lt; 最大数::武将情報::配列数) {
+		if (p武将戸籍情報[iBushouID].状態 == 状態::大名) {
+			int iDaimyoID = p武将情報[iBushouID].所属大名【大名番号】 - 1;
+
+			if (0 &lt;= iDaimyoID &amp;&amp; iDaimyoID &lt; 最大数::大名情報::配列数) {
+				int 城数 = Get_大名所持城数(iDaimyoID);
+				デバッグ出力 &lt;&lt; &quot;大名、織田信長の麾下の城数は&quot; &lt;&lt; 城数 &lt;&lt; endl;
+
+				番号リスト型 list = Get_大名所持城番号リスト【配列用】(iDaimyoID);
+				for (int iCastleID : list) {
+					デバッグ出力 &lt;&lt; Get_城名(iCastleID) + Get_城称(iCastleID) &lt;&lt; endl;
+				}
+			}
+		}
+	}
+}
+</pre>
+	</div>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>城主と本城</h3>
+	<blockquote>p城情報[ix].城主【武将番号】</blockquote>
+	<p>この値を参照することは問題ありませんが、<mark>この値を直接書き換えないようにしてください</mark>。書き換える際は Set_城主(...)関数を利用します。</p>
+	<blockquote>p城情報[ix].本城</blockquote>
+	<p>本城は「本城::非本拠」「本城::大名」「本城::軍団長」のいずれかの値です。<br>
+		この値は<mark>原則書き換えない</mark>ようにしてください。</p>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_castle_11.png"></p>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+	int iCastleID = 城配列番号::二条城;
+
+	if (p城情報[iCastleID].本城 == 本城::大名) {
+		デバッグ出力 &lt;&lt; &quot;この城は大名の本拠です&quot; &lt;&lt; endl;
+
+		int iBushouID = p城情報[iCastleID].城主【武将番号】-1;
+		if (0 &lt;= iBushouID &amp;&amp; iBushouID &lt; 最大数::武将情報::配列数) {
+			デバッグ出力 &lt;&lt; &quot;大名は&quot; &lt;&lt; Get_名字(iBushouID) + Get_名前(iBushouID) &lt;&lt; endl;
+		}
+	}
+	else if (p城情報[iCastleID].本城 == 本城::軍団長) {
+		デバッグ出力 &lt;&lt; &quot;この城は軍団長の本拠です&quot; &lt;&lt; endl;
+
+		int iBushouID = p城情報[iCastleID].城主【武将番号】 - 1;
+		if (0 &lt;= iBushouID &amp;&amp; iBushouID &lt; 最大数::武将情報::配列数) {
+			デバッグ出力 &lt;&lt; &quot;軍団長は&quot; &lt;&lt; Get_名字(iBushouID) + Get_名前(iBushouID) &lt;&lt; endl;
+		}
+	}
+	else if (p城情報[iCastleID].本城 == 本城::非本拠) {
+		デバッグ出力 &lt;&lt; &quot;この城には大名も軍団長も居ません。&quot; &lt;&lt; endl;
+
+		int iBushouID = p城情報[iCastleID].城主【武将番号】 - 1;
+		// 城主が居る
+		if (0 &lt;= iBushouID &amp;&amp; iBushouID &lt; 最大数::武将情報::配列数) {
+			デバッグ出力 &lt;&lt; &quot;城主は&quot; &lt;&lt; Get_名字(iBushouID) + Get_名前(iBushouID) &lt;&lt; endl;
+		}
+	}
+}
+
+</pre>
+	</div>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>城主の入れ替え</h3>
+	<blockquote>bool Set_城主(int 武将番号【配列用】)</blockquote>
+	<p>これは指定の「現役武将Ａ」を「城主」とする関数である。</p>
+	<ul>
+		<li>①もしも、「現在の城主Ｂ」が、ただの普通の城主であれば、指定の「現役武将Ａ」が単に城主となる。<br>
+		<li>②もしも、「現在の城主Ｂ」が「軍団長」であったならば、この関数によって「現役武将Ａ」が、城主 兼 軍団長となる。<br>
+		<li>③もしも、「現在の城主Ｂ」が「大名」であったならば、この関数によって「現役武将Ａ」が、城主 兼 大名となり、「大名だった人」は宿老となる。<br>
+	</ul>
+
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+	// 柴田勝家が一般武将で、かつ、城主ではない時に、城主にする
+	int iBushouID = Get_武将番号【配列用】(顔番号::柴田勝家);
+
+	if (0 &lt;= iBushouID &amp;&amp; iBushouID &lt; 最大数::武将情報::配列数) {
+
+		// どの城にいるか
+		int iCastleID = p武将情報[iBushouID].所属居城【城番号】 - 1;
+
+		if (0 &lt;= iCastleID &amp;&amp; iCastleID &lt; 最大数::城情報::配列数) {
+
+			// 通常の身分か確かめる
+			if (p武将戸籍情報[iBushouID].状態 == 状態::現役) {
+				if (身分::宿老 &lt;= p武将戸籍情報[iBushouID].身分 &amp;&amp; p武将戸籍情報[iBushouID].身分 &lt;= 身分::足軽頭) {
+					int success = Set_城主(iBushouID);
+					if (success) {
+						デバッグ出力 &lt;&lt; &quot;柴田勝家は城主になりました&quot; &lt;&lt; endl;
+					}
+				}
+			}
+		}
+	}
+}
+
+</pre>
+	</div>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_castle_19.png"></p>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>城の説明文の変更</h3>
+	<p>城の説明文などを状況を判断しながら変更することが出来ます。</p>
+	<p>詳細は、<a href="?page=nobu_mod_the_snmod_methodref_on_viewing_castle_retsuden">On_戦国名城物語要求時</a> を参照してください。</p>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>より詳細を知るには...</h3>
+	<p>
+		「城」に関する主な所は以上となります。<br>
+		詳しくは「城情報型.h」や「城情報列挙.h」などを参照してください。
+	</p>
+</div>

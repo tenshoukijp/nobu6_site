@@ -1,0 +1,606 @@
+%(hilight)s
+<div class="content-box mb-3 content-lighten">
+	<h2><i class="fa fa-book fa-fw"></i>戦争 - ヘックス位置</h2>
+	<p>ヘックス位置とは、<br>
+		戦争中、画面に表示されているヘックス画面(野戦もしくは籠城戦)において、<br>
+		武将が居るヘックス(升目)の「位置」もしくは、その位置の役割(山・橋・門等)を得るための<br>
+		APIとなります。</p>
+	<h4>野戦のヘックス</h4>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_war_hex_07.png"></p>
+	<h4>攻城戦のヘックス</h4>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_war_hex_06.png"></p>
+
+	<h4>ヘックスマップエディタを触ってみると、ヘックスがすんなり理解できる</h4>
+	<p><a href="?page=nobu_mod_the_hexmap_editor">ヘックスマップエディタ</a> を触ってみると、<br>
+		ScenarioModのヘックスの概念の理解が促進されることでしょう。</p>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>現在の画面に出陣している武将のヘックス位置を得る</h3>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_war_hex_12.png"></p>
+	<blockquote>ヘックス位置型 Get_武将の野戦ヘックス位置(int 武将番号【配列用】)</blockquote>
+	<blockquote>ヘックス位置型 Get_武将の攻城戦ヘックス位置(int 武将番号【配列用】)</blockquote>
+	<blockquote>int Get_攻城戦ヘックス高さ(ヘックス位置型 Ｐ)</blockquote>
+	<blockquote>int Get_攻城戦ヘックス高さ(double Ｘ位置, double Ｙ位置)</blockquote>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_残りターン変更《戦争画面》(int 残りターン数) {
+	if (Is_野戦中()) {
+		番号リスト型 list = Get_出陣中の武将番号リスト【配列用】《表示中マップ》();
+
+		for (int iBushouID : list) {
+			ヘックス位置型 pos = Get_武将の野戦ヘックス位置(iBushouID);
+			デバッグ出力 &lt;&lt; Get_名字(iBushouID) + Get_名前(iBushouID) &lt;&lt; &quot;のヘックス位置:(&quot; &lt;&lt; pos.Ｘ &lt;&lt; &quot;, &quot; &lt;&lt; pos.Ｙ &lt;&lt; &quot;)&quot; &lt;&lt; endl;
+		}
+	}
+}
+
+void カスタム::On_ターン変更《攻城中画面》(int ターン数) {
+	if (Is_攻城戦中()) {
+		番号リスト型 list = Get_出陣中の武将番号リスト【配列用】《表示中マップ》();
+
+		for (int iBushouID : list) {
+			ヘックス位置型 pos = Get_武将の攻城戦ヘックス位置(iBushouID);
+			int 高さ = Get_攻城戦ヘックス高さ(pos); // Get_攻城戦ヘックス高さ(pos.Ｘ, pos.Ｙ); でも同じ
+			デバッグ出力 &lt;&lt; Get_名字(iBushouID) + Get_名前(iBushouID) &lt;&lt; &quot;のヘックス位置:(&quot; &lt;&lt; pos.Ｘ &lt;&lt; &quot;, &quot; &lt;&lt; pos.Ｙ &lt;&lt; &quot;)&quot; &lt;&lt; endl;
+			デバッグ出力 &lt;&lt; &quot;その位置の高さ&quot; &lt;&lt; 高さ &lt;&lt; endl;
+		}
+	}
+}
+</pre>
+	</div>
+</div>
+
+
+<div class="content-box mb-3 content-lighten">
+	<h3>ヘックス位置Ａとヘックス位置Ｂの間隔</h3>
+	<p>武将Ａと武将Ｂとの間隔や、武将と特定のポイント(城や川)などの近さも計算できます。</p>
+	<blockquote>int Get_ヘックス間隔(ヘックス位置型 Ｐ１, ヘックス位置型 Ｐ２)</blockquote>
+	<div class="code">
+		<pre class="brush:cpp;highlight:[41]">
+void カスタム::On_残りターン変更《戦争画面》(int 残りターン数) {
+
+	/*
+	* もしも上杉謙信と武田信玄が、二人とも戦場に居るならば
+	* 二人のヘックス上の位置の間隔を取得する。
+	*/
+
+	番号リスト型 list = Get_出陣中の武将番号リスト【配列用】《表示中マップ》(); // 出陣中の
+
+	番号リスト型 信玄と謙信;
+	ヘックス位置型 謙信pos, 信玄pos; // 謙信、信玄の位置
+
+	for each (int iBushouID in list) {
+		if (p武将戸籍情報[iBushouID].顔番号 == 顔番号::武田晴信) { // 信玄が出陣している。
+			信玄と謙信.push_back(iBushouID);
+			// どのヘックスに居るのか覚えておく
+			if (Is_野戦中()) {
+				信玄pos = Get_武将の野戦ヘックス位置(iBushouID);
+			}
+			else if (Is_攻城戦中()) {
+				信玄pos = Get_武将の攻城戦ヘックス位置(iBushouID);
+			}
+
+		}
+
+		else if (p武将戸籍情報[iBushouID].顔番号 == 顔番号::長尾景虎) { // 謙信が出陣している。
+			信玄と謙信.push_back(iBushouID);
+			// どのヘックスに居るのか覚えておく
+			if (Is_野戦中()) {
+				謙信pos = Get_武将の野戦ヘックス位置(iBushouID);
+			}
+			else if (Is_攻城戦中()) {
+				謙信pos = Get_武将の攻城戦ヘックス位置(iBushouID);
+			}
+
+		}
+	}
+
+	// 2人とも存在している
+	if (信玄と謙信.size() == 2) {
+		int 二人の間隔 = Get_ヘックス間隔(謙信pos, 信玄pos);
+		デバッグ出力 &lt;&lt; &quot;信玄から謙信へは直線で&quot; &lt;&lt; 二人の間隔 &lt;&lt; &quot;マス移動すれば同じ位置に到達出来る。&quot; &lt;&lt; endl;
+	}
+}
+</pre>
+	</div>
+	<h4>この考え方を流用するだけで...</h4>
+	<div class="code">
+		<pre class="brush:cpp;highlight:[44]">
+void カスタム::On_基本コマンド表示直前《戦争画面》(int 武将番号) {
+
+	/*
+	* もしも上杉謙信と武田信玄が、接しているならば、
+	* 互いに一喝の命令が変化する。
+	*/
+
+	int iBushouID = 武将番号 - 1; // 武将番号→武将番号【配列用】に
+
+	if (0 &lt;= iBushouID &amp;&amp; iBushouID &lt; 最大数::武将情報::配列数) {
+
+		番号リスト型 list = Get_出陣中の武将番号リスト【配列用】《表示中マップ》(); // 出陣中の
+
+		番号リスト型 信玄と謙信;
+
+		ヘックス位置型 謙信pos, 信玄pos; // 謙信、信玄の位置
+		for each (int iBushouID in list) {
+			if (p武将戸籍情報[iBushouID].顔番号 == 顔番号::武田晴信) { // 信玄が出陣している。
+				信玄と謙信.push_back(iBushouID);
+				// どのヘックスに居るのか覚えておく
+				if (Is_野戦中()) {
+					信玄pos = Get_武将の野戦ヘックス位置(iBushouID);
+				}
+				else if (Is_攻城戦中()) {
+					信玄pos = Get_武将の攻城戦ヘックス位置(iBushouID);
+				}
+
+			}
+
+			else if (p武将戸籍情報[iBushouID].顔番号 == 顔番号::長尾景虎) { // 謙信が出陣している。
+				信玄と謙信.push_back(iBushouID);
+				// どのヘックスに居るのか覚えておく
+				if (Is_野戦中()) {
+					謙信pos = Get_武将の野戦ヘックス位置(iBushouID);
+				}
+				else if (Is_攻城戦中()) {
+					謙信pos = Get_武将の攻城戦ヘックス位置(iBushouID);
+				}
+
+			}
+		}
+
+		// 2人とも存在し、その距離はヘックス升で１つ。即ち隣接している。
+		if (信玄と謙信.size() == 2 &amp;&amp; Get_ヘックス間隔(謙信pos, 信玄pos) == 1) {
+			// 信玄なら
+			if (p武将戸籍情報[iBushouID].顔番号 == 顔番号::武田晴信) {
+				Set_コマンド名(戦争画面::基本コマンド名::一喝, &quot;龍撃虎&quot;);
+				Set_コマンド名(戦争画面::基本コマンド名::一喝, &quot;龍撃虎&quot;);
+				// 謙信なら
+			}
+			else if (p武将戸籍情報[iBushouID].顔番号 == 顔番号::長尾景虎) {
+				Set_コマンド名(戦争画面::基本コマンド名::一喝, &quot;虎破龍&quot;);
+				Set_コマンド名(戦争画面::基本コマンド名::一喝, &quot;虎破龍&quot;);
+			}
+		}
+	}
+}
+		</pre>
+	</div>
+</div>
+
+
+
+<div class="content-box mb-3 content-lighten">
+	<h3>野戦のヘックスの役割</h3>
+	<blockquote>int Get_野戦ヘックス役割(double Ｘ位置, double Ｙ位置)</blockquote>
+	<blockquote>int Get_野戦ヘックス役割(ヘックス位置型 Ｐ)</blockquote>
+	<h4>役割の概念は、ヘックスエディタを利用してみるとわかりやすい</h4>
+	<p>下図では中央部だけフォーカスしているが、実際は当然野戦マップ全体に役割が割り当てられている</p>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_war_hex_01.png"></p>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_war_hex_03.png"></p>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_war_hex_02.png"></p>
+	<div class="code">
+		<pre class="brush:cpp;highlight:[12]">
+void カスタム::On_残りターン変更《戦争画面》(int 残りターン数) {
+	if (Is_野戦中())
+	{
+		// 今表示中の武将達
+		auto blist = Get_出陣中の武将番号リスト【配列用】《表示中マップ》();
+
+		int iBushouID = 0xFFFF;
+		if (blist.size() &gt;= 1) {
+			iBushouID = blist[0]; // 先頭の人だけ表示
+
+			ヘックス位置型 位置 = Get_武将の野戦ヘックス位置(iBushouID);
+			int 役割 = Get_野戦ヘックス役割(位置);
+			デバッグ出力 &lt;&lt; Get_名字(iBushouID) + Get_名前(iBushouID) &lt;&lt; &quot;は、&quot;;
+			switch (役割) {
+			case 野戦ヘックス役割::高山:
+				デバッグ出力 &lt;&lt; &quot;高山&quot;;
+				break;
+			case 野戦ヘックス役割::中山:
+				デバッグ出力 &lt;&lt; &quot;中山&quot;;
+				break;
+			case 野戦ヘックス役割::低山:
+				デバッグ出力 &lt;&lt; &quot;低山&quot;;
+				break;
+			case 野戦ヘックス役割::城:
+				デバッグ出力 &lt;&lt; &quot;城&quot;;
+				break;
+			case 野戦ヘックス役割::川:
+				デバッグ出力 &lt;&lt; &quot;川&quot;;
+				break;
+			case 野戦ヘックス役割::海: // 野戦ヘックス役割::湖 と同じ番号
+				デバッグ出力 &lt;&lt; &quot;海か湖&quot;;
+				break;
+			case 野戦ヘックス役割::森:
+				デバッグ出力 &lt;&lt; &quot;森&quot;;
+				break;
+			case 野戦ヘックス役割::橋:
+				デバッグ出力 &lt;&lt; &quot;橋&quot;;
+				break;
+			case 野戦ヘックス役割::湿地:
+				デバッグ出力 &lt;&lt; &quot;湿地&quot;;
+				break;
+			case 野戦ヘックス役割::荒れ地:
+				デバッグ出力 &lt;&lt; &quot;荒れ地&quot;;
+				break;
+			case 野戦ヘックス役割::道:
+				デバッグ出力 &lt;&lt; &quot;道&quot;;
+				break;
+			case 野戦ヘックス役割::平地:
+				デバッグ出力 &lt;&lt; &quot;平地&quot;;
+				break;
+			case 野戦ヘックス役割::枠外: // 左右の境界線など、ヘックスとしては存在するが、ユニットなど決して到達できない枠外というチップもある
+				デバッグ出力 &lt;&lt; &quot;枠外&quot;;
+				break;
+			case -1: // 指定した「位置」が不適切で、枠外をさらに飛び越えて、そもそも対応するヘックス自体ないような場所を指し示している
+				デバッグ出力 &lt;&lt; &quot;マップ外&quot;;
+				break;
+			}
+
+			デバッグ出力 &lt;&lt; &quot;に居ます&quot; &lt;&lt; endl;
+		}
+	}
+}
+</pre>
+	</div>
+
+	<h4>特定のヘックスの位置を指定し、その役割を調査することもあるだろう。</h4>
+	<div class="code">
+		<pre class="brush:cpp;highlight:[11,12]">
+void カスタム::On_残りターン変更《戦争画面》(int 残りターン数) {
+	if (Is_野戦中())
+	{
+		// 今表示中の武将達
+		auto blist = Get_出陣中の武将番号リスト【配列用】《表示中マップ》();
+
+		int iBushouID = 0xFFFF;
+		if (blist.size() &gt;= 1) {
+			iBushouID = blist[0]; // 先頭の人だけ表示
+
+			ヘックス位置型 位置{野戦ヘックス::中心Ｘ, 野戦ヘックス::中心Ｙ};
+			int 役割 = Get_野戦ヘックス役割(位置);
+			デバッグ出力 &lt;&lt; &quot;野戦の中心は、(&quot; &lt;&lt; 位置.Ｘ &lt;&lt; &quot;,&quot; &lt;&lt; 位置.Ｙ &lt;&lt; &quot;)&quot; &lt;&lt; endl;
+			デバッグ出力 &lt;&lt; &quot;その役割は)&quot; &lt;&lt; endl;
+			switch (役割) {
+			case 野戦ヘックス役割::高山:
+				デバッグ出力 &lt;&lt; &quot;高山&quot;;
+				break;
+			case 野戦ヘックス役割::中山:
+				デバッグ出力 &lt;&lt; &quot;中山&quot;;
+				break;
+			case 野戦ヘックス役割::低山:
+				デバッグ出力 &lt;&lt; &quot;低山&quot;;
+				break;
+			case 野戦ヘックス役割::城: // 通常 城ヘックスの上に居ることは出来ない(城に入場してしまう)ため、こうなることはない
+				デバッグ出力 &lt;&lt; &quot;城&quot;;
+				break;
+			case 野戦ヘックス役割::川:
+				デバッグ出力 &lt;&lt; &quot;川&quot;;
+				break;
+			case 野戦ヘックス役割::海: // 野戦ヘックス役割::湖 と同じ番号
+				デバッグ出力 &lt;&lt; &quot;海か湖&quot;;
+				break;
+			case 野戦ヘックス役割::森:
+				デバッグ出力 &lt;&lt; &quot;森&quot;;
+				break;
+			case 野戦ヘックス役割::橋:
+				デバッグ出力 &lt;&lt; &quot;橋&quot;;
+				break;
+			case 野戦ヘックス役割::湿地:
+				デバッグ出力 &lt;&lt; &quot;湿地&quot;;
+				break;
+			case 野戦ヘックス役割::荒れ地:
+				デバッグ出力 &lt;&lt; &quot;荒れ地&quot;;
+				break;
+			case 野戦ヘックス役割::道:
+				デバッグ出力 &lt;&lt; &quot;道&quot;;
+				break;
+			case 野戦ヘックス役割::平地:
+				デバッグ出力 &lt;&lt; &quot;平地&quot;;
+				break;
+			case 野戦ヘックス役割::枠外: // 左右の境界線など、ヘックスとしては存在するが、ユニットなど決して到達できない枠外というチップもある
+				デバッグ出力 &lt;&lt; &quot;枠外&quot;;
+				break;
+			case -1: // 指定した「位置」が不適切で、枠外をさらに飛び越えて、そもそも対応するヘックス自体ないような場所を指し示している
+				デバッグ出力 &lt;&lt; &quot;マップ外&quot;;
+				break;
+			}
+
+			デバッグ出力 &lt;&lt; &quot;です&quot; &lt;&lt; endl;
+		}
+	}
+}
+</pre>
+	</div>
+</div>
+
+
+<div class="content-box mb-3 content-lighten">
+	<h3>攻城戦のヘックスの役割</h3>
+	<blockquote>int Get_攻城戦ヘックス役割(double Ｘ位置, double Ｙ位置)</blockquote>
+	<blockquote>int Get_攻城戦ヘックス役割(ヘックス位置型 Ｐ)</blockquote>
+	<h4>役割の概念は、ヘックスエディタを利用してみるとわかりやすい</h4>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_war_hex_04.png"></p>
+	<div class="code">
+		<pre class="brush:cpp;highlight:[12]">
+void カスタム::On_ターン変更《攻城中画面》(int ターン数) {
+	if (Is_攻城戦中())
+	{
+		// 今表示中の武将達
+		auto blist = Get_出陣中の武将番号リスト【配列用】《表示中マップ》();
+
+		int iBushouID = 0xFFFF;
+		if (blist.size() &gt;= 1) {
+			iBushouID = blist[0]; // 先頭の人だけ表示
+
+			ヘックス位置型 位置 = Get_武将の攻城戦ヘックス位置(iBushouID);
+			int 役割 = Get_攻城戦ヘックス役割(位置);
+			デバッグ出力 &lt;&lt; Get_名字(iBushouID) + Get_名前(iBushouID) &lt;&lt; &quot;は、&quot;;
+			switch (役割) {
+			case 攻城戦ヘックス役割::城外平地:
+				デバッグ出力 &lt;&lt; &quot;城外平地&quot;;
+				break;
+			case 攻城戦ヘックス役割::城内平地:
+				デバッグ出力 &lt;&lt; &quot;城内平地&quot;;
+				break;
+			case 攻城戦ヘックス役割::城内整地:
+				デバッグ出力 &lt;&lt; &quot;城内整地&quot;;
+				break;
+			case 攻城戦ヘックス役割::城壁:
+				デバッグ出力 &lt;&lt; &quot;城壁&quot;;
+				break;
+			case 攻城戦ヘックス役割::堀: // 攻城戦ヘックス役割::海 と 攻城戦ヘックス役割::湖 も同じ値
+				デバッグ出力 &lt;&lt; &quot;堀 か 海 か 湖&quot;;
+				break;
+			case 攻城戦ヘックス役割::堀橋:
+				デバッグ出力 &lt;&lt; &quot;堀橋&quot;;
+				break;
+			case 攻城戦ヘックス役割::本丸:
+				デバッグ出力 &lt;&lt; &quot;本丸&quot;;
+				break;
+			case 攻城戦ヘックス役割::柵:
+				デバッグ出力 &lt;&lt; &quot;柵&quot;;
+				break;
+			case 攻城戦ヘックス役割::森:
+				デバッグ出力 &lt;&lt; &quot;森&quot;;
+				break;
+			case 攻城戦ヘックス役割::櫓:
+				デバッグ出力 &lt;&lt; &quot;櫓&quot;;
+				break;
+			case 攻城戦ヘックス役割::閉門:
+				デバッグ出力 &lt;&lt; &quot;閉まっている門&quot;;
+				break;
+			case 攻城戦ヘックス役割::開門:
+				デバッグ出力 &lt;&lt; &quot;開いている門&quot;;
+				break;
+			case 攻城戦ヘックス役割::枠外: // 左右の境界線など、ヘックスとしては存在するが、ユニットなど決して到達できない枠外というチップもある
+				デバッグ出力 &lt;&lt; &quot;枠外&quot;;
+				break;
+			case -1: // 指定した「位置」が不適切で、枠外をさらに飛び越えて、そもそも対応するヘックス自体ないような場所を指し示している
+				デバッグ出力 &lt;&lt; &quot;マップ外&quot;;
+				break;
+			}
+
+			デバッグ出力 &lt;&lt; &quot;に居ます&quot; &lt;&lt; endl;
+		}
+	}
+}
+</pre>
+	</div>
+
+	<h4>特定のヘックスの位置を指定し、その役割を調査することもあるだろう。</h4>
+	<div class="code">
+		<pre class="brush:cpp;highlight:[11,12]">
+void カスタム::On_ターン変更《攻城中画面》(int ターン数) {
+	if (Is_攻城戦中())
+	{
+		// 今表示中の武将達
+		auto blist = Get_出陣中の武将番号リスト【配列用】《表示中マップ》();
+
+		int iBushouID = 0xFFFF;
+		if (blist.size() &gt;= 1) {
+			iBushouID = blist[0]; // 先頭の人だけ表示
+
+			ヘックス位置型 位置{ 攻城戦ヘックス::中心Ｘ, 攻城戦ヘックス::中心Ｙ };;
+			int 役割 = Get_攻城戦ヘックス役割(位置);
+			デバッグ出力 &lt;&lt; &quot;攻城戦の中心は、(&quot; &lt;&lt; 位置.Ｘ &lt;&lt; &quot;,&quot; &lt;&lt; 位置.Ｙ &lt;&lt; &quot;)&quot; &lt;&lt; endl;
+			デバッグ出力 &lt;&lt; &quot;その役割は)&quot; &lt;&lt; endl;
+			switch (役割) {
+			case 攻城戦ヘックス役割::城外平地:
+				デバッグ出力 &lt;&lt; &quot;城外平地&quot;;
+				break;
+			case 攻城戦ヘックス役割::城内平地:
+				デバッグ出力 &lt;&lt; &quot;城内平地&quot;;
+				break;
+			case 攻城戦ヘックス役割::城内整地:
+				デバッグ出力 &lt;&lt; &quot;城内整地&quot;;
+				break;
+			case 攻城戦ヘックス役割::城壁:
+				デバッグ出力 &lt;&lt; &quot;城壁&quot;;
+				break;
+			case 攻城戦ヘックス役割::堀: // 攻城戦ヘックス役割::海 と 攻城戦ヘックス役割::湖 も同じ値
+				デバッグ出力 &lt;&lt; &quot;堀 か 海 か 湖&quot;;
+				break;
+			case 攻城戦ヘックス役割::堀橋:
+				デバッグ出力 &lt;&lt; &quot;堀橋&quot;;
+				break;
+			case 攻城戦ヘックス役割::本丸:
+				デバッグ出力 &lt;&lt; &quot;本丸&quot;;
+				break;
+			case 攻城戦ヘックス役割::柵:
+				デバッグ出力 &lt;&lt; &quot;柵&quot;;
+				break;
+			case 攻城戦ヘックス役割::森:
+				デバッグ出力 &lt;&lt; &quot;森&quot;;
+				break;
+			case 攻城戦ヘックス役割::櫓:
+				デバッグ出力 &lt;&lt; &quot;櫓&quot;;
+				break;
+			case 攻城戦ヘックス役割::閉門:
+				デバッグ出力 &lt;&lt; &quot;閉まっている門&quot;;
+				break;
+			case 攻城戦ヘックス役割::開門:
+				デバッグ出力 &lt;&lt; &quot;開いている門&quot;;
+				break;
+			case 攻城戦ヘックス役割::枠外: // 左右の境界線など、ヘックスとしては存在するが、ユニットなど決して到達できない枠外というチップもある
+				デバッグ出力 &lt;&lt; &quot;枠外&quot;;
+				break;
+			case -1: // 指定した「位置」が不適切で、枠外をさらに飛び越えて、そもそも対応するヘックス自体ないような場所を指し示している
+				デバッグ出力 &lt;&lt; &quot;マップ外&quot;;
+				break;
+			}
+
+			デバッグ出力 &lt;&lt; &quot;です&quot; &lt;&lt; endl;
+		}
+	}
+}
+
+</pre>
+	</div>
+</div>
+
+
+<div class="content-box mb-3 content-lighten">
+	<h3>攻城戦のヘックスが炎上しているかどうか</h3>
+	<blockquote>int Get_攻城戦ヘックス炎上(double Ｘ位置, double Ｙ位置);</blockquote>
+	<blockquote>int Get_攻城戦ヘックス炎上(ヘックス位置型 Ｐ)</blockquote>
+	<p>ほとんどの場合は、武将が居る位置が炎上しているかどうかを調べるような目的で利用することになるでしょう。</p>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_war_hex_08.png"></p>
+	<div class="code">
+		<pre class="brush:cpp;highlight:[9,11,14]">
+void カスタム::On_ターン変更《攻城中画面》(int ターン数) {
+	if (Is_攻城戦中())
+	{
+		// 今表示中の武将達
+		auto blist = Get_出陣中の武将番号リスト【配列用】《表示中マップ》();
+
+		for (int iBushouID : blist) {
+			ヘックス位置型 pos = Get_武将の攻城戦ヘックス位置(iBushouID);
+			int 炎上状態 = Get_攻城戦ヘックス炎上(pos);
+
+			if (炎上状態 == 攻城戦ヘックス炎上::炎上) {
+				デバッグ出力 &lt;&lt; Get_名字(iBushouID) + Get_名前(iBushouID) &lt;&lt; &quot;は炎上しています&quot; &lt;&lt; endl;
+			}
+			else if (炎上状態 == 攻城戦ヘックス炎上::無し) { // 通常は普通に else とだけ書けばよい。今回は定義があるということを示すためにわざと記述
+				デバッグ出力 &lt;&lt; Get_名字(iBushouID) + Get_名前(iBushouID) &lt;&lt; &quot;は炎上してません&quot; &lt;&lt; endl;
+			}
+		}
+	}
+}
+</pre>
+	</div>
+</div>
+
+
+<div class="content-box mb-3 content-lighten">
+	<h3>ヘックスベクトル型</h3>
+	<p>単純に「ヘックス位置Ａ」から「ヘックス位置Ｂ」の方向を求めることがあると考えられるため、定義されています。</p>
+	<div class="code">
+		<pre class="brush:cpp;highlight:[15,16]">
+void カスタム::On_残りターン変更《戦争画面》(int 残りターン数) {
+	if (Is_野戦中())
+	{
+		// 今表示中の武将達
+		auto blist = Get_出陣中の武将番号リスト【配列用】《表示中マップ》();
+
+		// ２人以上いるかチェック
+		if (blist.size() &gt;= 2) {
+			// 最初の２人の位置
+			int iBushouID_A = blist[0];
+			int iBushouID_B = blist[1];
+			ヘックス位置型 posA = Get_武将の野戦ヘックス位置(iBushouID_A);
+			ヘックス位置型 posB = Get_武将の野戦ヘックス位置(iBushouID_B);
+
+			ヘックスベクトル型 vec_hex = posB - posA;
+			２Ｄベクトル型 vec_2d = { vec_hex.Ｘ, vec_hex.Ｙ };
+
+			string 姓名A = Get_名字(iBushouID_A) + Get_名前(iBushouID_A);
+			string 姓名B = Get_名字(iBushouID_B) + Get_名前(iBushouID_B);
+
+
+			デバッグ出力 &lt;&lt; 姓名A &lt;&lt; &quot;→&quot; &lt;&lt; 姓名B &lt;&lt; &quot;への方向ベクトルは...&quot; &lt;&lt; endl;
+			デバッグ出力 &lt;&lt; &quot;(&quot; &lt;&lt; vec_hex.Ｘ &lt;&lt; &quot;,&quot; &lt;&lt; vec_hex.Ｙ &lt;&lt; &quot;)&quot; &lt;&lt; endl;
+			デバッグ出力 &lt;&lt; &quot;即ち、&quot; &lt;&lt; 姓名B &lt;&lt; &quot;は、&quot; &lt;&lt; 姓名A &lt;&lt; &quot;の&quot; &lt;&lt; Get_８方位文字列(vec_2d) &lt;&lt; &quot;に居ます&quot; &lt;&lt; endl;
+		}
+	}
+}
+		</pre>
+	</div>
+</div>
+
+
+<div class="content-box mb-3 content-lighten">
+	<h3>野戦のヘックス位置を３Ｄ座標へ</h3>
+	<p>ゲームは２Ｄですが、関連させる座標が３Ｄといったことは十分ありえます。<br>
+	例えば、ScenarioModには、効果音を「３Ｄ」空間上で再生する機能が提供されています。<br></p>
+	<p>このように野戦のヘックスマップと３Ｄとを変換しやすいように関数が提供されています。</p>
+	<blockquote>３Ｄ位置型 野戦ヘックス位置→３Ｄ位置(ヘックス位置型 Ｐ)</blockquote>
+	<blockquote>ヘックス位置型 ３Ｄ位置→野戦ヘックス位置(３Ｄ位置型 Ｐ)</blockquote>
+	<p>こちらの「３Ｄ位置→野戦ヘックス位置」については原則あまり使うことはないでしょうが、<br>
+	「３Ｄ位置型 野戦ヘックス位置→３Ｄ位置(ヘックス位置型 Ｐ)」で座標を変換したものを元へと戻せる、という特性があります。</p>
+	<fieldset class="code"><legend>戦場に上杉謙信が居れば、謙信ユニットの野戦での「位置」に応じて、スピーカーから音が聞こえてくる。<br>
+	彼が左奥に居れば左奥から、彼が右手前にいれば右手前から音が聞こえる。</legend>
+	<pre class="brush:cpp;highlight:[9]">
+void カスタム::On_残りターン変更《戦争画面》(int 残りターン数) {
+	if (Is_野戦中())
+	{
+		// 今表示中の武将達のヘックス位置を表示する。
+		auto blist = Get_出陣中の武将番号リスト【配列用】《表示中マップ》();
+
+		for (int iBushouID : blist) {
+			if (p武将戸籍情報[iBushouID].顔番号 == 顔番号::長尾景虎) {
+				ヘックス位置型 pos = Get_武将の野戦ヘックス位置(iBushouID);
+
+				３Ｄ位置型 pos_3D = 野戦ヘックス位置→３Ｄ位置(pos);
+				３Ｄ効果音再生(効果音音源::壁越え, &quot;&quot;, false, pos_3D);
+				デバッグ出力 &lt;&lt; &quot;効果音を鳴らしました(&quot; &lt;&lt; pos_3D.Ｘ &lt;&lt; &quot;,&quot; &lt;&lt; pos_3D.Ｙ &lt;&lt; &quot;,&quot; &lt;&lt; pos_3D.Ｚ &lt;&lt; endl;
+			}
+		}
+	}
+}		</pre>
+	</fieldset>
+</div>
+
+
+<div class="content-box mb-3 content-lighten">
+	<h3>攻城戦のヘックス位置を３Ｄ座標へ</h3>
+	<p>野戦と同様です。</p>
+	<blockquote>３Ｄ位置型 攻城戦ヘックス位置→３Ｄ位置(ヘックス位置型 Ｐ)</blockquote>
+	<blockquote>ヘックス位置型 ３Ｄ位置→攻城戦ヘックス位置(３Ｄ位置型 Ｐ)</blockquote>
+	<p>こちらの「３Ｄ位置→攻城戦ヘックス位置」については原則あまり使うことはないでしょうが、<br>
+	「３Ｄ位置型 攻城戦ヘックス位置→３Ｄ位置(ヘックス位置型 Ｐ)」で座標を変換したものを元へと戻せる、という特性があります。</p>
+	<fieldset class="code"><legend>戦場に上杉謙信が居れば、謙信ユニットの攻城戦での「位置」に応じて、スピーカーから音が聞こえてくる。<br>
+	彼が左奥に居れば左奥から、彼が右手前にいれば右手前から音が聞こえる。</legend>
+		<pre class="brush:cpp;highlight:[9]">
+void カスタム::On_ターン変更《攻城中画面》(int ターン数) {
+	if (Is_攻城戦中())
+	{
+		// 今表示中の武将達のヘックス位置を表示する。
+		auto blist = Get_出陣中の武将番号リスト【配列用】《表示中マップ》();
+
+		for (int iBushouID : blist) {
+			if (p武将戸籍情報[iBushouID].顔番号 == 顔番号::長尾景虎) {
+				ヘックス位置型 pos = Get_武将の攻城戦ヘックス位置(iBushouID);
+
+				３Ｄ位置型 pos_3D = 攻城戦ヘックス位置→３Ｄ位置(pos);
+				３Ｄ効果音再生(効果音音源::壁越え, &quot;&quot;, false, pos_3D);
+				デバッグ出力 &lt;&lt; &quot;効果音を鳴らしました(&quot; &lt;&lt; pos_3D.Ｘ &lt;&lt; &quot;,&quot; &lt;&lt; pos_3D.Ｙ &lt;&lt; &quot;,&quot; &lt;&lt; pos_3D.Ｚ &lt;&lt; endl;
+			}
+		}
+	}
+}
+	</pre>
+	</fieldset>
+</div>
+
+
+
+<div class="content-box mb-3 content-lighten">
+	<h3>より詳細を知るには...</h3>
+	<p>
+		「戦争 - ヘックス位置」に関する主な所は以上となります。
+		詳しくは「戦場情報型.h」「戦場情報列挙.h」などを参照してください。
+	</p>
+</div>

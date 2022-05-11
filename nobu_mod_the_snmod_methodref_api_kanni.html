@@ -1,0 +1,290 @@
+%(hilight)s
+<div class="content-box mb-3 content-lighten">
+	<h2><i class="fa fa-book fa-fw"></i>官位</h2>
+	<p>官位とは「太政大臣」や「関白」といったものです。
+	</p>
+	<p>官位と一言で言っても３つの概念で構成されます。<br>
+	</p>
+	<ul class="pointlist">
+		<li>
+			<h4>官位</h4>
+			<p>官位という抽象的なカテゴリの概念。</p>
+			<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_kanni_01.png"></p>
+		<li>
+			<h4>「p官位情報」という配列</h4>
+			<p>官位の一覧リストに相当する「官位の配列」の概念。</p>
+			<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_kanni_02.png"></p>
+		<li>
+			<h4>p官位情報[ix] (0 &lt;= ix &lt; 官位の総数)</h4>
+			<p>官位の配列のうち、どれか１つの官位</p>
+			<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_kanni_03.png"></p>
+	</ul>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>特定の官位からそれを所持する武将を求める</h3>
+	<p></p>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_kanni_07.png"></p>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+	番号リスト型 list;
+
+	// 官位名と一致で判定するなら以下のようになる「官位名を書き換えているとマッチしない」ので注意
+	for (int KanniID = 0; KanniID &lt; 最大数::官位情報::配列数; KanniID++) {
+
+		if (Get_官位名(KanniID) == &quot;大納言&quot;) {
+			list.push_back(KanniID);
+		}
+	}
+
+	for (int KaniID : list) {
+		int iBushouID = p官位情報[KaniID].所有武将【武将番号】 - 1;
+
+		デバッグ出力 &lt;&lt; &quot;官位番号【配列用】:&quot; &lt;&lt; KaniID &lt;&lt; &quot;の&quot; &lt;&lt; Get_官位名(KaniID) &lt;&lt;  &quot;は...&quot; &lt;&lt; endl;
+
+		// 武将番号【配列用】の範囲なら
+		if (0 &lt;= iBushouID &amp;&amp; iBushouID &lt; 最大数::武将情報::配列数) {
+			デバッグ出力 &lt;&lt; Get_名字(iBushouID) + Get_名前(iBushouID) &lt;&lt; &quot;が所持しています&quot; &lt;&lt; endl;
+		}
+		else {
+			デバッグ出力 &lt;&lt; &quot;誰も所持していません&quot; &lt;&lt; endl;
+		}
+	}
+}
+</pre>
+	</div>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>官位には全く同じ名前のものが複数ある</h3>
+	<p>さきほどの、「大納言」のソース例でもわかることですが、<br>
+		官位には全く同じ名前のものが複数存在します。<br>
+		官位を操作する際には、この点に注意しましょう。</p>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_kanni_04.png"></p>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>特定の武将が官位を所持するか求める</h3>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_kanni_06.png"></p>
+	<p>特定の武将が官位を所持するかは、上述の「特定の官位からそれを所持する武将を求める」と同様の処理となります。</p>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+	int iBushouID = Get_武将番号【配列用】(顔番号::長尾景虎);
+
+	int 上杉謙信の持ってる最高の官位 = -1;
+	if (0 &lt;= iBushouID &amp;&amp; iBushouID &lt; 最大数::武将情報::配列数) {
+
+		for (int iKanniID = 0; iKanniID &lt; 最大数::家宝情報::配列数; iKanniID++) {
+
+			// 官位の「所持武将【武将番号】」→「武将番号【配列用】」 に直したものと一致するなら所持者
+			if (iBushouID == p官位情報[iKanniID].所有武将【武将番号】 - 1) {
+				上杉謙信の持ってる最高の官位 = iKanniID;
+				break; // iKanniIDが少ないほど高位の官位であるため、一番はじめに見つけた官位が最上位。このためbreak;してしまう。
+			}
+		}
+
+		if (0 &lt;= 上杉謙信の持ってる最高の官位 &amp;&amp; 上杉謙信の持ってる最高の官位 &lt; 最大数::官位情報::配列数) {
+			デバッグ出力 &lt;&lt; &quot;上杉謙信が持っている最高の官位は...&quot; &lt;&lt; Get_官位名(上杉謙信の持ってる最高の官位) &lt;&lt; &quot;です。&quot; &lt;&lt; endl;
+		}
+		else {
+			デバッグ出力 &lt;&lt; &quot;上杉謙信は官位を持っていません。&quot; &lt;&lt; endl;
+		}
+	}
+}
+</pre>
+	</div>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>官位の所持者を変更する</h3>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_kanni_03.png"></p>
+	<p>官位名の所持者を変更するには、専用の関数が用意されています。</p>
+	<blockquote>bool Set_官位所有者変更(int 官位番号【配列用】, int 宛先武将番号【配列用】)</blockquote>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+	int iBushouID = Get_武将番号【配列用】(顔番号::長尾景虎);
+
+	int 上杉謙信の持ってる最高の官位 = -1;
+	if (0 &lt;= iBushouID &amp;&amp; iBushouID &lt; 最大数::武将情報::配列数) {
+
+		// 内大臣を上杉謙信に
+		Set_官位所有者変更(4, iBushouID);
+	}
+}
+		</pre>
+	</div>
+	<h4>番号直接指定がためらわれる場合は</h4>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+	int iBushouID = Get_武将番号【配列用】(顔番号::長尾景虎);
+
+	int 上杉謙信の持ってる最高の官位 = -1;
+	if (0 &lt;= iBushouID &amp;&amp; iBushouID &lt; 最大数::武将情報::配列数) {
+
+		// 内大臣を上杉謙信に
+		for (int KanniID = 0; KanniID &lt; 最大数::家宝情報::配列数) {
+			if (Get_官位名(KanniID) == &quot;内大臣&quot;) {
+				Set_官位所有者変更(KanniID, iBushouID);
+				break; // break; を付けるのを忘れないようにすること。breakを付け忘れると、同じ官位名を全て総取りしてしまう。
+			}
+		}
+	}
+}
+		</pre>
+	</div>
+	<h4>朝廷に官位を返却する際には、0xFFFFを指定する</h4>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+	int iBushouID = Get_武将番号【配列用】(顔番号::長尾景虎);
+
+	for (int KanniID = 0; KanniID &lt; 最大数::家宝情報::配列数; KanniID++) {
+
+		// 所持者が長尾景虎と一致した
+		if (iBushouID == p官位情報[KanniID].所有武将【武将番号】 - 1) {
+
+			// 官位を朝廷に返上
+			Set_官位所有者変更(KanniID, 0xFFFF);
+		}
+	}
+}
+		</pre>
+	</div>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>官位名の取得、官位名の設定</h3>
+	<blockquote>string Get_官位名(int 官位番号【配列用】)</blockquote>
+	<p>官位名の取得については、すでに何箇所かで記載があるので問題はないことでしょう。</p>
+	<blockquote>void Set_官位名(int 官位番号【配列用】, string 官位名)</blockquote>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+	Set_官位名(4, &quot;菜っ葉大臣&quot;);
+}
+		</pre>
+	</div>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_kanni_08.png"></p>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>位階の使用や判定</h3>
+	<blockquote>p官位情報[ix].位階</blockquote>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+	番号リスト型 list;
+
+	for (int KaniiID = 0; KaniiID &lt; 最大数::官位情報::配列数; KaniiID++) {
+		if (p官位情報[KaniiID].位階 == 位階::従三位) {
+			list.push_back(KaniiID);
+		}
+	}
+
+	int iSelectedKanniID = 選択官位ダイアログ表示(list);
+}
+		</pre>
+	</div>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>上昇値の使用や判定</h3>
+	<blockquote>p官位情報[ix].上昇値</blockquote>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+	番号リスト型 list;
+
+	for (int KaniiID = 0; KaniiID &lt; 最大数::官位情報::配列数; KaniiID++) {
+		if (p官位情報[KaniiID].上昇値 &gt;= 7) {
+			list.push_back(KaniiID);
+		}
+	}
+
+	int iSelectedKanniID = 選択官位ダイアログ表示(list);
+}
+		</pre>
+	</div>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>上昇値を変更する際は、一旦「朝廷」に預けてから行うこと</h3>
+	<blockquote>p官位情報[ix].上昇値</blockquote>
+	<p>官位の「上昇値」を変更させる際には、「上昇値」だけ変更しても、当該の官位をすでに所持している武将には反映されません。<br>
+		このため、一旦該当の官位を「朝廷に返上」し、「上昇値」を変更してから、元の武将へ再び付け直す、といった作業が必要となります。
+	</p>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+	int 関白の官位番号【配列用】 = 0;
+	for (int KaniID = 0; KaniID &lt; 最大数::官位情報::配列数; KaniID++) {
+		if (Get_官位名(KaniID) == &quot;関白&quot;) {
+
+			int iBushouID = p官位情報[KaniID].所有武将【武将番号】 - 1;  // 今持ってる武将番号を【配列用】に変更して控えておく
+
+			Set_官位所有者変更(KaniID, 0xFFFF); // 上昇値を変化させる前に、朝廷へと返上する
+
+			p官位情報[KaniID].上昇値 = 16; // 10ではなく16上昇するようにする
+
+			// 元々が武将が所有していたのであれば...
+			if (0 &lt;= iBushouID &amp;&amp; iBushouID &lt; 最大数::武将情報::配列数) {
+				Set_官位所有者変更(KaniID, iBushouID);
+			}
+		}
+	}
+}
+		</pre>
+	</div>
+	<blockquote>bool Set_官位上昇値(int 官位番号【配列用】, int 上昇値)</blockquote>
+	<p>上昇値が１～24の範囲であれば、Set_官位上昇値を利用するのがお手軽です。<br></p>
+	<div class="code">
+		<pre class="brush:cpp;highlight:[19]">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+	int iBushouID = Get_武将番号【配列用】(顔番号::長尾景虎);
+
+	int 上杉謙信の持ってる最高の官位 = -1;
+	if (0 &lt;= iBushouID &amp;&amp; iBushouID &lt; 最大数::武将情報::配列数) {
+
+		for (int iKanniID = 0; iKanniID &lt; 最大数::家宝情報::配列数; iKanniID++) {
+
+			// 官位の「所持武将【武将番号】」→「武将番号【配列用】」 に直したものと一致するなら所持者
+			if (iBushouID == p官位情報[iKanniID].所有武将【武将番号】 - 1) {
+				上杉謙信の持ってる最高の官位 = iKanniID;
+				break; // iKanniIDが少ないほど高位の官位であるため、一番はじめに見つけた官位が最上位。このためbreak;してしまう。
+			}
+		}
+
+		if (0 &lt;= 上杉謙信の持ってる最高の官位 &amp;&amp; 上杉謙信の持ってる最高の官位 &lt; 最大数::官位情報::配列数) {
+			デバッグ出力 &lt;&lt; &quot;上杉謙信が持っている最高の官位は...&quot; &lt;&lt; Get_官位名(上杉謙信の持ってる最高の官位) &lt;&lt; &quot;です。&quot; &lt;&lt; endl;
+			Set_官位上昇値(上杉謙信の持ってる最高の官位, 24);
+		}
+		else {
+			デバッグ出力 &lt;&lt; &quot;上杉謙信は官位を持っていません。&quot; &lt;&lt; endl;
+		}
+	}
+}
+</pre>
+	</div>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>より詳細を知るには...</h3>
+	<p>
+		「官位」に関する主な所は以上となります。<br>
+		詳しくは「官位情報型.h」や「官位情報列挙.h」などを参照してください。
+	</p>
+</div>

@@ -1,0 +1,113 @@
+%(hilight)s
+<div class="content-box mb-3 content-lighten">
+    <h2><i class="fa fa-book fa-fw"></i>城Ａ から 城Ｂ への経路探索</h2>
+    <h3>Google Map のルート探索を思い浮かべてください</h3>
+    <p>経路探索といえば、Google Map を思い浮かべる人がいるかと思います。</p>
+    <p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_castle_route_01.png"></p>
+    <p>なぜ躑躅ヶ崎館(武田氏館後）から小田原城に直線で線が引かれないのでしょうか？<br>
+        ─── 富士山もあり、そこにまっすぐと移動するような道が存在しないためです。<br>
+        (仮に存在したとしてもまともに移動できない)</p>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>天翔記に存在する「街道」の概念</h3>
+    <p>自勢力の城とその他の自勢力の城は、街道で「連結」されます。<br>
+        街道で結ばれていても街道の途中に他勢力の城が介在する場合は、「連結されていない」ことになります。<br>
+        軍団は、「連結」されている城から収入を得ることができます。</p>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+    <h3>城と経路グラフ関連の関数</h3>
+    <h4>グラフ(経路グラフ)とは</h4>
+    <p>通常「グラフ」という言葉を聞くと、「棒グラフ」や「円グラフ」を思い浮かべると思いますが、<br>
+        ゲーム制作において、「グラフ」とは、一般的に、<br>
+        <a href="http://ja.wikipedia.org/wiki/%E9%81%93_(%E3%82%B0%E3%83%A9%E3%83%95%E7%90%86%E8%AB%96)"><b>経路グラフ</b></a>のことを示します。<br>
+        (道のような経路に限らず、状態遷移が矢印で繋がったような、いわゆる「点項目(ノード)」が「矢印線(エッジ)」で繋がっているものの総称です。)</p>
+    <p>ScenarioModには、この経路グラフ関連の関数が提供されています。
+    </p>
+    <p><img src="./cnt_mod/mod_snmod/cnt_mod_scenario_mod_103.png" width="825" height="256"><br>
+    </p>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+    <h3>とある城を中心に、道(経路)が繋がっている隣接城の一覧を得る</h3>
+    <blockquote>番号リスト型 clist = Get_経路連結の隣接城番号リスト【配列用】( int iCastleID );</blockquote>
+    <div class="code">
+        <pre class="brush:cpp;">
+番号リスト型 clist = Get_経路連結の隣接城番号リスト【配列用】( 城配列番号::躑躅ヶ崎館 ); // 躑躅ヶ崎館の周囲に隣接していて、道で繋がっている城一覧
+for each ( int iCastleID in clist ) {
+    デバッグ出力 &lt;&lt; Get_城名(iCastleID) &lt;&lt; &quot;,&quot;;
+}
+デバッグ出力 &lt;&lt; endl;
+</pre>
+    </div>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+    <h3>とある城A→城Bまで、理想的な経路を探索し、その経路上の城一覧を得る。</h3>
+    <blockquote>Set_城経路グラフ初期化();<br>
+        番号リスト型 clist = Get_経路連結の隣接城番号リスト【配列用】( int iCastleID );</blockquote>
+    <div class="code">
+        <pre class="brush:cpp;">
+Set_城経路グラフ初期化(); // 経路グラフを現在実行中の城位置に合わせて再構築しなおす。MapDataObgkModなど、ゲーム中に城の位置を変えているものへの対処
+
+番号リスト型 clist = Get_経路上の城番号リスト【配列用】( 城配列番号::躑躅ヶ崎館, 城配列番号::月山富田城 );  // 躑躅ヶ崎館 から 月山富田城まで
+
+for each ( int iCastleID in clist ) {
+    デバッグ出力 &lt;&lt; Get_城名(iCastleID) &lt;&lt; &quot;,&quot;;
+}
+デバッグ出力 &lt;&lt; endl;
+</pre>
+    </div>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+    <h3>経路探索の対象にしたくない城の設定</h3>
+    <p>先述の経路探索をする前に、「探索対象にしたくない城」を複数削除することができます。</p>
+    <blockquote>Set_城経路グラフから城削除( int iCastleID );</blockquote>
+    <div class="code">
+        <pre class="brush:cpp;">
+Set_城経路グラフ初期化(); // 経路グラフを現在実行中の城位置に合わせて再構築しなおす。MapDataObgkModなど、ゲーム中に城の位置を変えているものへの対処
+
+Set_城経路グラフから城削除( 城配列番号::尾高城 );  // 尾高城は探索対象にしない。
+Set_城経路グラフから城削除( 城配列番号::上原城 ); // 上原城は探索対象にしない。
+
+番号リスト型 clist = Get_経路上の城番号リスト【配列用】( 城配列番号::躑躅ヶ崎館, 城配列番号::月山富田城 );  // 躑躅ヶ崎館 から 月山富田城まで
+for each ( int iCastleID in clist ) {
+    デバッグ出力 &lt;&lt; Get_城名(iCastleID) &lt;&lt; &quot;,&quot;;
+}
+デバッグ出力 &lt;&lt; endl;
+</pre>
+    </div>
+    <p>forループなどで、自勢力以外の城を全て 「Set_城経路グラフから城削除」で削除 してしまえば、<br>
+        経路探索は、「自勢力の城を使ったもの」となるわけです。<br>
+    </p>
+    <div class="code">
+        <pre class="brush:cpp;">
+Set_城経路グラフ初期化(); // 経路グラフを現在実行中の城位置に合わせて再構築しなおす。MapDataObgkModなど、ゲーム中に城の位置を変えているものへの対処
+
+Set_城経路グラフから城削除( 城配列番号::門司城 );   // 九州の、門司城を削除
+Set_城経路グラフから城削除( 城配列番号::松葉城 );  // 四国の松葉城を削除
+
+番号リスト型 clist = Get_経路上の城番号リスト【配列用】( 城配列番号::室町御所, 城配列番号::種子島城 );  // 室町から種子島
+if ( clist.size() &lt; 2 ) {
+     // 経路が求まったのであれば、少なくとも「開始城」と「終了城」がリストに入っている。
+     // ２つ未満ということは経路が求まらなかったということ。
+    デバッグ出力 &lt;&lt; &quot;経路が求まらない&quot; &lt;&lt; endl;
+} else {
+    for each ( int iCastleID in clist ) {
+      デバッグ出力 &lt;&lt; Get_城名(iCastleID) &lt;&lt; &quot;,&quot;;
+    }
+    デバッグ出力 &lt;&lt; endl;
+}
+</pre>
+    </div>
+
+</div>
+
+<div class="content-box mb-3 content-lighten">
+    <h3>より詳細を知るには...</h3>
+    <p>
+        「城Ａ から 城Ｂ への経路探索」に関する主な所は以上となります。
+        詳しくは「城情報型.h」などを参照してください。
+    </p>
+</div>

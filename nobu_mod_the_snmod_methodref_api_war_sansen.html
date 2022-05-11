@@ -1,0 +1,231 @@
+%(hilight)s
+<div class="content-box mb-3 content-lighten">
+  <h2><i class="fa fa-book fa-fw"></i>戦争 - 参戦と立場</h2>
+  <p>戦争中において、どのような大名が参戦したのか、どのような軍団が参戦したのか、<br>
+    あるいはどのような武将が出陣中なのかを取得するAPI軍団です。</p>
+  <p>原則的に、「戦争中」のイベントハンドラ内での利用が中心で、次いで会話メッセージ中での判定用にて使うことになるでしょう。</p>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+  <h3>現在行われている戦争に参加した大名勢力はどこなのか？ についての情報を得る</h3>
+  <blockquote>番号リスト型 Get_参戦の大名番号リスト【配列用】()</blockquote>
+  <fieldset class="alert alert-info">
+    <legend>対象イベントハンドラの制限はない</legend>今回提示する以下の関数群のサンプル軍は、<br>
+    たまたま全て「On_残りターン変更《戦争画面》」イベントハンドラ内での記述となっているが、<br>
+    別段そのような使用制限事項は存在しない。<br>
+    戦争中に実行されるいかなるイベントハンドラ内においても(たとえば吹き出し直前イベントハンドラ等)、実行可能である。
+  </fieldset>
+  <div class="code">
+    <pre class="brush:cpp;">
+void カスタム::On_残りターン変更《戦争画面》(int 残りターン数) {
+  番号リスト型 dlist = Get_参戦の大名番号リスト【配列用】();
+
+  for( int iDaimyoID : dlist ) {
+    デバッグ出力 &lt;&lt; &quot;参戦大名番号【配列用】:&quot; &lt;&lt; iDaimyoID &lt;&lt; endl;
+    デバッグ出力 &lt;&lt; &quot;大名:&quot; &lt;&lt; Get_名字( p大名情報[iDaimyoID].大名【武将番号】-1 ) &lt;&lt; endl;
+  }
+}
+</pre>
+  </div>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+  <h3>現在行われている戦争に参戦した軍団勢力はどこなのか？ についての情報を得る</h3>
+  <blockquote>番号リスト型 Get_参戦の軍団番号リスト【配列用】()</blockquote>
+  <div class="code">
+    <pre class="brush:cpp;">
+void カスタム::On_残りターン変更《戦争画面》(int 残りターン数) {
+  番号リスト型 glist = Get_参戦の軍団番号リスト【配列用】();
+
+  for ( int iGundanID : glist ) {
+    デバッグ出力 &lt;&lt; &quot;参戦軍団番号【配列用】:&quot; &lt;&lt; iGundanID &lt;&lt; endl;
+    int iBushouID = p軍団情報[iGundanID].軍団長【武将番号】-1;
+    if ( 0 &lt;= iBushouID &amp;&amp; iBushouID &lt; 最大数::武将情報::配列数 ) {
+      デバッグ出力 &lt;&lt; &quot;軍団長:&quot; &lt;&lt; Get_名字(iBushouID)+Get_名前(iBushouID) &lt;&lt; endl;
+    }
+  }
+}
+</pre>
+  </div>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+  <h3>とある軍団の「戦争への参戦立場」についての情報を得るものとなる</h3>
+  <blockquote>int Get_軍団の参戦立場(int 軍団番号【配列用】)</blockquote>
+  <div class="code">
+    <pre class="brush:cpp;">
+void カスタム::On_残りターン変更《戦争画面》(int 残りターン数) {
+  番号リスト型 glist = Get_参戦の軍団番号リスト【配列用】();
+
+  for ( int iGundanID : glist ) {
+
+    int iBushouID = p軍団情報[iGundanID].軍団長【武将番号】-1;
+
+    if ( 0 &lt;= iBushouID &amp;&amp; iBushouID &lt; 最大数::武将情報::配列数 ) {
+      デバッグ出力 &lt;&lt; &quot;軍団長:&quot; &lt;&lt; Get_名字(iBushouID)+Get_名前(iBushouID) &lt;&lt; endl;
+    }
+
+    // 軍団としての参戦立場を得る
+    int iTachiba = Get_軍団の参戦立場(iGundanID);
+
+    if ( iTachiba == 参戦立場::不明 ) {
+      デバッグ出力 &lt;&lt; &quot;立場:不明&quot; &lt;&lt; endl;
+    }
+    else if ( iTachiba == 参戦立場::攻撃軍 ) {
+      デバッグ出力 &lt;&lt; &quot;立場:攻撃軍&quot; &lt;&lt; endl;
+    }
+    else if ( iTachiba == 参戦立場::守備軍 ) {
+      デバッグ出力 &lt;&lt; &quot;立場:守備軍&quot; &lt;&lt; endl;
+    }
+    else if ( iTachiba == 参戦立場::攻撃の援軍 ) {
+      デバッグ出力 &lt;&lt; &quot;立場:攻撃の援軍&quot; &lt;&lt; endl;
+    }
+    else if ( iTachiba == 参戦立場::守備の援軍 ) {
+      デバッグ出力 &lt;&lt; &quot;立場:守備の援軍&quot; &lt;&lt; endl;
+    }
+    else if ( iTachiba == 参戦立場::中立軍 ) {
+      デバッグ出力 &lt;&lt; &quot;立場:中立軍&quot; &lt;&lt; endl;
+    }
+    デバッグ出力 &lt;&lt; &quot;------------------------&quot; &lt;&lt; endl;
+  }
+}
+</pre>
+  </div>
+</div>
+
+
+
+
+<div class="content-box mb-3 content-lighten">
+  <h3>現在の戦争中において、とある軍団の戦場における指揮者は誰なのか？ の情報を得るものとなる。</h3>
+  <p>代表者とは、軍団長や大名とは限らない。<br>
+    大名や軍団長が戦場に居ない場合などは、戦場にて最も相応しい者が代表者として天翔記システムにより選ばれている。</p>
+  <blockquote>int Get_参戦軍団の指揮者(int 軍団番号【配列用】)</blockquote>
+  <div class="code">
+    <pre class="brush:cpp;">
+void カスタム::On_残りターン変更《戦争画面》(int 残りターン数) {
+
+  if ( 残りターン数 &lt;= 29 ) {
+    番号リスト型 glist = Get_参戦の軍団番号リスト【配列用】();
+
+    for each ( int iGundanID in glist ) {
+      デバッグ出力 &lt;&lt; &quot;参戦軍団番号【配列用】:&quot; &lt;&lt; iGundanID &lt;&lt; endl;
+
+      int iBushouID = Get_参戦軍団の指揮者(iGundanID);
+
+      if ( 0 &lt;= iBushouID &amp;&amp; iBushouID &lt; 最大数::武将情報::配列数 ) {
+        デバッグ出力 &lt;&lt; &quot;指揮者:&quot; &lt;&lt; Get_名字(iBushouID)+Get_名前(iBushouID) &lt;&lt; endl;
+      }
+    }
+  }
+}
+</pre>
+  </div>
+</div>
+
+
+<div class="content-box mb-3 content-lighten">
+  <h3>現在出陣しいている武将一覧を取得する</h3>
+  <blockquote>番号リスト型 Get_出陣中の武将番号リスト【配列用】()</blockquote>
+  <p>現在の「戦域全域」を対象として出陣している武将のリストを得る。<br>
+    戦域全域とは、画面上に表示されていないような攻城戦などに出陣中の武将も含まれる。</p>
+    <p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_war_where_03.png"></p>
+    <blockquote>番号リスト型 Get_出陣中の武将番号リスト【配列用】《表示中マップ》()</blockquote>
+  <p>現現在表示中の戦闘マップに出陣している武将番号配列用のリストを得る。<br>
+    現在表示されているマップのみが対象となる。(野戦マップもしくは特定の攻城戦マップ）</p>
+    <p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_war_where_05.png"></p>
+    <div class="code">
+    <pre class="brush:cpp;">
+void カスタム::On_残りターン変更《戦争画面》(int 残りターン数) {
+
+  if ( 残りターン &lt;= 29 ) {
+    // 野戦 or 攻城戦 という戦域全体で、現在出陣中の武将一覧
+    番号リスト型 blist = Get_出陣中の武将番号リスト【配列用】();
+
+    for( int iBushouID : blist ) {
+
+      デバッグ出力 &lt;&lt; &quot;武将姓名:&quot; &lt;&lt; Get_名字(iBushouID)+Get_名前(iBushouID) &lt;&lt; endl;
+    }
+  }
+}
+</pre>
+  </div>
+
+  <div class="code">
+    <pre class="brush:cpp;">
+void カスタム::On_残りターン変更《戦争画面》(int 残りターン数) {
+	if (Is_野戦中()) {
+		// 現在表示中の野戦なら、表示中の野戦フィールドで出陣中の武将一覧
+		番号リスト型 blist = Get_出陣中の武将番号リスト【配列用】《表示中マップ》();
+		for (int iBushouID : blist) {
+			デバッグ出力 &lt;&lt; Get_名字(iBushouID) + Get_名前(iBushouID) &lt;&lt; endl;
+		}
+	}
+}
+
+void カスタム::On_ターン変更《攻城中画面》(int ターン数) {
+	if (Is_攻城戦中()) {
+		// 現在表示中の攻城戦で表示中の城マップでの出陣中の武将一覧
+		番号リスト型 blist = Get_出陣中の武将番号リスト【配列用】《表示中マップ》();
+		for (int iBushouID : blist) {
+			デバッグ出力 &lt;&lt; Get_名字(iBushouID) + Get_名前(iBushouID) &lt;&lt; endl;
+		}
+	}
+}
+</pre>
+  </div>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+  <h3>とある武将の「戦争への参戦立場」についての情報を得るものとなる</h3>
+  <blockquote>int Get_武将の参戦立場(int 武将番号【配列用】)</blockquote>
+  <p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_war_sansen_01.png"></p>
+  <div class="code">
+    <pre class="brush:cpp;">
+void カスタム::On_残りターン変更《戦争画面》(int 残りターン数) {
+
+  if ( 残りターン &lt;= 29 ) {
+    番号リスト型 blist = Get_出陣中の武将番号リスト【配列用】();
+
+    for each ( int iBushouID in blist ) {
+
+      デバッグ出力 &lt;&lt; &quot;武将姓名:&quot; &lt;&lt; Get_名字(iBushouID)+Get_名前(iBushouID) &lt;&lt; endl;
+
+      // 武将としての参戦立場を得る
+      int iTachiba = Get_武将の参戦立場(iBushouID);
+
+      if ( iTachiba == 参戦立場::不明 ) {
+        デバッグ出力 &lt;&lt; &quot;立場:不明&quot; &lt;&lt; endl;
+      }
+      else if ( iTachiba == 参戦立場::攻撃軍 ) {
+        デバッグ出力 &lt;&lt; &quot;立場:攻撃軍&quot; &lt;&lt; endl;
+      }
+      else if ( iTachiba == 参戦立場::守備軍 ) {
+        デバッグ出力 &lt;&lt; &quot;立場:守備軍&quot; &lt;&lt; endl;
+      }
+      else if ( iTachiba == 参戦立場::攻撃の援軍 ) {
+        デバッグ出力 &lt;&lt; &quot;立場:攻撃の援軍&quot; &lt;&lt; endl;
+      }
+      else if ( iTachiba == 参戦立場::守備の援軍 ) {
+        デバッグ出力 &lt;&lt; &quot;立場:守備の援軍&quot; &lt;&lt; endl;
+      }
+      else if ( iTachiba == 参戦立場::中立軍 ) {
+        デバッグ出力 &lt;&lt; &quot;立場:中立軍&quot; &lt;&lt; endl;
+      }
+      デバッグ出力 &lt;&lt; &quot;------------------------&quot; &lt;&lt; endl;
+
+    }
+  }
+}
+</pre>
+  </div>
+</div>
+
+
+<div class="content-box mb-3 content-lighten">
+  <h3>より詳細を知るには...</h3>
+  <p>
+    「戦争 - 参戦と立場」に関する主な所は以上となります。
+    詳しくは「戦場情報型.h」や「戦場情報列挙.h」などを参照してください。
+  </p>
+</div>

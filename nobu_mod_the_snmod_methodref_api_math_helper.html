@@ -1,0 +1,88 @@
+%(hilight)s
+<div class="content-box mb-3 content-lighten">
+	<h2><i class="fa fa-book fa-fw"></i>数学関数</h2>
+	<p>ScenarioModで特別に利用するための数学系関数がいくつか存在する。
+	</p>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>数値が「0.5単位の目盛り」であると仮定して、そこへと数値を丸める関数</h3>
+	<blockquote>double round《二分の一吸着化》(double value)</blockquote>
+	<div class="code">
+		<pre class="brush:cpp">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+	double ret1 = round《二分の一吸着化》(1.77);
+
+	デバッグ出力 &lt;&lt; ret1 &lt;&lt; endl;
+
+	double ret2 = round《二分の一吸着化》(1.51);
+
+	デバッグ出力 &lt;&lt; ret2 &lt;&lt; endl;
+
+	double ret3 = round《二分の一吸着化》(-1.33);
+
+	デバッグ出力 &lt;&lt; ret3 &lt;&lt; endl;
+}
+</pre>
+	</div>
+	<div class="code">
+		<pre class="brush:cpp">
+2.0
+1.5
+-1.5
+</pre>
+	</div>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>２次元座標・２次元ベクトル</h3>
+	<blockquote>２Ｄ位置型</blockquote>
+	<blockquote>２Ｄベクトル型</blockquote>
+	<p>これらは一般的な、vec2D、vector2D などと称されるような、各種言語でのライブラリと同じようなものであり、<br>
+	ScenarioModで使いそうな範囲での「簡易版」と言える。</p>
+	<p>特別な関数として、ベクトルの方向を東西南北といった言葉に変換するための</p>
+	<blockquote>string Get_８方位文字列(２Ｄベクトル型 v)</blockquote>
+	<blockquote>string Get_４方位文字列(２Ｄベクトル型 v)</blockquote>
+	<p>といった関数が存在する。</p>
+	<p>城と城の位置関係や、戦争画面でのユニットとユニットの位置関係など、ベクトルの方向を言葉に直せるのは、<br>
+	武将にセリフを言われる際に、便利に機能するだろう。</p>
+	<div class="code">
+		<pre class="brush:cpp">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+	城グリッド位置型 pos1 = Get_城グリッド位置(城配列番号::春日山城);
+	城グリッド位置型 pos2 = Get_城グリッド位置(城配列番号::小田原城);
+
+	// 春日山 → 小田原へのベクトル
+	城グリッドベクトル型 v城 = pos2 - pos1;
+
+	２Ｄベクトル型 v汎(v城.Ｘ, v城.Ｙ); // 城グリッドベクトル型から、汎用計算が可能な２Ｄベクトル型へ
+
+	string str方向 = Get_８方位文字列(v汎);
+	デバッグ出力 &lt;&lt; str方向 &lt;&lt; endl;
+}
+</pre>
+	</div>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>３次元座標・３次元ベクトル</h3>
+	<blockquote>３Ｄ位置型</blockquote>
+	<blockquote>３Ｄベクトル型</blockquote>
+	<p>これらは一般的な、vec3D、vector3D などと称されるような、各種言語でのライブラリと同じようなものであり、<br>
+	ScenarioModで使いそうな範囲での「簡易版」と言える。</p>
+	<p>ScenarioModでは、「３Ｄ効果音再生」関連で出てくる程度であるため、そちらを参照のこと。</p>
+	<ul>
+		<li><a href="?page=nobu_mod_the_snmod_methodref_api_sound_effect">３Ｄ効果音の再生の項目</a>
+		<li><a href="?page=nobu_mod_the_snmod_methodref_api_war_hex">ヘックス位置を３Ｄ位置への変換の項目</a>
+	</ul>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>より詳細を知るには...</h3>
+	<p>
+		「２Ｄ位置情報型」に関する主な所は以上となります。
+		詳しくは「２Ｄ位置情報型.h」「３Ｄ位置情報型.h」「補助ライブラリ.h」などを参照してください。
+	</p>
+</div>

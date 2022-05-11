@@ -1,0 +1,72 @@
+﻿%(hilight)s
+<div class="content-box mb-3 content-lighten">
+    <h2><i class="fa fa-book fa-fw"></i><a name="doc1_patch">パッチ</a></h2>
+
+    <div class="titletoc">
+        <ul>
+            <li> <a href="#doc1_id225">登録されているゲームへのパッチ</a>
+            <li> <a href="#doc1_id228">登録されていないゲームへのパッチ</a>
+            <li> <a href="#doc1_id234">元のファイルのバックアップ</a>
+            <li> <a href="#doc1_revert">パッチ前のファイルに戻す</a>
+            <li>
+                <a href="#doc1_specialpatch">特殊なパッチ</a>
+                <ul>
+                    <li> <a href="#doc1_id245">ImportTableパッチ</a>
+                    <li> <a href="#doc1_id257">VFWパッチ</a>
+                </ul>
+        </ul>
+    </div>
+    <p class="first_ja">_inmm.dllを使ってゲームの曲を置き換えるためには、そのゲームのプログラムをちょっと書き換えてやる必要があります。この作業を「（ゲームの実行ファイルに）パッチを当てる」といいます。</p>
+    <p>以前のバージョンの_inmm.dllでパッチを当てたゲームには、再度パッチを当てる必要はありません。</p>
+    <p>パッチ当ては_inmmcnf.exeを使って行います。_inmmcnf.exeはwindowsの実行形式ファイルを解析して、必要箇所を自動的に書き替えてくれます。ユーザーがしなければならないのは、書き替えるべきファイルを_inmmcnf.exeに教えてやることだけです。</p>
+    <p>とはいっても、書き換えるべきファイルの特定には少々コツが必要です。そこで_inmm.dllでは、パッチを当てたファイルについての情報をユーザーの皆さんから提供してもらって、そんなソフトについてはボタンひとつでパッチを当てられるようにしています。</p>
+    <p>このデータベースは、_inmmのアーカイブに含まれている_inmmcnf.ini（<a href="?page=nobu_tool_web_archieve_inmm_manual_s4#doc1_inmmini">_inmm.ini</a>とは別のものです）というファイルに入っていて、<a href="?page=nobu_tool_web_archieve_inmm_index">_inmm.dllのホームページ</a>で最新版を入手できます。</p>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3><a name="doc1_id225">登録されているゲームへのパッチ</a></h3>
+
+    <p class="first_ja">すでに_inmmcnf.iniに登録されているゲームにパッチを当てたい場合、話は簡単です。_inmmcnf.exeの[パッチ]ページで、ゲーム名を一覧から選択して[実行]ボタンを押すだけです。ゲームによっては追加のメッセージが表示されたり、インストールフォルダを自分で指定してやらなければならなかったりしますが、迷うことはほとんどないでしょう。</p>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3><a name="doc1_id228">登録されていないゲームへのパッチ</a></h3>
+
+    <p class="first_ja">お目当てのソフトが登録されていなくても諦めるのはまだ早いです。試しに実行ファイルにパッチを当ててみて、動くかどうか調べてみましょう。（そして成功したらぜひ<a href="?page=nobu_tool_web_archieve_inmm_manual_s6#doc1_reginfo">登録情報</a>を提供してください。）</p>
+    <p>パッチを当てるべきファイルは、ゲーム本体のプログラム（exeファイル）かDLLファイルです。これら全部にパッチを当てておけば、まあ間違いはないでしょう。:-)</p>
+    <p>_inmmcnf.exeで[パッチ]ページを選択して、そこにファイルをドラッグ＆ドロップするとパッチをあてることができます。</p>
+    <p>はずれのファイルにパッチをあてても、「書き替える情報がありません」と表示されるだけで害はありません。ただし、「書き換えに成功しました」と表示されたからといって、そのファイルが当たりとは限りません。ややこしいですね。：-)正しいファイルにパッチが当てられているかを調べるには、ゲームを起動してみてBGMが置き換わっているかどうかをみるしかありません。</p>
+    <p>エクスプローラ上で、ファイルを_inmmcnf.exeのアイコンにドロップしても、パッチをあてることができます。</p>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3><a name="doc1_id234">元のファイルのバックアップ</a></h3>
+
+    <p class="first_ja">どの方法でパッチを当てても、書き換える前のファイルは、拡張子を.orgに変えられて、書き換えたファイルと同じフォルダに保存されます。すでに.orgファイルがある場合、バックアップファイルの拡張子は.org1、.org2…となります。ファイルが書き替えられなかった場合は、バックアップファイルは作られません。</p>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3><a name="doc1_revert">パッチ前のファイルに戻す</a></h3>
+
+    <p class="first_ja">パッチを当てたファイルにもう一度パッチを当てようとすると、元に戻すか聞いてきます。「はい」を選ぶと、パッチを当てたファイルを元に戻します（最後に作られたバックアップファイルで上書きします）。</p>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3><a name="doc1_specialpatch">特殊なパッチ</a></h3>
+
+    <p class="first_ja">通常のパッチのほかに、_inmmcnf.exeには2種類のパッチ方法が用意されています。これらの特殊なパッチは、通常のパッチでうまく動かないゲームに使用します。</p>
+    <p>どんな場合に特殊なパッチが必要になるかは、<a href="?page=nobu_tool_web_archieve_inmm_faq#specialpatch">FAQ</a>を参照してください。</p>
+
+    <h4><a name="doc1_id245">ImportTableパッチ</a></h4>
+
+    <p class="first_ja">_inmm Ver.2.36以降の標準のパッチ方法では、ファイル中にあるWINMM.DLLのAPI名を表す文字列をすべて強制的に書き換えてしまいます。ImportTableパッチは_inmm Ver.2.35以前のデフォルトのパッチ方法で、実行ファイルの構造を解析して必要な箇所にのみパッチを適用します。余計な部分を書き換えてしまう危険はありませんが、標準的でない方法でWINMM.DLLを使っているゲームには効かないかもしれません。</p>
+    <p>
+        ImportTableパッチを当てるには、_inmmcnf.iniの<a href="?page=nobu_tool_web_archieve_inmm_manual_s6#doc1_reginfo">
+            登録情報</a>で、<code>File=</code>の代わりに<code>ImportTablePatch=</code>を指定します。
+    </p>
+
+    <h4><a name="doc1_id257">VFWパッチ</a></h4>
+
+    <p class="first_ja">
+        WINMM.DLLではなくMSVFW32.DLLを使ってCDを鳴らしているゲームに使います。このパッチを当てたゲームを実行するには、<a href="?page=nobu_tool_web_archieve_inmm_svfw32_readme" target="_top">
+            _inmm.dll
+            のホームページ
+        </a>で配布している_svfw32.dllが必要です。
+    </p>
+    <p>VFWパッチを当てるには、_inmmcnf.iniの<a href="?page=nobu_tool_web_archieve_inmm_manual_s6#doc1_reginfo">登録情報</a>で、<code>File=</code>の代わりに<code>VfwPatch=</code>を指定します。</p>
+</div>

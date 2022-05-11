@@ -1,0 +1,124 @@
+%(hilight)s
+<div class="content-box mb-3 content-lighten">
+	<h2><i class="fa fa-book fa-fw"></i>画面演出</h2>
+	<p>フェイドインやフェイドアウト、画面カメラの移動など、<br>
+		画面演出系のAPI提供用オブジェクトとなります。<br>
+	</p>
+
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>使い処</h3>
+	<p>独自イベント演出前後のフェイドアウトやフェイドイン、や、<br>
+		「画面中央に映す城」を変更する際に利用します。<br>
+	</p>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>最も単純な例</h3>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_screen_effect_01.png"></p>
+	<fieldset class="code"><legend>会見で真田幸隆に話しかけると、フェイドイン・アウトを挟んで二条城へとカメラが移動する</legend>
+		<pre class="brush:cpp">
+string カスタム::On_噴出メッセージ直前(string 武将名, string 元メッセージ, メッセージ関連情報型 メッセージ関連情報) {
+
+	if (武将名 == &quot;真田幸隆&quot;) {
+		フェイドアウト();
+		カメラ移動(城配列番号::二条城);
+		フェイドイン();
+		return &quot;ここが&quot; + Get_城名(城配列番号::二条城) + Get_城称(城配列番号::二条城);
+	}
+
+	// 変更しない場合&quot;&quot;
+	return &quot;&quot;;
+}
+</pre>
+	</fieldset>
+</div>
+<div class="content-box mb-3 content-lighten">
+	<h3>void カメラ移動(int 城番号【配列用】)</h3>
+	<p>フェイドイン()やフェイドアウト()を挟まずとも、カメラは移動可能ですが、移動があまりにも一瞬で終了してしまうため、<br>
+	通常は何らかの表示を挟むことが多いかと思います。</p>
+	<fieldset class="code"><legend>城名を表示するフレームダイアログにて一瞬で移動が切り替わっていくのを止める</legend>
+		<pre class="brush:cpp">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+	カメラ移動(城配列番号::春日山城);
+	情報フレームダイアログ表示(Get_城名(城配列番号::春日山城) + Get_城称(城配列番号::春日山城));
+
+	カメラ移動(城配列番号::二条城);
+	情報フレームダイアログ表示(Get_城名(城配列番号::二条城) + Get_城称(城配列番号::二条城));
+
+}
+</pre>
+	</fieldset>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>様々なことに応用可能</h3>
+	<p>名指しによる移動だけではなく、様々な応用が考えられます。</p>
+	<div class="code">
+		<pre class="brush:cpp">
+void カスタム::On_軍団ターン変更《メイン画面》(int 軍団番号) {
+	int iGundanID = 軍団番号 - 1;
+	if (0 &lt;= iGundanID &amp;&amp; iGundanID &lt; 最大数::軍団情報::配列数) {
+
+		int iCastleID = p軍団情報[iGundanID].所属居城【城番号】 - 1;
+
+		if (0 &lt; iCastleID &amp;&amp; iCastleID &lt; 最大数::城情報::配列数) {
+			カメラ移動(iCastleID);
+		}
+
+		int iBushouID = p軍団情報[iGundanID].軍団長【武将番号】 - 1;
+		if (0 &lt; iBushouID &amp;&amp; iBushouID &lt; 最大数::武将情報::配列数) {
+			情報フレームダイアログ表示(Get_名字(iBushouID) + Get_名前(iBushouID) + &quot;のターン&quot;);
+		}
+	}
+}
+</pre>
+	</div>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>画面更新()</h3>
+	<p>フェイドアウト・フェイドインと同じ機能ですが、暗転しません。</p>
+	<div class="code">
+		<pre class="brush:cpp">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+	int iBushouID = Get_武将番号【配列用】(顔番号::織田信長);
+
+	if (0 &lt;= iBushouID &amp;&amp; iBushouID &lt; 最大数::武将情報::配列数) {
+		int iDaimyoID = p武将情報[iBushouID].所属大名【大名番号】 - 1;
+
+		if (0 &lt;= iDaimyoID &amp;&amp; iDaimyoID &lt; 最大数::大名情報::配列数) {
+			p大名情報[iDaimyoID].家紋 = 151;
+		}
+	}
+
+	画面更新();
+}
+</pre>
+	</div>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>解像度型 Get_天翔記解像度()</h3>
+	<p>天翔記の「ゲーム描画領域の解像度」を取得します。天翔記起動後に、ウィンドウが大きくなりますがそのタイミングの後に使用可能となります。</p>
+	<p>通常はこの関数を利用することはないかと思いますが、ゲーム画面の中央の(X, Y)座標などを取得する必要性が出た場合などに利用してくてください。<br>
+	</p>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_トップメニュー表示時() {
+    解像度型 解像度 = Get_天翔記解像度();
+    デバッグ出力 &lt;&lt; 解像度.Ｘ &lt;&lt; &quot;,&quot; &lt;&lt; 解像度.Ｙ &lt;&lt; endl;
+}
+</pre>
+	</div>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>より詳細を知るには...</h3>
+	<p>
+		画面演出に関する主な所は以上となります。
+		詳しくは「画面演出情報型.h」や「城情報列挙.h」などを参照してください。
+	</p>
+</div>

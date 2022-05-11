@@ -1,0 +1,42 @@
+%(hilight)s
+<div class="content-box mb-3 content-lighten">
+    <h2><i class="fa fa-book fa-fw"></i>void カスタム::On_仮想武将登場直後(int 武将番号)</h2>
+    <div class="code">
+        <pre class="brush:cpp;">
+void カスタム::On_仮想武将登場直後(int 武将番号) {
+}
+</pre>
+    </div>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>タイミング</h3>
+    <ul>
+        <li>このメソッドは「仮想武将」が登場した直後に実行される。<br>
+        <li>具体的には、<br>
+            ・「ゲーム内でのプレイヤによる武将新規作成」<br>
+            ・「ゲーム内で姫が登場」<br>
+            ・「ScenarioMod内でSet_武将誕生」「TSMod内で同様の関数が呼び出された際」、<br>
+            呼び出されることになる。
+    </ul>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>一般的用途</h3>
+    <ul>
+        <li>全ての武将に何らかの新属性を付与するなど、「登場直後に１回だけ能力を変更したい」という目的で利用する。<br>
+    </ul>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>例①</h3>
+    <div class="code">
+        <pre class="brush:cpp;">
+void カスタム::On_仮想武将登場直後(int 武将番号) {
+
+    int iBushouID = 武将番号 - 1; // 武将番号→配列用へ
+
+    デバッグ出力 &lt;&lt; Get_名字(iBushouID) &lt;&lt; Get_名字(iBushouID) &lt;&lt; endl;
+
+    Set_弓適性( iBushouID, 弓適性::Ａ );
+}
+</pre>
+    </div>
+</div>

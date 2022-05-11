@@ -1,0 +1,267 @@
+%(hilight)s
+<div class="content-box mb-3 content-lighten">
+	<h2><i class="fa fa-book fa-fw"></i>効果音</h2>
+	<p>天翔記内に元々ある効果音、及び、ユーザー独自の効果音を再生するAPIです。</p>
+
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>相場の値を変更したい場合には、以下の</h3>
+	<p>
+		相場変更直前に実行されるイベントハンドラの<br>
+		<a href="?page=nobu_mod_the_snmod_methodref_on_sobachange">On_相場変更直前</a> を利用してください。
+	</p>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>再生ファイルの種類</h3>
+	<p>効果音に関する関数が、大幅に強化し、関数数も増えた。</p>
+	<p>音のタイプとして大きく３種類、<br>
+		・<b>通常のwavファイル</b><br>
+		・<b>通常のmp3ファイル</b><br>
+		・<b>通常のminiファイル</b><br>
+		・<b>dllに埋め込んだ通常のwavリソース</b><br>
+	</p>
+	<p>の４種類が利用可能である。<br>
+	</p>
+</div>
+<div class="content-box mb-3 content-lighten">
+	<blockquote>音ハンドル型 効果音再生(string 音源ファイル名, BOOL ループ = 効果音ループ::ＯＦＦ)</blockquote>
+	<div class="code">
+		<pre class="brush:cpp;">
+	効果音再生(&quot;testsnd/d.mp3&quot;);
+  </pre>
+	</div>
+	<p>あるいは、</p>
+	<div class="code">
+		<pre class="brush:cpp;">
+	効果音再生(&quot;myfolder/a.wav&quot;);
+  </pre>
+	</div>
+	<p>などというように、ファイル名を指定することで、効果音の単発再生が可能である。 <br>
+	</p>
+</div>
+<div class="content-box mb-3 content-lighten">
+	<blockquote>音ハンドル型 効果音再生( int 効果音音源, string 効果音ＤＬＬ名, BOOL ループ )</blockquote>
+	<div class="code">
+		<pre class="brush:cpp;">
+	効果音再生(効果音音源::成功);
+  </pre>
+	</div>
+	<p>といった形で、天翔記に存在する音源の再生も可能となっている。<br>
+		どのような音源があるのかは、「効果音情報列挙.h」を参照のこと。<br>
+	</p>
+	<p>Visual Studio 上で 「効果音再生(効果音音源::」と入力すれば自然と候補が出てくるかと思います。</p>
+	<p>「&quot;&quot;」は音声リソースが埋め込まれているＤＬＬ名を指定する。<br>
+		<br>
+	</p>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>音のループ</h3>
+	<p>音をループも可能です。</p>
+	<div class="code">
+		<pre class="brush:cpp;">
+	音ハンドル型 mysnd1; // グローバル変数やクラスフィールドなど
+  
+	// ・・・
+	mysnd1 = 効果音再生(&quot;mysnd/e.mp3&quot;, 効果音ループ::ＯＮ);
+  </pre>
+	</div>
+	<p>というように、再生時に、返り値を「音ハンドル型」の変数にとっておいて、<br>
+		別の場所にて、</p>
+
+	<div class="code">
+		<pre class="brush:cpp;">
+	<b>効果音停止(mysnd1);</b>
+  </pre>
+	</div>
+	<p>とすれば、止まる。 <br>
+		例を追記すると、</p>
+	<div class="code">
+		<pre class="brush:cpp;">
+	  音ハンドル型 hMySnd = NULL;
+	  string カスタム::On_噴出メッセージ直前(string 武将名, string 元メッセージ, メッセージ関連情報型 メッセージ関連情報) {
+  
+  
+		  if ( 武将名==&quot;真田幸隆&quot; ) {
+			  if ( !hMySnd ) {
+				  hMySnd = 効果音再生( &quot;d.mp3&quot;, 効果音ループ::ＯＮ );
+			  } else {
+				  効果音停止( hMySnd );
+				  hMySnd = NULL;
+			  }
+		  }
+  
+		  return &quot;&quot;;
+	  }
+  </pre>
+	</div>
+	<p>などとすればよい。 <br>
+	</p>
+	<p>試しに、「真田幸隆」に会見でもすれば音が鳴りはじめ、<br>
+		再び会見すれば、音が停止するであろう。<br>
+	</p>
+		<h4>効果音同時再生数</h4>
+		<p>効果音は<b>同時に最大で「８つ」まで</b>再生される。<br>
+			同時に９つ目が再生されそうになると、９つ目は無視される。<br>
+		</p>
+		<p>常識的に考えても、効果音が８つも鳴っていたら、かなりうるさいと言えよう。 <br>
+		</p>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>３Ｄ空間音</h3>
+	<blockquote>音ハンドル型 ３Ｄ効果音再生(string 音源ファイル名, BOOL ループ = 効果音ループ::ＯＦＦ, ３Ｄ位置型 位置, ３Ｄベクトル型 移動／毎秒);</blockquote>
+	<p>３Ｄ空間で音を再生することが可能である。</p>
+	<div class="code">
+		<pre class="brush:cpp;">
+	  string カスタム::On_噴出メッセージ直前(string 武将名, string 元メッセージ, メッセージ関連情報型 メッセージ関連情報) {
+  
+		if ( 武将名==&quot;真田幸隆&quot; ) {
+		  ３Ｄ効果音再生( 効果音音源::台風, &quot;&quot;, 効果音ループ::ＯＦＦ, ３Ｄ位置型(5,0,0), ３Ｄベクトル型(-2,0,0) );
+		}
+  
+		return &quot;&quot;;
+	  }
+  </pre>
+	</div>
+	<p>などとすると、音が右から左へと、移動してゆく。<br>
+	</p>
+	<p>逆に、<br>
+	</p>
+	<div class="code">
+		<pre class="brush:cpp;">
+  string カスタム::On_噴出メッセージ直前(string 武将名, string 元メッセージ, メッセージ関連情報型 メッセージ関連情報) {
+  
+	if ( 武将名==&quot;真田幸隆&quot; ) {
+	  ３Ｄ効果音再生( 効果音音源::台風, &quot;&quot;, 効果音ループ::ＯＦＦ, ３Ｄ位置型(-5,0,0), ３Ｄベクトル型(2,0,0) );
+	}
+  
+	return &quot;&quot;;
+  }
+  </pre>
+	</div>
+	<p>などとすると、音が左から右へと、移動してゆく。<br>
+	</p>
+	<p><b>３Ｄ位置型にて、「音の再生される位置」を指定し、「３Ｄベクトル型」にて、１秒あたり、どの方向へと音源が移動するのかを指定</b>する。<br>
+	</p>
+	<h4>３Ｄ空間のデカルトと方向</h4>
+	<p><b>３Ｄ位置型(x, y, z) や ３Ｄベクトル型(x,y,z)の座標軸は以下の通り</b>である。<br>
+		<b>
+			<font color="red">仮想空間で人間がＺ方向に顔を向けている</font>
+		</b>と想定されている。<br>
+	</p>
+	<p>３Ｄ位置型(-5,0,0)<br>
+	</p>
+	<p>ということは、人間の５ｍ左で音を再生する考えれば良い。 <br>
+	</p>
+	<p>又、<br>
+		３Ｄベクトル型(2,0,0) <br>
+		というのは、<br>
+		その音が「１秒あたり２ｍのスピード」でX軸右方向へと動くということだ。<br>
+	</p>
+	<p>このように、空間にて移動する音を再生することが可能である。<br>
+	</p>
+	<p>2chスピーカーやヘッドフォンでも充分体感できるが、5.1chのスピーカーであれば、一層臨場感が増すだろう。<br>
+	</p>
+	<p><img src="cnt_mod/mod_snmod/cnt_mod_scenario_mod_42.png"> <br>
+	</p>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h4>全ての効果音の一斉停止</h4>
+	<blockquote>全ての効果音停止()</blockquote>
+	<p>最後に、<b><span class="negative">ScenarioModから再生した</span></b>全ての音を強制的に停止する手段として、</p>
+	<div class="code">
+		<pre class="brush:cpp;">
+	全ての効果音停止();
+  </pre>
+	</div>
+	<p>という関数が利用可能である。</p>
+	</ul>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>Midiの再生</h3>
+	<p>MIDIフォーマットも再生可能です。<br>
+	</p>
+	<div class="code">
+		<pre class="brush:cpp;">
+    効果音再生(&quot;mydir/a.mid&quot;, 効果音ループ::ＯＮ);
+</pre>
+	</div>
+	<p>Midiには特殊な概念として、「Midiシンセサイザー」という概念がある。<br>
+		Midiとは言わば、「楽器やテンポ、効果が指定された楽譜」に過ぎない。<br>
+		実際にどのような演奏がされるのかは、シンセサイザーの音源によって決まる。<br>
+		通常それは、「Midiマッパー/ドライバー」という形によって、提供される。<br>
+		SceanrioModでは、この「どのシンセサイザーを利用するのか」を、下記のように「部分文字列」で適当な感じで指定可能である。<br>
+	</p>
+	<div class="code">
+		<pre class="brush:cpp;">
+    // &quot;TiMidi&quot; という文字列が含まれるMidiマッパーデバイス(シンセサイザー)が、Windowsにインストールされているならば、そちらで再生する。
+    Set_ＭＩＤＩデバイス(&quot;TiMidi&quot;);
+</pre>
+	</div>
+	<p>これは、ゲーム開始時に設定するだけではなく、途中で何度でも切替可能である。 <br>
+	</p>
+	<p>MIDIは３Ｄ効果音再生には対応していない。<br>
+	</p>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>独自音源のwaveなどを１つのdllにパックする</h3>
+	<blockquote>BOOL 関数::Set_効果音ＤＬＬ追加(string 効果音ＤＬＬ名)</blockquote>
+	<blockquote>BOOL 効果音再生( int 効果音音源, string 効果音ＤＬＬ名="" )</blockquote>
+	<p>
+		というように、第２引数として効果音用ＤＬＬを指定することが出来ます。<br>
+		｢Set_効果音ＤＬＬ追加」で事前にDLLを追加しておけば、<br>
+		この第２引数に同じDLL名を指定することで、有効に機能する。<br>
+		(※第２引数のＤＬＬ名を指定しない、もしくは「""」を指定した場合の挙動は従来通りである)<br>
+		<br></p>
+	<h4>使い方:</h4>
+	<p>スタム::初期化()イベントハンドラ内にて、効果音用のDLLを呼び出す。</p>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::初期化() {
+    Set_効果音ＤＬＬ追加(&quot;my_se1.dll&quot;); // dllの名前はなんでも良い。
+    Set_効果音ＤＬＬ追加(&quot;my_se2.dll&quot;); // 複数の効果音用のdllが登録可能。
+}
+</pre>
+	</div>
+	<p>実際にどこかで鳴らす。<br></p>
+	<div class="code">
+		<pre class="brush:cpp;">
+効果音再生( 3, &quot;my_se1.dll&quot;); // my_se1.dll内にある、 ｢3｣というリソース名が付いたWAV音を鳴らす。
+効果音再生(20, &quot;my_se2.dll&quot;); // my_se2.dll内にある、｢20｣というリソース名が付いたWAV音を鳴らす。
+効果音再生( 3, &quot;my_se2.dll&quot;); // my_se2.dll内にある、 ｢3｣というリソース名が付いたWAV音を鳴らす。
+</pre>
+	</div>
+	<h4>効果音用DLLの作り方①</h4>
+	<p>新規にDLLのリソースパックを作る方法は「<a href="?page=nobu_mod_the_snmod_resource_pack">複数の効果音･画像を１つのDLLに</a>」にて詳細に解説されています。</p>
+
+	<h4>効果音用DLLの作り方②</h4>
+	<ul>
+		<li>フル効果音キットを導入しているならば、「n6pwav1.dll」を、<br>
+			導入していないならば、「n6pwav.dll」を適当な名前でコピー。<br>
+			ここでは｢my_se1.dll」という名前にコピーしたと仮定する。
+		<li><a href="http://www.geocities.jp/donut1817/tabbrowser/misc/reshacker_outline.html">リソースハッカー</a>などを使って、my_se1.dllを開き編集する。<br>
+			リソースハッカーでリソースの名前を変更するのはわかりにくいと思うが、<br>
+			下図の1041(これは言語番号であるが…)を右クリックして、リソースの名前を変更すれば良い。<br>
+			<img src="./cnt_mod/mod_snmod/cnt_mod_scenario_mod_41.png"><br>
+			適当に操作していれば、そのうちリソース追加の方法や置き換え方法もわかるだろう。<br>
+	</ul>
+	<h4>効果音dllを作ったら、Set_効果音ＤＬＬ追加("作ったdllのファイル名")で読み込む</h4>
+	<p>上述のソースコードのように Set_効果音ＤＬＬ追加(...)を利用して、対象のdllを読み込んで下さい。<br>
+		基本的には、「カスタム初期化()」あたりで読み込むことになるかと思います。<br>
+	</p>
+</div>
+
+
+<div class="content-box mb-3 content-lighten">
+	<h3>より詳細を知るには...</h3>
+	<p>
+		効果音に関する主な所は以上となります。
+		詳しくは「効果音情報型.h」や「効果音情報列挙.h」などを参照してください。
+	</p>
+</div>

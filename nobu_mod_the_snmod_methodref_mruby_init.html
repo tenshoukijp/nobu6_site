@@ -1,0 +1,35 @@
+<div class="content-box mb-3 content-lighten">
+    <h2><i class="fa fa-book fa-fw"></i>mrubyを使えるようにするための、ScenarioModの設定</h2>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>必要環境</h3>
+    <ul>
+        <li>ScenarioModで「mruby」を利用するためには、<a href="?page=nobu_mod_the_snmod_methodref_mruby_make">こちらのページ</a>からダウンロードできるmrubyのcp932修正版をビルドし、<br>
+            <span class="positive">出来上がった「libmruby.lib」「libmruby_core.lib」</span>を、ScenarioModの「mruby/lib」フォルダ内へと上書きしてください。
+        <li>ScenarioModでは、デフォルトでは2013用にビルドしたものが含まれています。
+    </ul>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>ScenarioModの設定</h3>
+    <ul>
+        <li>mrubyは、サイズが大きいため、自動ではScenarioModで使えるようになっていません。<br>
+            以下のように設定を行ってください。<br>
+
+        <li>ScenarioModのプロジェクトを右クリックして「プロパティ」より「C++のプリプロセッサ」として、<br>
+            「USE_MRUBY_INTERPRETER」を付け加える<br>
+            <br>
+            <img src="./cnt_mod/mod_snmod/cnt_mod_scenario_mod_ruby02.png"> <br>
+            <br>
+
+        <li>同様に、「全般」のプラットフォームセットで、自分自身が使っているVisual Studio のバージョンのものを選ぶ。<br>
+            自分自身がVisual Studio 2015 を今起動している、そのまま「Visual Studio 2015」を選ぶ。<br>
+            このように、自分自身が利用しているバージョンと合わせます。<br>
+            <br>
+            <img src="./cnt_mod/mod_snmod/cnt_mod_scenario_mod_ruby03.png"><br>
+            <br>
+
+        <li>printやエラーの類は、全て「ModDebugger」上に出ます。<br>
+            <img src="./cnt_mod/mod_snmod/cnt_mod_scenario_mod_ruby04.png"><br>
+            <br>
+    </ul>
+</div>

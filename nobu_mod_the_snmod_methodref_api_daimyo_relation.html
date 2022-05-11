@@ -1,0 +1,230 @@
+%(hilight)s
+<div class="content-box mb-3 content-lighten">
+	<h2><i class="fa fa-book fa-fw"></i>大名 － 大名Ａと大名Ｂの関係</h2>
+	<p>大名の関係には</p>
+	<h4>「友好値」</h4>
+	<p>大名Ａと大名Ｂ は「親密度」という意味での「友好値」</p>
+	<h4>同盟関係 (大名Ａは、複数の大名と同盟可能)</h4>
+	<h4>婚姻関係 (大名Ａは、複数の大名と婚姻可能)</h4>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_daimyo_relation_04.png"></p>
+	<h4>敵対関係（大名Ａは、１つの大名に対してのみ敵対設定可能）</h4>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_daimyo_relation_01.png"></p>
+	<h4>共闘関係（大名Ａは、１つの大名に対してのみ共闘可能）</h4>
+	共闘関係を結ぶと、必然的に敵対大名も設定される。
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_daimyo_relation_02.png"></p>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_daimyo_relation_03.png"></p>
+	<p>があります。</p>
+	<p>ScenarioModやメモリエディタでは歴史的な都合で「p大名情報[ix].友好大名【大名番号】」が「共闘関係の大名番号」に相当します<br>
+		<img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_daimyo_05.png"></p>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>大名Ａと大名Ｂ の同盟関係の取得や設定</h3>
+	<blockquote>int Is_同盟関係(int 大名Ａ番号【配列用】, int 大名Ｂ番号【配列用】)</blockquote>
+	<blockquote>void Set_同盟関係(int 大名Ａ番号【配列用】, int 大名Ｂ番号【配列用】, BOOL 同盟化 = TRUE)</blockquote>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+	int iBushouID_A = Get_武将番号【配列用】(顔番号::織田信長);
+	int iBushouID_B = Get_武将番号【配列用】(顔番号::武田晴信);
+	if (0 &lt;= iBushouID_A &amp;&amp; iBushouID_A &lt; 最大数::武将情報::配列数 &amp;&amp;
+		0 &lt;= iBushouID_B &amp;&amp; iBushouID_B &lt; 最大数::武将情報::配列数 ) {
+
+		// 両者とも大名である
+		if (p武将戸籍情報[iBushouID_A].身分 == 身分::大名 &amp;&amp; p武将戸籍情報[iBushouID_B].身分 == 身分::大名) {
+			int iDaimyoID_A = p武将情報[iBushouID_A].所属大名【大名番号】 - 1;
+			int iDaimyoID_B = p武将情報[iBushouID_B].所属大名【大名番号】 - 1;
+
+			if (0 &lt;= iDaimyoID_A &amp;&amp; iDaimyoID_A &lt; 最大数::大名情報::配列数 &amp;&amp;
+				0 &lt;= iDaimyoID_B &amp;&amp; iDaimyoID_B &lt; 最大数::大名情報::配列数) {
+
+				// 同盟関係でなければ、同盟関係を結ぶ
+				if ( Is_同盟関係(iDaimyoID_A, iDaimyoID_B) == false) {
+					Set_同盟関係(iDaimyoID_A, iDaimyoID_B);
+				}
+			}
+		}
+	}
+}
+</pre>
+	</div>
+</div>
+
+
+<div class="content-box mb-3 content-lighten">
+	<h3>大名Ａと大名Ｂ の婚姻関係の取得や設定</h3>
+	<blockquote>int Is_婚姻関係(int 大名Ａ番号【配列用】, int 大名Ｂ番号【配列用】)</blockquote>
+	<blockquote>void Set_婚姻関係(int 大名Ａ番号【配列用】, int 大名Ｂ番号【配列用】, BOOL 婚姻化 = TRUE)</blockquote>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+	int iBushouID_A = Get_武将番号【配列用】(顔番号::織田信長);
+	int iBushouID_B = Get_武将番号【配列用】(顔番号::武田晴信);
+	if (0 &lt;= iBushouID_A &amp;&amp; iBushouID_A &lt; 最大数::武将情報::配列数 &amp;&amp;
+		0 &lt;= iBushouID_B &amp;&amp; iBushouID_B &lt; 最大数::武将情報::配列数 ) {
+
+		// 両者とも大名である
+		if (p武将戸籍情報[iBushouID_A].身分 == 身分::大名 &amp;&amp; p武将戸籍情報[iBushouID_B].身分 == 身分::大名) {
+			int iDaimyoID_A = p武将情報[iBushouID_A].所属大名【大名番号】 - 1;
+			int iDaimyoID_B = p武将情報[iBushouID_B].所属大名【大名番号】 - 1;
+
+			if (0 &lt;= iDaimyoID_A &amp;&amp; iDaimyoID_A &lt; 最大数::大名情報::配列数 &amp;&amp;
+				0 &lt;= iDaimyoID_B &amp;&amp; iDaimyoID_B &lt; 最大数::大名情報::配列数) {
+
+				// 婚姻関係でなければ、婚姻関係を結ぶ
+				if ( Is_婚姻関係(iDaimyoID_A, iDaimyoID_B) == false) {
+					Set_婚姻関係(iDaimyoID_A, iDaimyoID_B);
+				}
+			}
+		}
+	}
+}
+</pre>
+	</div>
+</div>
+
+
+<div class="content-box mb-3 content-lighten">
+	<h3>大名Ａと大名Ｂ の友好値の取得や設定</h3>
+	<blockquote>int Get_友好関係(int 大名Ａ番号【配列用】, int 大名Ｂ番号【配列用】)</blockquote>
+	<blockquote>void Set_友好関係(int 大名Ａ番号【配列用】, int 大名Ｂ番号【配列用】, int 友好値)</blockquote>
+	<fieldset class="alert alert-info"><legend>友好値は実は一定の規則がある</legend>友好関係は自由な値をとるわけではなく、<br>
+		<b>0, 10, 20, 30, 40, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100</b>
+	のいずれかの値を取ります。<br>
+これらと一致しない数値を指定した場合には、「指定した値より小さく」かつ「上記数値に一致するもっとも近い数値」が採用されます。</fieldset>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+	int iBushouID_A = Get_武将番号【配列用】(顔番号::織田信長);
+	int iBushouID_B = Get_武将番号【配列用】(顔番号::武田晴信);
+	if (0 &lt;= iBushouID_A &amp;&amp; iBushouID_A &lt; 最大数::武将情報::配列数 &amp;&amp;
+		0 &lt;= iBushouID_B &amp;&amp; iBushouID_B &lt; 最大数::武将情報::配列数 ) {
+
+		// 両者とも大名である
+		if (p武将戸籍情報[iBushouID_A].身分 == 身分::大名 &amp;&amp; p武将戸籍情報[iBushouID_B].身分 == 身分::大名) {
+			int iDaimyoID_A = p武将情報[iBushouID_A].所属大名【大名番号】 - 1;
+			int iDaimyoID_B = p武将情報[iBushouID_B].所属大名【大名番号】 - 1;
+
+			if (0 &lt;= iDaimyoID_A &amp;&amp; iDaimyoID_A &lt; 最大数::大名情報::配列数 &amp;&amp;
+				0 &lt;= iDaimyoID_B &amp;&amp; iDaimyoID_B &lt; 最大数::大名情報::配列数) {
+
+				// 友好関係が60を超えていたら80に設定
+				if ( Get_友好関係(iDaimyoID_A, iDaimyoID_B) &gt;= 60) {
+					Set_友好関係(iDaimyoID_A, iDaimyoID_B, 80);
+				}
+			}
+		}
+	}
+}
+</pre>
+	</div>
+</div>
+
+
+<div class="content-box mb-3 content-lighten">
+	<h3>大名Ａ が 大名Ｂ を敵対大名とする</h3>
+	<blockquote>p大名情報[ix].敵対大名【大名番号】</blockquote>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+	// 織田信長が帰属する大名家の家紋を151番に変更する
+	int iBushouID = Get_武将番号【配列用】(顔番号::織田信長);
+
+	// 織田信長が大名の時、大名番号【配列用】を取得する
+	int i信長のDaimyoID = 0xFFFF;
+	if (0 &lt;= iBushouID &amp;&amp; iBushouID &lt; 最大数::武将情報::配列数) {
+		if (p武将戸籍情報[iBushouID].身分 == 身分::大名) {
+			int iDaimyoID = p武将情報[iBushouID].所属大名【大名番号】 - 1;
+
+			if (0 &lt;= iDaimyoID &amp;&amp; iDaimyoID &lt; 最大数::大名情報::配列数) {
+				i信長のDaimyoID = iDaimyoID;
+			}
+		}
+	}
+
+	// 全ての大名家が、織田信長を敵国設定する
+	if ( 0 &lt;= i信長のDaimyoID &amp;&amp; i信長のDaimyoID &lt; 最大数::武将情報::配列数) {
+		for(int iDaimyoID = 0; iDaimyoID &lt; 最大数::大名情報::配列数; iDaimyoID++) {
+
+			// 織田信長の織田家自身の情報については、敵対大名の変更をしない(織田家自身が織田家を敵対とか意味不明なため)
+			if (iDaimyoID == i信長のDaimyoID) { continue; }
+
+			// 有効な大名である。
+			if (p大名情報[iDaimyoID].大名【武将番号】 != 0xFFFF) {
+
+				p大名情報[iDaimyoID].敵対大名【大名番号】 = i信長のDaimyoID + 1; // 大名番号【配列用】→大名番号 に変更して代入
+			}
+		}
+	}
+}
+</pre>
+	</div>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_daimyo_relation_05.png"></p>
+	<h4>敵対大名を解除</h4>
+	<p>敵対大名を解除する時には「敵対大名【大名番号】」に「255(=0xFF)」を代入すればよい</p>
+	</p>
+</div>
+
+
+<div class="content-box mb-3 content-lighten">
+	<h3>大名Ａ が 大名Ｂ と共闘関係(友好関係)となる</h3>
+	<blockquote>p大名情報[ix].友好大名【大名番号】</blockquote>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+	int 武田信玄のDaimyoID = -1;
+	int 上杉謙信のDaimyoID = -1;
+	int 織田信長のDaimyoID = -1;
+
+
+	for (int iDaimyoID = 0; iDaimyoID &lt; 最大数::大名情報::配列数; iDaimyoID++) {
+
+		// 大名家の大名本人の武将番号【配列用】
+		int iBushouID = p大名情報[iDaimyoID].大名【武将番号】 - 1;
+
+		if (0 &lt;= iBushouID &amp;&amp; iBushouID &lt; 最大数::武将情報::配列数) {
+			// それは
+			if (p武将戸籍情報[iBushouID].顔番号 == 顔番号::武田晴信) {
+				武田信玄のDaimyoID = iDaimyoID;
+			}
+			else if (p武将戸籍情報[iBushouID].顔番号 == 顔番号::長尾景虎) {
+				上杉謙信のDaimyoID = iDaimyoID;
+			}
+			else if (p武将戸籍情報[iBushouID].顔番号 == 顔番号::織田信長) {
+				織田信長のDaimyoID = iDaimyoID;
+			}
+		}
+	}
+
+	// ３者が全て居る。
+	if (0 &lt;= 武田信玄のDaimyoID &amp;&amp; 武田信玄のDaimyoID &lt; 最大数::大名情報::配列数 &amp;&amp;
+		0 &lt;= 上杉謙信のDaimyoID &amp;&amp; 上杉謙信のDaimyoID &lt; 最大数::大名情報::配列数 &amp;&amp;
+		0 &lt;= 織田信長のDaimyoID &amp;&amp; 織田信長のDaimyoID &lt; 最大数::大名情報::配列数) {
+
+		// 武田信玄と上杉謙信が友好関係(共闘関係)となり、織田信長を敵対とする
+		p大名情報[武田信玄のDaimyoID].友好大名【大名番号】 = 上杉謙信のDaimyoID + 1;  // 大名番号【配列用】→大名番号になおして代入
+		p大名情報[上杉謙信のDaimyoID].友好大名【大名番号】 = 武田信玄のDaimyoID + 1;  // 大名番号【配列用】→大名番号になおして代入
+
+		p大名情報[武田信玄のDaimyoID].敵対大名【大名番号】 = 織田信長のDaimyoID + 1;  // 大名番号【配列用】→大名番号になおして代入
+		p大名情報[上杉謙信のDaimyoID].敵対大名【大名番号】 = 織田信長のDaimyoID + 1;  // 大名番号【配列用】→大名番号になおして代入
+	}
+}
+
+</pre>
+	</div>
+	<h4>友好大名を解除</h4>
+	<p>友好大名を解除する時には「友好大名【大名番号】」に「255(=0xFF)」を代入すればよい</p>
+	</p>
+</div>
+
+
+
+<div class="content-box mb-3 content-lighten">
+	<h3>より詳細を知るには...</h3>
+	<p>
+		「大名Ａと大名Ｂ」に関する主な所は以上となります。<br>
+		詳しくは「大名情報型.h」や「大名情報列挙.h」などを参照してください。
+	</p>
+</div>

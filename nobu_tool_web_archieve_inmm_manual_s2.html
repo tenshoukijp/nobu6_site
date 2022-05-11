@@ -1,0 +1,75 @@
+﻿%(hilight)s
+<div class="content-box mb-3 content-lighten">
+    <h2><i class="fa fa-book fa-fw"></i><a name="doc1_id172">ゲームを_inmm化するには</a></h2>
+
+    <div class="titletoc">
+        <ul>
+            <li> <a href="#doc1_id189">パッチを当てる</a>
+            <li> <a href="#doc1_id195">_inmm.iniを作成する</a>
+            <li> <a href="#doc1_id207">オプションを設定する</a>
+            <li> <a href="#doc1_id213">ゲームを起動してみる</a>
+        </ul>
+    </div>
+    <p class="first_ja">ゲームソフトの曲を任意のものに差し替えるには、</p>
+
+    <ol>
+        <li> ゲームのプログラムを書き換える（これを「パッチを当てる」といいます）
+        <li> CD-DAの代わりに再生するファイルを指定する（_inmm.iniというファイルに記述します）
+    </ol>
+
+    <p>という2つの作業が必要です。さらに、環境やゲームによっては_inmmcnf.exeで設定をする必要があるかもしれません。</p>
+    <p>感じをつかんでいただくために、ここでは例として、ゲームCDのオーディオトラックをエンコードしたMP3ファイルTrack02.mp3, Track03.mp3...があって<span class="note"><a href="#doc1_id183"
+                title="オーディオトラックからMP3ファイルを作成する方法については、FAQを参照してください。"><sup>(2)</sup></a></span>、それらをCD-DAの代わりに使う場合の作業を見ていきます（たぶんこれが_inmm.dllの最も一般的な使い方でしょう）。それぞれのステップの詳細については、あとの節で詳しく解説します。</p>
+
+    <div class="footnote">
+        <ol>
+            <li id="doc1_id183" value="2"> オーディオトラックからMP3ファイルを作成する方法については、<a href="?page=nobu_tool_web_archieve_inmm_faq#trackfile">FAQ</a>を参照してください。
+        </ol>
+    </div>
+</div>
+<div class="content-box mb-3 content-lighten">
+
+    <h3><a name="doc1_id189">パッチを当てる</a></h3>
+
+    <p class="first_ja">パッチをあてるには、付属の_inmmcnf.exeを使います。_inmmcnf.exeを起動して、[パッチ]ページを選択します。登録済みのゲーム一覧が表示されるので、対象のゲームを選んで[実行]ボタンを押します。確認メッセージが表示されるので[OK]を押すと、実行ファイルが書き換えられます。</p>
+    <p>一覧にないゲームにパッチをあてる場合は、ちょっと複雑です。<a href="?page=nobu_tool_web_archieve_inmm_manual_s3#doc1_patch">パッチ</a>の節を参照してください。</p>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+    <h3><a name="doc1_id195">_inmm.iniを作成する</a></h3>
+
+    <p class="first_ja">次に、ゲームのインストールフォルダに_inmm.iniというファイルを作ります。このファイルで、CDの各トラックと、その代わりに再生するMP3ファイルを対応づけます。</p>
+    <p>_inmmcnf.exeに_inmm.ini作成用のエディタがついていますので、これを使うことにします。_inmmcnf.exeの[_inmm.ini]ページを選択して、そこにエクスプローラ等からMP3ファイル群をドラッグ＆ドロップします。すると、ドロップしたファイルの名前がエディタ内にずらずらと出てきます。</p>
+    <p>_inmm.iniでは、ファイル名を記述する順番に重要な意味があります。1行目に書いたファイルがトラック2、2行目がトラック3、3行目がトラック4、…という風に対応しています<span class="note"><a href="#doc1_id197" title="ゲームのオーディオトラックはたいてい第2トラックから始まるので、こんな仕様になっています。第1トラックからの指定が必要なときは、_inmm.iniを拡張形式にします。"><sup>(3)</sup></a></span>。例えば、_inmm.iniの最初の2行が</p>
+
+    <a name="doc1_id203"></a>
+    <pre class="program">
+Track03.mp3
+Track02.mp3
+</pre>
+
+    <p>だと、トラック2としてTrack03.mp3が、トラック3としてTrack02.mp3が再生されてしまいます。</p>
+    <p>というわけで、エディタに表示されたファイル名の順番とトラックの順番が一致しているか確かめます。問題なければ[保存]ボタンを押して、ゲームのインストールフォルダに保存します。</p>
+
+    <div class="footnote">
+        <ol>
+            <li id="doc1_id197" value="3"> ゲームのオーディオトラックはたいてい第2トラックから始まるので、こんな仕様になっています。第1トラックからの指定が必要なときは、_inmm.iniを<a href="?page=nobu_tool_web_archieve_inmm_manual_s4#doc1_extform">拡張形式</a>にします。
+        </ol>
+    </div>
+</div>
+<div class="content-box mb-3 content-lighten">
+
+    <h3><a name="doc1_id207">オプションを設定する</a></h3>
+
+    <p class="first_ja">曲を再生するのにどのプレイヤーを使うか、といったことを決めます。</p>
+    <p>_inmmcnf.exeの<a href="?page=nobu_tool_web_archieve_inmm_manual_s5#doc1_player_select">[再生方法]ページ</a>を開いてください。ファイルの種類と、そのファイルを再生するのに使うプレイヤーが並んでいます。例えばMP3ファイルの再生には、[*.mp3]の横に表示されているプレイヤーが使われます。</p>
+    <p>DirectShowは最近のDirectXがインストールされていれば使えるのでお手軽です。今回はMP3の再生にDirectShowを使うことにしましょう。[*.mp3]のプレイヤーに[DirectShow]を選択します（デフォルトで[DirectShow]になっていますが）。</p>
+    <p>選択したプレイヤーの設定は[プレイヤー]ページで行いますが、今のところDirectShowには設定項目はありません。</p>
+    <p>ほかの設定はそのままにしておきます。</p>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3><a name="doc1_id213">ゲームを起動してみる</a></h3>
+
+    <p class="first_ja">これで準備は整いました。ゲームを起動すると、CD-DAの代わりにMP3が再生される…はずです。</p>
+    <p>うまくいかない場合や、設定を変えたい場合は以降の節を参考にしてください。</p>
+</div>

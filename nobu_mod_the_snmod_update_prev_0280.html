@@ -1,0 +1,606 @@
+%(hilight)s
+<div class="content-box mb-3 content-lighten">
+    <h2><i class="fa fa-lightbulb-o fa-fw"></i>ScenarioModVer2 更新履歴 v2.7.0.0～v2.8.0.0</h2>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>v2.7.9.9 ⇒ v2.8.0.0</h3>
+    <ul class="pointlist">
+        <li><h4>Get_大名番号リスト【配列用】(...)</h4>の関数が有効ではない大名番号(大名が居ない大名のスロット番号）も返していたことの不具合を修正。</li>
+        <li><h4>画面更新()</h4>という関数を追加。フェイドアウト・フェイドインと同じ機能であるが、画面を暗転しないバージョン。</li>
+    </ul>
+    <h3>v2.7.9.8 ⇒ v2.7.9.9</h3>
+    <ul>
+        <li><h4>bool Set_家宝上昇値(int 官位番号【配列用】, int 上昇値)</h4></li>
+        <li><h4>bool Set_家宝分類(int 官位番号【配列用】, int 家宝分類)</h4></li>
+        <li><h4>bool Set_官位上昇値(int 官位番号【配列用】, int 上昇値)</h4></li>
+    </ul>
+    <p>の３点を追加</p>
+    <h3>v2.7.9.7 ⇒ v2.7.9.8</h3>
+    <ul class="pointlist">
+        <li><h4>Get_軍団役職(int 軍団番号【配列用】) において、対象の軍団が第１軍団であれば大名役職に自動的に問い合わせるようにした。</h4>
+            <p>元来は、「大名役職」と「軍団役職」は別管理であり、大名家が役職を１つだけ持っている際は、<br>
+                大名情報にだけ役職が付き、第１軍団の軍団情報には役職が付かないのであるが、<br>
+            これは取り扱いに戸惑いを覚えるであろうから、Get_軍団役職(...)やSet_軍団役職(...)において、<br>
+        引数にしてした軍団が<mark>第１軍団であれば、大名の役職を対象とする</mark>ようにした。</p>
+    </ul>
+    <h3>v2.7.9.6 ⇒ v2.7.9.7</h3>
+    <ul class="pointlist">
+        <li><h4>Get_都道府県天気() の関数を削除</h4>
+            <p>すでにWebサービスが機能していないため、削除した。</p>
+        <li><h4>不適切なコメントの修正</h4>
+            <p>いくつかの関数のミスリードに繋がる不適切なコメントの修正</p>
+        <li><h4>カラム::大名::＊＊＊ で提供されていなかった３つを追加</h4>
+        <p>
+            選択大名ダイアログ表示(...) の関数にて利用する<br></p>
+            <ul>
+            <li>列挙::ダイアログ::カラム::大名::朝廷<br>
+            <li>列挙::ダイアログ::カラム::大名::朝廷官位<br>
+            <li>列挙::ダイアログ::カラム::大名::幕府役職<br>
+            </ul>
+            <p>の３つが提供されていなかった不具合を修正。<br></p>
+    </ul>
+    <h3>v2.7.9.5 ⇒ v2.7.9.6</h3>
+    <ul class="pointlist">
+        <li>C++/CLI で C++17 を指定すると「byte」型があいまいでエラーがでるので対処。<br>
+            これまでのプロジェクトファイルに
+        <blockquote>/D "_HAS_STD_BYTE=0"</blockquote>
+        を付け加えただけの変更。</li>
+    </ul>
+    <h3>v2.7.9.1 ⇒ v2.7.9.5</h3>
+    <ul class="pointlist">
+        <li>
+            <h4><span class="negative">TSMod非互換更新。<br></span></h4>
+            <p>TSMod.dll v2.7.9.5 と ScenarioMod v2.7.9.1 の組み合わせでは<span class="keyword">Get_待機武将戸籍情報リスト()</span>関数が機能しなくなった。</p>
+            <p><span class="positive">TSMod.dll v2.7.9.5以上で、Get_待機武将戸籍情報リスト() を利用する</span>場合は、ScenarioMod も v2.7.9.5以上を要する。</p>
+        <li>
+            <h4>Get_待機武将情報リスト()</h4>
+            <p>
+                <span class="keyword">Get_待機武将戸籍情報リスト()</span>と使い方は同じであり、得られる型が、「武将情報型」と同じものとなる。<br>
+                これにより、「該当の待機武将」の詳しい能力を知ることが出来る。<br>
+                但し、ラッパー関数などは一切無いので注意すること。(間違ってp武将情報用のラッパー関数を、この待機武将情報に当てはめないこと);
+
+            </p>
+            <div class="code">
+                <pre class="brush:cpp;highlight:[3,5]">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+    int num = Get_待機武将データ数();
+
+    auto p待機武将情報リスト = Get_待機武将情報リスト();
+
+    if (p待機武将情報リスト) {
+        for (int t = 0; t &lt; num; t++) {
+            デバッグ出力 &lt;&lt; (int)p待機武将情報リスト[t].兵数 &lt;&lt; endl;
+        }
+    }
+}
+</pre>
+            </div>
+        </li>
+        <li>
+            <h4>Get_待機武将登場情報リスト()</h4>
+            <p>
+                <span class="keyword">Get_待機武将戸籍情報リスト()</span>と使い方は同じであり、得られる型が、登場年・登場時に仕える大名・登場時に居場所となる城などの情報となる。<br>
+                これにより、「最速で何年に登場するのか、どの大名か、どの城か」などを知ることが出来る。
+
+            </p>
+            <div class="code">
+                <pre class="brush:cpp;highlight:[4]">
+ void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+	int num = Get_待機武将データ数();
+
+	auto p待機武将登場情報リスト = Get_待機武将登場情報リスト();
+	auto p待機武将戸籍情報リスト = Get_待機武将戸籍情報リスト();
+
+	デバッグ出力 &lt;&lt; Get_天翔記基準年() &lt;&lt; endl;
+
+	int base = Get_天翔記基準年();
+	if (p待機武将登場情報リスト) {
+		for (int t = 0; t &lt; 10; t++) {
+			デバッグ出力 &lt;&lt; p待機武将戸籍情報リスト[t]._名字 &lt;&lt; p待機武将戸籍情報リスト[t]._名前 &lt;&lt; endl;
+			デバッグ出力 &lt;&lt; (int)p待機武将登場情報リスト[t].登場年 + base &lt;&lt; endl;
+		}
+	}
+
+}
+</pre>
+            </div>
+        <li>
+            <p>これらの「待機武将」に関する並びやパラメータは、シナリオエディタで「該当シナリオ」の「未登場武将」タブで確認すると理解が早い。</p>
+            <p>
+                <img src="./cnt_mod/mod_snmod/cnt_mod_scenario_mod_104.png"><br>
+            </p>
+            <p>なお、シナリオエディタには間違いがあり、<span class="negative">
+                    「独立」が2bit(値0-3) となっているが、これは3bit(値0-7)の間違い
+                </span>であり、<br>
+                「？」となっているものが、この「独立」の残り１ビットに相当する。<br>
+                よって、不明なデータは無い。
+        <li>
+            <h4>その他、数点の関数バグの修正</h4>
+            </p>
+    </ul>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>v2.7.8.3 ⇒ v2.7.9.1</h3>
+    <ul class="pointlist">
+        <li>
+            <h4>新たなるイベントハンドラ、「On_待機武将登場直後」</h4>
+            <p>待機武将が登場した直後に実行されるイベントハンドラ。<br></p>
+            <p>詳細は<a href="?page=nobu_mod_the_snmod_methodref_on_taiki_regist_after">こちら</a></p>
+        <li>
+            <h4>新たなるイベントハンドラ、「On_仮想武将登場直後」</h4>
+            <p>仮想武将が登場した直後に実行されるイベントハンドラ。<br></p>
+            <p>詳細は<a href="?page=nobu_mod_the_snmod_methodref_on_kasou_regist_after">こちら</a></p>
+        <li>
+            <h4>新たなるイベントハンドラ、「On_待機武将登場直前」</h4>
+            <p>待機武将が登場した直前に実行されるイベントハンドラ。<br></p>
+            <p>詳細は<a href="?page=nobu_mod_the_snmod_methodref_on_taiki_regist_before">こちら</a></p>
+        <li>
+            <h4>Get_待機武将登場済人数()</h4>
+            <p>待機武将のうち、すでに登場済みの武将の人数を得る。<br>この数値は、「次に登場する待機武将」を割り出すのに使える。</p>
+        <li>
+            <h4>Get_待機武将データ数()</h4>
+            <p>
+                該当のシナリオにおいて、「待機武将のデータ数」を取得する。<br>
+                実行するシナリオや、改変シナリオによって、「待機武将」の数が異なるので、<br>
+                「待機武将一覧」を総なめしたい場合などに利用する。
+            </p>
+        <li>
+            <h4>Get_待機武将戸籍情報リスト()</h4>
+            <p>
+                該当のシナリオにおいて、「待機武将の武将戸籍情報」に類するデータをを取得する。<br>
+            </p>
+            <div class="code">
+                <pre class="brush:cpp;highlight:[3,5]">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+    int num = Get_待機武将データ数();
+
+    auto p待機武将戸籍情報リスト = Get_待機武将戸籍情報リスト();
+
+    if (p待機武将戸籍情報リスト) {
+        for (int t = 0; t &lt; num; t++) {
+            デバッグ出力 &lt;&lt; p待機武将戸籍情報リスト[t]._名字 &lt;&lt; p待機武将戸籍情報リスト[t]._名前 &lt;&lt; endl;
+        }
+    }
+}
+</pre>
+            </div>
+            <p>
+                登場済みの人数もわかっているため、次に登場する武将の顔番号を取得することも出来る。
+            </p>
+            <div class="code">
+                <pre class="brush:cpp;highlight:[3,5,9]">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+    int 登場済の数 = Get_待機武将登場済人数();
+
+    auto p待機武将戸籍情報リスト = Get_待機武将戸籍情報リスト();
+
+    if (p待機武将戸籍情報リスト) {
+
+        auto next武将 = p待機武将戸籍情報リスト[登場済の数];
+
+        if (next武将.顔番号 == 顔番号::明智光秀) {
+            デバッグ出力 &lt;&lt; next武将._名字 &lt;&lt; next武将._名前 &lt;&lt; endl;
+        }
+    }
+
+}
+</pre>
+            </div>
+
+    </ul>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>v2.7.8.3 ⇒ v2.7.8.3</h3>
+    <ul class="pointlist">
+        <li>
+            <h4>新たなるイベントハンドラ、「On_シナリオデータ反映直後」</h4>
+            <p>詳細は<a href="/?page=nobu_mod_the_snmod_methodref_on_selectscenarioafter">こちら</a></p>
+        <li>
+            <h4><span class="keyword">Get_軍団新設候補情報(int 大名番号【配列用】)</span>という関数の追加</h4>
+            <p>
+                大名内に軍団を新設するのは良いが、<br>
+                何もないところから、「軍団作成可能な情報」を正確に集めるのは大変である。
+            </p>
+            <p>この関数は、</p>
+            <ul>
+                <li>今、指定の大名に新たに軍団を新設することは、様々な条件を考えて可能なのか？</li>
+                <li>どの武将を軍団長にするのか、候補リスト全て
+                <li>どこの城を軍団長の拠点城として選択できるのか、そのリスト全て
+                <li>軍団の割当番号（１～８の番号）で、余っている番号は何か、そのリスト全て
+            </ul>
+            <p>などの面倒な計算を全て肩代わりして、一気に返り値として返してくれます。</p>
+            <p>
+                <b>
+                    この関数で得られた結果値の情報を元に、<br>
+                    <span class="keyword">Set_軍団新設(...)</span>関数を利用する
+                </b>と、大名内に新たな軍団を作ることが可能となります。
+            </p>
+            <p>
+                <b>Get_軍団新設候補情報(...)は返り値として、「<span class="keyword">軍団新設候補情報型</span>」の値</b>を返し、その値は、<br>
+            </p>
+            <ul>
+                <li><span class="keyword">Is新設可能</span>(結局、いろいろ計算した結果、軍団は新設可能なのか？)
+                <li><span class="keyword">候補軍団割当番号リスト</span>(余っている軍団割当番号（１～８）は何なのか？
+                <li><span class="keyword">候補城番号【配列用】リスト</span>(どこの城で軍団を新設できるのか、その候補の城番号「配列用」のリスト）
+                <li><span class="keyword">候補武将番号【配列用】リスト</span>(どの武将を軍団長として任命できるのか、その候補の城番号「配列用」のリスト）
+            </ul>
+            <p>をフィールドとして持ちます。</p>
+            <div class="code">
+                <pre class="brush:cpp;highlight:[17,21,24,30,36]">
+void カスタム::On_シナリオデータ反映直後(int シナリオ番号) {
+ 
+    if (3 &lt;= シナリオ番号 &amp;&amp; シナリオ番号 &lt;= 5) {
+ 
+        int iBushouID = Get_武将番号【配列用】(顔番号::織田信長);
+ 
+        if (0 &lt;= iBushouID &amp;&amp; iBushouID &lt; 最大数::武将情報::配列数) {
+
+            if (p武将戸籍情報[iBushouID].状態 == 状態::大名) {
+
+                // 信長の大名としての番号
+                int pDaimyoID = p武将情報[iBushouID].所属大名【大名番号】 - 1;
+ 
+                // 信長家で、軍団を新設したいが、可能なのか？
+                // どのような「武将」が新たな軍団長となれるのか、どのような「城」を軍団長の本拠と出来るのか
+                // そのような便利な情報を返してもらう。
+                auto ret = Get_軍団新設候補情報(pDaimyoID);
+ 
+                デバッグ出力 &lt;&lt; &quot;この大名が軍団を新設することは？&quot; &lt;&lt; (ret.Is新設可能 ? &quot;可能&quot; : &quot;不可能&quot;) &lt;&lt; endl;
+ 
+                if (ret.Is新設可能) {
+ 
+                    デバッグ出力 &lt;&lt; &quot;２～８で余っている軍団割当番号は？ &quot;;
+                    for each(auto wn in ret.候補軍団割当番号リスト) {
+                        デバッグ出力 &lt;&lt; wn &lt;&lt; &quot; &quot;;
+                    }
+                    デバッグ出力 &lt;&lt; endl;
+ 
+                    デバッグ出力 &lt;&lt; &quot;どの城に軍団を新設できますか？&quot;;
+                    for each(auto cn in ret.候補城番号【配列用】リスト) {
+                        デバッグ出力 &lt;&lt; Get_城名(cn) + Get_城称(cn) &lt;&lt; &quot; &quot;;
+                    }
+                    デバッグ出力 &lt;&lt; endl;
+ 
+                    デバッグ出力 &lt;&lt; &quot;誰を軍団に任命できますか？&quot;;
+                    for each(auto bn in ret.候補武将番号【配列用】リスト) {
+                        デバッグ出力 &lt;&lt; Get_名字(bn) + Get_名前(bn) &lt;&lt; &quot; &quot;;
+                    }
+                    デバッグ出力 &lt;&lt; endl;
+                }
+            }
+        }
+    }
+}
+</pre>
+            </div>
+            <br>
+            <br>
+        <li>
+            <h4><span class="keyword">int Set_軍団新設(int 武将番号【配列用】, int 城番号【配列用】, 軍団新設候補情報型 チェック情報)</span></h4>
+            <p>
+                このような、Get_軍団新設候補情報(...)関数で得られた情報があることで、<br>
+                その結果の値の中から、自分で選択し、Set_軍団新設(...)を安全に実行することが出来ます。
+            </p>
+            <p>軍団新設に成功した場合は、返り値として「軍団番号【配列用】」が返ってきます。</p>
+            <div class="code">
+                <pre class="brush:cpp;highlight:[25]">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+    int iBushouID = Get_武将番号【配列用】(顔番号::織田信長);
+
+    if (0 &lt;= iBushouID &amp;&amp; iBushouID &lt; 最大数::武将情報::配列数) {
+
+        if (p武将戸籍情報[iBushouID].状態 == 状態::大名) {
+
+            int pDaimyoID = p武将情報[iBushouID].所属大名【大名番号】 - 1;
+
+            auto ret = Get_軍団新設候補情報(pDaimyoID);
+
+            if (ret.Is新設可能) {
+
+                srand((unsigned)time(NULL));
+
+                // シャカシャカ
+                std::random_shuffle(ret.候補武将番号【配列用】リスト.begin(), ret.候補武将番号【配列用】リスト.end());
+                int iRndBushouID = ret.候補武将番号【配列用】リスト[0];
+
+                // シャカシャカ
+                std::random_shuffle(ret.候補城番号【配列用】リスト.begin(), ret.候補城番号【配列用】リスト.end());
+                int iRndCastleID = ret.候補城番号【配列用】リスト[0];
+
+                // 候補のうち、ランダムで、軍団を新設する
+                int iGundanID = Set_軍団新設(iRndBushouID, iRndCastleID, ret);
+                if (iGundanID != 0xFFFF) {
+                    デバッグ出力 &lt;&lt; &quot;軍団番号【配列用】&quot; &lt;&lt; iGundanID &lt;&lt; &quot;として、軍団が新設された&quot; &lt;&lt; endl;
+                }
+                else {
+                    デバッグ出力 &lt;&lt; &quot;軍団の新設には失敗した&quot; &lt;&lt; endl;
+                }
+            }
+        }
+    }
+}
+</pre>
+            </div>
+
+            <p>
+                武将候補リストや、城候補リストが存在することで、「安全に」「誰か特定の人物」を、<br>
+                軍団長にすることが出来るようになります。
+            </p>
+            <div class="code">
+                <pre class="brush:cpp;highlight:[19,24,27]">
+ void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+    int iBushouID = Get_武将番号【配列用】(顔番号::織田信長);
+
+    if (0 &lt;= iBushouID &amp;&amp; iBushouID &lt; 最大数::武将情報::配列数) {
+
+        if (p武将戸籍情報[iBushouID].状態 == 状態::大名) {
+
+            int pDaimyoID = p武将情報[iBushouID].所属大名【大名番号】 - 1;
+
+            auto ret = Get_軍団新設候補情報(pDaimyoID);
+
+            if (ret.Is新設可能) {
+
+                srand((unsigned)time(NULL));
+                // 城はシャカシャカ
+                std::random_shuffle(ret.候補城番号【配列用】リスト.begin(), ret.候補城番号【配列用】リスト.end());
+                int iRndCastleID = ret.候補城番号【配列用】リスト[0];
+
+                int iShibataBushouID = Get_武将番号【配列用】(顔番号::柴田勝家);
+                // (本来はiShibataBushouIDは範囲チェックをした方がよいが、「リストの中にあること」が
+                // 範囲チェック替わりとなるので、省略
+
+                // 今、この瞬間、軍団長になれる武将候補リストの中に、勝家は含まれてる？
+                auto iter = std::find(ret.候補武将番号【配列用】リスト.begin(), ret.候補武将番号【配列用】リスト.end(), iShibataBushouID);
+
+                // 候補内に柴田勝家が居た
+                if (iter != ret.候補武将番号【配列用】リスト.end()) {
+
+                    // 候補のうち、勝家で、ランダム城で、軍団を新設する
+                    int iGundanID = Set_軍団新設(iShibataBushouID, iRndCastleID, ret);
+                    if (iGundanID != 0xFFFF) {
+                        デバッグ出力 &lt;&lt; &quot;軍団番号【配列用】&quot; &lt;&lt; iGundanID &lt;&lt; &quot;として、軍団が新設された&quot; &lt;&lt; endl;
+                    }
+                    else {
+                        デバッグ出力 &lt;&lt; &quot;軍団の新設には失敗した&quot; &lt;&lt; endl;
+                    }
+                }
+            }
+        }
+    }
+}
+</pre>
+            </div>
+            <br>
+            <br>
+
+        <li>
+            <h4><span class="keyword">int Set_軍団独立(int 軍団番号【配列用】)</span></h4>
+            <p>
+                軍団をまるまる大名へと独立させます。
+            </p>
+            <p>状況が明確であれば、以下のように対象を指定するだけで良いでしょう。</p>
+            <div class="code">
+                <pre class="brush:cpp;highlight:[15]">
+void カスタム::On_シナリオデータ反映直後(int シナリオ番号) {
+
+    if (シナリオ番号 == 5) {
+        // 明智光秀を探す
+        int iBushouID = Get_武将番号【配列用】(顔番号::明智光秀);
+        // 登場している
+        if (0 &lt;= iBushouID &amp;&amp; iBushouID &lt; 最大数::武将情報::配列数) {
+            // 光秀は軍団長だ
+            if (p武将戸籍情報[iBushouID].状態 == 状態::軍団長) {
+
+                // 所属軍団
+                int iGundanID = p武将情報[iBushouID].所属軍団【軍団番号】 - 1;
+
+                // 該当の軍団長は、大名として独立する
+                int iDaimyoID = Set_軍団独立(iGundanID);
+
+                // 成否をチェック
+                if (iDaimyoID != 0xFFFF) {
+                    デバッグ出力 &lt;&lt; &quot;明智光秀は独立に成功した&quot; &lt;&lt; endl;
+                }
+            }
+
+        }
+    }
+}
+</pre>
+            </div>
+            <p>
+                <img src="./cnt_mod/mod_snmod/cnt_mod_scenario_mod_ref_089.png"><br>
+            </p>
+            <p>
+                「独立させた軍団」をそのまま、「独立した大名」とするのも、<br>
+                Set_軍団新設(...)関数の返り値をそのまま使えるので、楽です。
+            </p>
+            <div class="code">
+                <pre class="brush:cpp;highlight:[30,35]">
+void カスタム::On_メインゲーム開始() {
+    int iBushouID = Get_武将番号【配列用】(顔番号::織田信長);
+
+    if (0 &lt;= iBushouID &amp;&amp; iBushouID &lt; 最大数::武将情報::配列数) {
+
+        if (p武将戸籍情報[iBushouID].状態 == 状態::大名) {
+
+            int pDaimyoID = p武将情報[iBushouID].所属大名【大名番号】 - 1;
+
+            auto ret = Get_軍団新設候補情報(pDaimyoID);
+
+            if (ret.Is新設可能) {
+
+                srand((unsigned)time(NULL));
+
+                std::random_shuffle(ret.候補城番号【配列用】リスト.begin(), ret.候補城番号【配列用】リスト.end());
+                int iRndCastleID = ret.候補城番号【配列用】リスト[0];
+
+                int iShibataBushouID = Get_武将番号【配列用】(顔番号::柴田勝家);
+                // (本来はiShibataBushouIDは範囲チェックをした方がよいが、「リストの中にあること」が
+                // 範囲チェック替わりとなるので、省略
+
+                // シャカシャカ
+                auto iter = std::find(ret.候補武将番号【配列用】リスト.begin(), ret.候補武将番号【配列用】リスト.end(), iShibataBushouID);
+
+                // 候補内に柴田勝家が居た
+                if (iter != ret.候補武将番号【配列用】リスト.end()) {
+
+                    // 候補のうち、勝家で、ランダム城で、軍団を新設する
+                    int iGundanID = Set_軍団新設(iShibataBushouID, iRndCastleID, ret);
+                    if (iGundanID != 0xFFFF) {
+                        デバッグ出力 &lt;&lt; &quot;軍団番号【配列用】&quot; &lt;&lt; iGundanID &lt;&lt; &quot;として、軍団が新設された&quot; &lt;&lt; endl;
+
+                        // 該当の軍団長は、大名として独立する
+                        int iDaimyoID = Set_軍団独立(iGundanID);
+
+                        // 成否をチェック
+                        if (iDaimyoID != 0xFFFF) {
+                            デバッグ出力 &lt;&lt; Get_名前(iShibataBushouID) &lt;&lt; &quot;は大名化に成功した&quot; &lt;&lt; endl;
+                        }
+                        else {
+                            デバッグ出力 &lt;&lt; Get_名前(iShibataBushouID) &lt;&lt; &quot;は大名化に失敗した&quot; &lt;&lt; endl;
+                        }
+
+                    }
+                    else {
+                        デバッグ出力 &lt;&lt; &quot;軍団の新設には失敗した&quot; &lt;&lt; endl;
+                    }
+                }
+            }
+        }
+    }
+}
+</pre>
+            </div>
+
+        <li>
+            <h4><span class="keyword">bool Set_非本拠城所属軍団(int 城番号【配列用】, int 新軍団番号【配列用】)</span></h4>
+            <p>
+                同じ大名配下、という前提で、軍団Ａ配下の城を、軍団Ｂ配下へと切り替えます。<br>
+                対象の城は「非本拠の城」である必要があります。<br>
+                非本拠とは、「大名がいない城」「軍団長がいない城」を指します。
+            </p>
+            <p>
+                一番簡単な例は、「状況が決め打ちできる」時でしょう。<br>
+                使い方を理解するという点で、有効です。
+            </p>
+            <div class="code">
+                <pre class="brush:cpp;highlight:[14]">
+void カスタム::On_シナリオデータ反映直後(int シナリオ番号) {
+
+    if (シナリオ番号 == 5) {
+        int i二条城CastleID = 城::城配列番号::二条城;
+
+        int i光秀BushouID = Get_武将番号【配列用】(顔番号::明智光秀);
+
+        //　光秀は居る＆軍団長
+        if (0 &lt;= i光秀BushouID &amp;&amp; i光秀BushouID &lt; 最大数::武将情報::配列数) {
+            if (p武将戸籍情報[i光秀BushouID].状態 == 状態::軍団長) {
+
+                int 光秀GundanID = p武将情報[i光秀BushouID].所属軍団【軍団番号】 - 1;
+
+                Set_非本拠城所属軍団(i二条城CastleID, 光秀GundanID);
+
+            }
+        }
+    }
+}
+</pre>
+            </div>
+            <p>
+                <img src="./cnt_mod/mod_snmod/cnt_mod_scenario_mod_ref_087.png"><br>
+            </p>
+            <p>
+                大抵の場合は、上記のように「城が特定を名指しで」とはいかないことでしょう。<br>
+                こういった場合は、軍団配下の城から割り出していきましょう。<br>
+                (もちろん色々な考え方があります)
+            </p>
+            <p>勝家が持っている城を、可能な限り秀吉に渡してみましょう。</p>
+            <div class="code">
+                <pre class="brush:cpp;highlight:[19,25,34]">
+void カスタム::On_シナリオデータ反映直後(int シナリオ番号) {
+
+    if (シナリオ番号 == 5) {
+
+        int i勝家BushouID = Get_武将番号【配列用】(顔番号::柴田勝家);
+        int i秀吉BushouID = Get_武将番号【配列用】(顔番号::羽柴秀吉);
+
+        //　両方居る
+        if (0 &lt;= i勝家BushouID &amp;&amp; i勝家BushouID &lt; 最大数::武将情報::配列数 &amp;&amp;
+            0 &lt;= i秀吉BushouID &amp;&amp; i秀吉BushouID &lt; 最大数::武将情報::配列数) {
+
+            // 両方軍団長
+            if (p武将戸籍情報[i勝家BushouID].状態 == 状態::軍団長 &amp;&amp;
+                p武将戸籍情報[i秀吉BushouID].状態 == 状態::軍団長) {
+
+                int 勝家GundanID = p武将情報[i勝家BushouID].所属軍団【軍団番号】 - 1;
+
+                // ----------------------勝家が持っている城のリスト(但し、勝家自身がいる城を除く -----------------------
+                auto 勝家城リスト = Get_軍団所持城番号リスト【配列用】(勝家GundanID);
+
+                番号リスト型 本拠以外の勝家城リスト;
+
+                for each (auto iCastleID in 勝家城リスト) {
+                    // 大名や軍団長が居ない
+                    if (p城情報[iCastleID].本城 == 本城::非本拠) {
+                        本拠以外の勝家城リスト.push_back(iCastleID);
+                    }
+                }
+
+                // ----------------------秀吉は勝家が持っている城をどんどん奪う -----------------------
+                int 秀吉GundanID = p武将情報[i秀吉BushouID].所属軍団【軍団番号】 - 1;
+
+                for each(int iCastleID in 本拠以外の勝家城リスト) {
+                    Set_非本拠城所属軍団(iCastleID, 秀吉GundanID);
+                }
+            }
+
+        }
+    }
+
+}
+
+</pre>
+            </div>
+            <br><br>
+        <li>
+            <h4><span class="keyword">軍団や大名情報と、マップ上の描画が食い違った場合</span></h4>
+            <p>上記で「大名としての独立」に関する関数は、<br><b>
+                    実行するイベントハンドラによっては、<br>
+                    画面上の描画が反映されません。
+                </b></p>
+            <p>そのような場合は、<span class="keyword">フェイドアウト()、フェイドイン()</span>関数を利用しましょう。
+
+            </p>
+
+    </ul>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>v2.7.1.1 ⇒ v2.7.8.3</h3>
+    <ul class="pointlist">
+        <li>
+            <h4>Set_年齢(...) 関数の追加</h4>
+            <p>武将に年齢を設定する際のラップ関数</p>
+        <li>
+            <h4>Get_軍団所持城番号リスト【配列用】(...)</h4>
+            <p>とある軍団下に属する全ての城の番号リストを得るためのラップ関数</p>
+        <li>
+            <h4>Get_大名所持城番号リスト【配列用】(...)</h4>
+            <p>とある大名下に属する全ての城の番号リストを得るためのラップ関数</p>
+    </ul>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>v2.6.9.0 ⇒ v2.7.1.1</h3>
+    <ul class="pointlist">
+        <li>
+            <h4>Set_鉄砲適性 のバグ</h4>
+            <p>Set_鉄砲適性で、範囲チェックに不具合があり、値を設定出来ないバグ修正</p>
+        <li>
+            <h4>選択武将ダイアログ表示のバグ</h4>
+            <p>武将を選択せずに、ダイアログを終了した際に、返り値が不正であるバグ修正</p>
+    </ul>
+</div>

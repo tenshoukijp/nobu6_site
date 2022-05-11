@@ -1,0 +1,114 @@
+﻿%(hilight)s
+<div class="content-box mb-3 content-lighten">
+  <h2><i class="fa fa-book fa-fw"></i>_inmmbridge</h2>
+  <p>
+    VMwareと_inmm.dllで快適ゲーム生活！計画:-)<br>
+    <br>
+  </p>
+</div>
+<div class="content-box mb-3 content-lighten">
+  <h3>これって？</h3>
+  <br>
+  _inmm.dllと併用して、ネットワーク上の他のマシンで動いているプレイヤー<br>
+  からBGMを鳴らそうというものです。Win9X専用のゲームをVMwareで遊びたい<br>
+  けど、CDだと曲の変わり目で止まる、VMware上でMP3を鳴らすと音割れする、<br>
+  などの理由で困っている人（主に私）のために作りました。<br>
+  <br>
+  _inmm.dll 2.28 以上が必要です。<br>
+  <br>
+  このテキストは、ある程度_inmm.dllについて知っている読者を想定して書<br>
+  かれています。<br>
+  <br>
+  <br>
+</div>
+<div class="content-box mb-3 content-lighten">
+  <h3>どうやって</h3>
+  <br>
+  _inmmbridgeには、2つのプログラムが含まれています。ゲームを動かす方の<br>
+  マシンではクライアントプログラム(_inmmbridge.exe)を、プレイヤーを動<br>
+  かす方のマシンではサーバープログラム(_inmmbridges.exe)を使います。<br>
+  <br>
+  <pre>
+          +-------------+   Windowsメッセージ   +--------------+
+          |   ゲーム    |---------------------->| _inmmbridge  |
+          | & _inmm.dll |                       | クライアント |
+          +-------------+                       +--------------+
+       マシン1                                         ↑
+       ................................................｜..........
+       マシン2                                         ｜接続
+                                                       ↓
+          +-------------+   Windowsメッセージ   +--------------+
+          | プレイヤー  |<----------------------| _inmmbridge  |
+          |             |                       |   サーバー   |
+          +-------------+                       +--------------+
+                                 概念図
+
+</pre>
+  <br>
+  上の図を見てください。ゲームがCDを再生しようとすると、_inmm.dllは外<br>
+  部のプレイヤー（例えばWinamp）にメッセージ（例えば「hogehoge.mp3を再<br>
+  生してくれ」）を送ります。ところがマシン1ではプレイヤーは動いていな<br>
+  くて、代わりに_inmmbridgeクライアントが動いています。こいつがメッセー<br>
+  ジを受け取って、マシン2で動いている_inmmbridgeサーバーに送ります。サー<br>
+  バーは送られてきたメッセージを、同じマシンで動いているプレイヤーに送<br>
+  ります。これで（やっと）、BGMが再生されるというわけです。<br>
+  <br>
+  ※_inmmbridgeは今のところ、Windowsメッセージしか扱えません。このため、<br>
+  _inmm.dllが対応しているプレイヤーのうち、Winamp、SCMPX、Digital CD<br>
+  Playerしか使えません。<br>
+  <br>
+  <br>
+</div>
+<div class="content-box mb-3 content-lighten">
+  <h3>手順</h3>
+  <br>
+  ゲームを動かす方のマシン（以下クライアント側）には_inmm.dllと<br>
+  _inmmbridge.exeを、プレイヤーを動かす方のマシン（以下サーバー側）に<br>
+  はプレイヤーと_inmmbridges.exeを用意しておきましょう。サーバー側には<br>
+  _inmm.dllは必要ありません。<br>
+  <br>
+  普通に_inmm.dllを使う場合と同じように、ゲームに_inmmパッチを当てて、<br>
+  _inmm.iniにトラック情報を書いていきます。普通と違うのは、_inmm.iniに<br>
+  書いたファイル名（またはトラック番号）がそのままサーバー側に送られる<br>
+  という点です。ですからファイルやCDはサーバー側のマシンに用意しておか<br>
+  なければなりません。<br>
+  <br>
+  困ったことに、クライアント側にないファイルを_inmm.iniに書くと、「そ<br>
+  んなファイル無いよ」と_inmm.dllに怒られてしまいます。そこで抜け道を<br>
+  用意してあります。_inmm.iniを拡張形式にして、[Settings]セクションに<br>
+  <br>
+  SkipFileCheck=1<br>
+  <br>
+  と書いてください。これで_inmm.dllはおとなしくなります。<br>
+  <br>
+  次に_inmmcnf.exeでプレイヤーの設定をします。[再生方法]タブで、サーバー<br>
+  側に用意したプレイヤーを使うように設定して、そのプレイヤーのパスを<br>
+  _inmmbridge.exeに設定します。これでプレイヤーの代わりに<br>
+  _inmmbridge.exeが起動されるわけです。_inmmbridge.exeのパスに続いて、<br>
+  プレイヤーの頭文字(w:Winamp, s:SCMPX, d:Digital CD Player)と、サーバー<br>
+  側のホスト名またはIPアドレスを書きます。例えばWinampのパスに<br>
+  <br>
+  C:\Tools\_inmmbridge.exe w 192.168.1.3<br>
+  <br>
+  という風に書きます。<br>
+  <br>
+  これで設定は終わりです。サーバー側で_inmmbridges.exeとプレイヤーの両<br>
+  方を立ち上げておいてから、クライアント側でゲームを始めてください。<br>
+  <br>
+  <br>
+</div>
+<div class="content-box mb-3 content-lighten">
+  <h3>さいごに</h3>
+  <br>
+  　どこか間違ってたら教えてください。<br>
+  <br>
+  改変・再配布は制限しません。<br>
+  「プログラム使いやすくしたよ」等は大歓迎です。超歓迎です。<br>
+  <br>
+  このプログラムを使用した結果について作者は一切責任もてません。<br>
+  <br>
+  <br>
+  作者 irori &lt;irori@gmx.net&gt;
+  <br>
+  http://www.geocities.co.jp/Playtown-Domino/8282/
+</div>

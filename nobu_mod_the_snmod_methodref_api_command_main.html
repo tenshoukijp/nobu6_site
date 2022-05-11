@@ -1,0 +1,181 @@
+%(hilight)s
+<div class="content-box mb-3 content-lighten">
+	<h2><i class="fa fa-book fa-fw"></i>メイン画面 - コマンド</h2>
+	<p>メイン画面のコマンドとは、プレイヤーやNPCの様々な命令に対応する概念です。<br>
+		具体的には下記のイメージ画像を思い浮かばればわかりやすいでしょう。</p>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_command_main_01.png"></p>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>プレイヤーのメインコマンド実行の際に判定や操作をしたい場合</h3>
+	<p>
+		プレイヤ操作によりコマンドが選択された瞬間にこのメソッドが実行されるイベントハンドラの<br>
+		<a href="?page=nobu_mod_the_snmod_methodref_on_enter_player_command">On_プレイヤコマンド発生直前《メイン画面》</a> を利用してください。
+	</p>
+	<p>
+		対として該当のコマンドが終了する直前に実行されるイベントハンドラの<br>
+		<a href="?page=nobu_mod_the_snmod_methodref_on_enter_player_command">On_プレイヤコマンド完了直前《メイン画面》</a> を利用してください。
+	</p>
+
+</div>
+<div class="content-box mb-3 content-lighten">
+	<h3>Set_コマンド行動力(int 行動力コマンド名, int 行動力);</h3>
+	<p>この命令はコマンドの行動力を変更しますが、設定すると「天翔記アプリケーションを終了するまで」変更が有効となります。<br>
+	今遊んでいるシナリオだけではなく、トップメニューに戻って新しくゲームを初めたとしても変更は有効となります。</p>
+	<p>
+		TSMod.ini にて、コマンドの行動力として、</p>
+		<div class="code">
+			<pre class="brush:lua;">
+--==========================================
+-- TSMOD系特殊コマンド 必要行動力の設定
+--==========================================
+------------------------ 以下は必要行動力の設定
+--                       最低値が1, 最大値が100まで設定が可能である。
+--                       コメントアウトした場合には、デフォルト値となる。
+-- 「講義」に必要な行動値
+cmd['all_gundan_need_koudou_value_kougii'] = 5
+-- 「披露」に必要な行動値
+cmd['all_gundan_need_koudou_value_hirouu'] = 50
+-- 「編成」に必要な行動値
+cmd['all_gundan_need_koudou_value_hensei'] = 5
+-- 「徴兵」に必要な行動値
+cmd['all_gundan_need_koudou_value_chohei'] = 10
+-- 「登用」に必要な行動値
+cmd['all_gundan_need_koudou_value_touyou'] = 5
+-- 「褒美」に必要な行動値
+cmd['all_gundan_need_koudou_value_houbii'] = 5
+-- 「物資」に必要な行動値
+cmd['all_gundan_need_koudou_value_busshi'] = 10
+-- 「戦争」に必要な行動値
+cmd['all_gundan_need_koudou_value_sensou'] = 30
+-- 「同盟」に必要な行動値
+cmd['all_gundan_need_koudou_value_doumei'] = 20
+-- 「婚姻」に必要な行動値
+cmd['all_gundan_need_koudou_value_koninn'] = 20
+-- 「手切れ」に必要な行動値
+cmd['all_gundan_need_koudou_value_tegire'] = 20
+-- 「脅迫」に必要な行動値
+cmd['all_gundan_need_koudou_value_kyohak'] = 20
+-- 「朝廷」に必要な行動値
+cmd['all_gundan_need_koudou_value_chotei'] = 20
+-- 「内応」に必要な行動値
+cmd['all_gundan_need_koudou_value_naiouu'] = 10
+-- 「謀略」に必要な行動値
+cmd['all_gundan_need_koudou_value_bourya'] = 10
+-- 「評定」に必要な行動値
+cmd['all_gundan_need_koudou_value_hyoujo'] = 20
+-- 「軍団→任命」に必要な行動値
+cmd['all_gundan_need_koudou_value_gunnin'] = 20
+-- 「軍団→分配・合流・再任」に必要な行動値
+cmd['all_gundan_need_koudou_value_gunsub'] = 10
+-- 「内政・訓練・昇進」に必要な行動値
+cmd['all_gundan_need_koudou_value_5ningu'] = 5
+	</pre>
+		</div>
+		<p>というものが定義されています。</p>
+		<p>この関数は、この数値をリアルタイムに変更できるものとなります。<br>
+		特定のシナリオ限定で変更、あるいは、特定の年、特定の大名、特定の能力の際にだけ変更しても良いでしょう。</p>
+
+</div>
+
+<div class="content-box mb-3 content-lighten">
+<h3>Set_コマンド行動力(..)を使用した最も単純な例</h3>
+	<p>以下のようなことをするだけであれば、簡単です。<br>
+ただしこのようなことをするだけであれば、TSMod.ini あるいは TSModEx.ini を編集すればよいでしょう。</p>
+	<fieldset class="code"><legend>戦争の行動値150に上書き</legend>
+		<pre class="brush:cpp;highlight:[2]">
+void カスタム::On_相場変更直前() {
+	Set_コマンド行動力(メイン画面::行動力コマンド名::戦争, 150); // 戦争に150もの行動力消費を必要とする
+}
+</pre>
+	</fieldset>
+
+</div>
+<div class="content-box mb-3 content-lighten">
+	<h3>一度変更すると「天翔記」のアプリケーションを終了するまでずっと有効</h3>
+	<p>一度変更すると、アプリケーションを変更するまではずっと有効となります。<br>
+		よって元へと戻す必要があるのであれば、元の値の保存処理や、元の値への復元処理が必要となることでしょう。</p>
+	<fieldset class="code"><legend>元の値の保存処理や、復元処理の例</legend>
+		<pre class="brush:cpp;">
+bool 元の行動力の値を保存済 = false;
+struct 元の行動力の型 {
+	int 登用;
+	int 戦争;
+};
+
+元の行動力の型 元の行動力{ 0 };
+
+void 元の行動力を保存する()
+{
+	// 行動力の変更は「アプリケーションを終了するまで」変更が有効となる。
+	// 最初にTSMod.ini(orTSModEx.ini)元の値を保存しておく必要がある。
+	// Set_コマンド行動力(...)を実行した後、Get_ＴＳＭＯＤＩＮＩ設定(&quot;...&quot;)したとしても、元の値が取得できるわけではない。
+	// (書き換えた場所とまったく同じものを参照してしまうため)
+	if (元の行動力の値を保存済 == false) {
+		元の行動力.登用 = Get_ＴＳＭＯＤＩＮＩ設定(&quot;all_gundan_need_koudou_value_touyou&quot;);
+		元の行動力.戦争 = Get_ＴＳＭＯＤＩＮＩ設定(&quot;all_gundan_need_koudou_value_sensou&quot;);
+		元の行動力の値を保存済 = true;
+	}
+}
+
+void 元の行動力から復元する()
+{
+	if (元の行動力の値を保存済 == true) {
+		// 今遊んでいるゲームが終わったからといって自動で元へと戻るわけではないので、元の値へと戻す
+		Set_コマンド行動力(メイン画面::行動力コマンド名::登用, 元の行動力.登用); // 元の値へと戻す
+		Set_コマンド行動力(メイン画面::行動力コマンド名::戦争, 元の行動力.戦争); // 元の値へと戻す
+	}
+}
+
+void 必要コマンド値の変更処理() {
+	int year = Get_西暦();
+
+	// 1560年より前の年代ならば...
+	if (year &lt; 1560) {
+		デバッグ出力 &lt;&lt; &quot;戦争の行動力&quot; &lt;&lt; 150 &lt;&lt; endl;
+		Set_コマンド行動力(メイン画面::行動力コマンド名::戦争, 150); // 戦争に150もの行動力消費を必要とする
+
+		デバッグ出力 &lt;&lt; &quot;登用の行動力&quot; &lt;&lt; 元の行動力.登用 * 5 &lt;&lt; endl;
+		Set_コマンド行動力(メイン画面::行動力コマンド名::登用, 元の行動力.登用 * 5); // 登用に必要な行動力を5倍にする。
+	}
+	else {
+		デバッグ出力 &lt;&lt; &quot;戦争の行動力&quot; &lt;&lt; 10 &lt;&lt; endl;
+		Set_コマンド行動力(メイン画面::行動力コマンド名::戦争, 10); // 戦争に必要な行動力はいきなり10でよくなる
+
+		デバッグ出力 &lt;&lt; &quot;戦争の行動力&quot; &lt;&lt; 10 &lt;&lt; endl;
+		Set_コマンド行動力(メイン画面::行動力コマンド名::登用, 元の行動力.登用); // 登用に必要な行動力は元へと戻す
+	}
+}
+
+void カスタム::On_トップメニュー表示時() {
+	元の行動力を保存する();
+	元の行動力から復元する();
+}
+
+void カスタム::On_メインゲーム開始() {
+	元の行動力から復元する();
+	必要コマンド値の変更処理();
+}
+// ------------------------------------- 以上までが準備
+
+
+// ------------------------------------- 以下は好きなイベントハンドラやタイミングで使用可能
+
+// 好きなタイミングで 状況判断のif文などを使いながら、 Set_コマンド行動力(...) を使用する
+void カスタム::On_相場変更直前() {
+	必要コマンド値の変更処理();
+}
+
+
+</pre>
+	</fieldset>
+
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>より詳細を知るには...</h3>
+	<p>
+		「メイン画面 - コマンド」に関する主な所は以上となります。
+		詳しくは「コマンド情報型.h」や「コマンド情報列挙.h」などを参照してください。
+	</p>
+</div>

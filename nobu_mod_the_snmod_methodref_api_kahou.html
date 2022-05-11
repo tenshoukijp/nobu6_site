@@ -1,0 +1,337 @@
+%(hilight)s
+<div class="content-box mb-3 content-lighten">
+	<h2><i class="fa fa-book fa-fw"></i>家宝</h2>
+	<p>家宝とは、「孫氏」「蜻蛉切」などといった、家宝のことです。<br>
+	</p>
+	<p>家宝と一言で言っても３つの概念で構成されます。<br>
+	</p>
+	<ul class="pointlist">
+		<li>
+			<h4>家宝</h4>
+			<p>家宝という抽象的なカテゴリの概念。</p>
+			<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_kahou_01.png"></p>
+		<li>
+			<h4>「p家宝情報」という配列</h4>
+			<p>家宝の一覧リストに相当する「家宝の配列」の概念。</p>
+			<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_kahou_02.png"></p>
+		<li>
+			<h4>p家宝情報[ix] (0 &lt;= ix &lt; 家宝の総数)</h4>
+			<p>家宝の配列のうち、どれか１つの家宝</p>
+			<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_kahou_03.png"></p>
+	</ul>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>特定の家宝からそれを所持する武将を求める</h3>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+	int iKahouID = 家宝配列番号::九十九髪茄子;
+	int iBushouID = p家宝情報[iKahouID].所有武将【武将番号】 - 1;
+
+	デバッグ出力 &lt;&lt; &quot;家宝番号【配列用】:&quot; &lt;&lt; iKahouID &lt;&lt; &quot;の&quot; &lt;&lt; Get_家宝名(iKahouID) &lt;&lt; &quot;は...&quot; &lt;&lt; endl;
+
+	// 武将番号【配列用】の範囲なら
+	if (0 &lt;= iBushouID &amp;&amp; iBushouID &lt; 最大数::武将情報::配列数) {
+		デバッグ出力 &lt;&lt; Get_名字(iBushouID) + Get_名前(iBushouID) &lt;&lt; &quot;が所持しています&quot; &lt;&lt; endl;
+	}
+	else {
+		デバッグ出力 &lt;&lt; &quot;誰も所持していません&quot; &lt;&lt; endl;
+	}
+}
+</pre>
+	</div>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>家宝名を変更している場合は名前から探すのも手</h3>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_kahou_09.png"></p>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+	int iKahouID = Get_家宝番号【配列用】(&quot;魔獣百科辞典&quot;);
+
+	if ( 0 &lt;= iKahouID &amp;&amp; iKahouID &lt; 最大数::家宝情報::配列数) {
+		int iBushouID = p家宝情報[iKahouID].所有武将【武将番号】 - 1;
+
+		デバッグ出力 &lt;&lt; &quot;家宝番号【配列用】:&quot; &lt;&lt; iKahouID &lt;&lt; &quot;の&quot; &lt;&lt; Get_家宝名(iKahouID) &lt;&lt; &quot;は...&quot; &lt;&lt; endl;
+
+		// 武将番号【配列用】の範囲なら
+		if (0 &lt;= iBushouID &amp;&amp; iBushouID &lt; 最大数::武将情報::配列数) {
+			デバッグ出力 &lt;&lt; Get_名字(iBushouID) + Get_名前(iBushouID) &lt;&lt; &quot;が所持しています&quot; &lt;&lt; endl;
+		}
+		else {
+			デバッグ出力 &lt;&lt; &quot;誰も所持していません&quot; &lt;&lt; endl;
+		}
+	}
+}
+</pre>
+	</div>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>特定の武将が家宝を所持するか求める</h3>
+	<p>特定の武将が家宝を所持するかは、上述の「特定の家宝からそれを所持する武将を求める」と同様の処理となります。</p>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+	int iBushouID = Get_武将番号【配列用】(顔番号::長尾景虎);
+
+	if (0 &lt;= iBushouID &amp;&amp; iBushouID &lt; 最大数::武将情報::配列数) {
+
+		for (int iKahouID = 0; iKahouID &lt; 最大数::家宝情報::配列数; iKahouID++) {
+
+			// 家宝の「所持武将【武将番号】」→「武将番号【配列用】」 に直したものと一致するなら所持者
+			if (iBushouID == p家宝情報[iKahouID].所有武将【武将番号】 - 1) {
+				デバッグ出力 &lt;&lt; &quot;上杉謙信は...&quot; &lt;&lt; Get_家宝名(iKahouID) &lt;&lt; &quot;を所持しています&quot; &lt;&lt; endl;
+			}
+		}
+	}
+}
+</pre>
+	</div>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>家宝の所持者を変更する</h3>
+	<p>家宝名の所持者を変更するには、専用の関数が用意されています。</p>
+	<blockquote>bool Set_家宝所有者変更(int 家宝番号【配列用】, int 宛先武将番号【配列用】)</blockquote>
+	<p><mark>家宝の所有者を変更した場合は、その家宝は「未登場」や「消失」フラグが消滅し、登場することとなります。</mark></p>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+	int iBushouID = Get_武将番号【配列用】(顔番号::長尾景虎);
+
+	int 上杉謙信の持ってる最高の家宝 = -1;
+	if (0 &lt;= iBushouID &amp;&amp; iBushouID &lt; 最大数::武将情報::配列数) {
+
+		// 古事記を上杉謙信に
+		Set_家宝所有者変更(家宝配列番号::古事記, iBushouID);
+	}
+}
+		</pre>
+	</div>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_kahou_08.png"></p>
+	<h4>名前から逆引きしてもよい</h4>
+		<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+	int iBushouID = Get_武将番号【配列用】(顔番号::長尾景虎);
+
+	int 上杉謙信の持ってる最高の家宝 = -1;
+	if (0 &lt;= iBushouID &amp;&amp; iBushouID &lt; 最大数::武将情報::配列数) {
+
+		int iKahouID = Get_家宝番号【配列用】(&quot;魔獣百科辞典&quot;);
+
+		if (0 &lt;= iKahouID &amp;&amp; iKahouID &lt; 最大数::家宝情報::配列数) {
+			// 魔法百科事典を上杉謙信に
+			Set_家宝所有者変更(iKahouID, iBushouID);
+		}
+	}
+}
+		</pre>
+	</div>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_kahou_09.png"></p>
+	<h4>商人に家宝を返却する際には、0xFFFFを指定する</h4>
+	<p><mark>家宝自体のパラメータを変更する際には、商人に返上してから行うと武将の能力反映を考慮しいなくて良いため安全です。</mark></p>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+	int iBushouID = Get_武将番号【配列用】(顔番号::長尾景虎);
+
+	for (int KahouID = 0; KahouID &lt; 最大数::家宝情報::配列数; KahouID++) {
+
+		// 所持者が長尾景虎と一致した
+		if (iBushouID == p家宝情報[KahouID].所有武将【武将番号】 - 1) {
+
+			// 家宝を商人に返上
+			Set_家宝所有者変更(KahouID, 0xFFFF);
+		}
+	}
+}
+		</pre>
+	</div>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>家宝名の取得、家宝名の設定</h3>
+	<blockquote>string Get_家宝名(int 家宝番号【配列用】)</blockquote>
+	<p>家宝名の取得については、すでに何箇所かで記載があるので問題はないことでしょう。</p>
+	<blockquote>void Set_家宝名(int 家宝番号【配列用】, string 家宝名)</blockquote>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_メインゲーム開始() {
+	Set_家宝名(家宝配列番号::蜻蛉切, &quot;トンボキリ&quot;);
+}
+		</pre>
+	</div>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_kahou_10.png"></p>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>家宝画像の判定や変更</h3>
+	<blockquote>p家宝情報[ix].家宝画像</blockquote>
+	<p>家宝画像::茶碗 ～ 家宝画像::香木 の値を入れることが出来ます。<br>
+	これは画像の変更だけを行います。</p>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_メインゲーム開始() {
+	if (p家宝情報[家宝配列番号::タバコ].家宝画像 == 家宝画像::煙草) {
+		p家宝情報[家宝配列番号::タバコ].家宝画像 = 家宝画像::地球儀;
+	}
+}
+		</pre>
+	</div>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_kahou_11.png"></p>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+	番号リスト型 家宝リスト;
+
+	for (int KahouID = 0; KahouID &lt; 最大数::家宝情報::配列数; KahouID++) {
+		if (p家宝情報[KahouID].家宝画像 == 家宝画像::槍) {
+			家宝リスト.push_back(KahouID);
+		}
+	}
+
+	int iSelectedKahouID = 選択家宝ダイアログ表示(家宝リスト);
+	if (0 &lt;= iSelectedKahouID &amp;&amp; iSelectedKahouID &lt; 最大数::家宝情報::配列数) {
+		デバッグ出力 &lt;&lt; Get_家宝名(iSelectedKahouID) &lt;&lt; &quot;が選択されました&quot; &lt;&lt; endl;
+	}
+	else {
+		デバッグ出力 &lt;&lt; &quot;家宝は選択されませんでした&quot; &lt;&lt; endl;
+	}
+}
+		</pre>
+	</div>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>家宝の上昇値の判定や変更。</h3>
+	<blockquote>p家宝情報[ix].上昇値</blockquote>
+	<blockquote>bool Set_家宝上昇値(int 官位番号【配列用】, int 上昇値)</blockquote>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_メインゲーム開始() {
+	for (int iKahouID = 0; iKahouID &lt; 最大数::家宝情報::配列数; iKahouID++) {
+		// 上昇値が5以上のものを
+		if (p家宝情報[iKahouID].上昇値 &gt; 5) {
+			// 10上昇に
+			Set_家宝上昇値(iKahouID, 10);
+		}
+	}
+}
+		</pre>
+	</div>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>家宝分類の判定や変更。</h3>
+	<p><mark>家宝分類とは家宝の種類のことで、この種類によって「政治・戦闘・智謀・野望」のどれが上昇するのかが決まります。</mark>
+	</p>
+	<blockquote>p家宝情報[ix].家宝分類</blockquote>
+	<blockquote>bool Set_家宝分類(int 官位番号【配列用】, int 家宝分類)</blockquote>
+	<p>家宝分類::茶碗 ～ 家宝分類::煙草 の値を入れることが出来ます。</p>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_メインゲーム開始() {
+
+	// 家宝分類を変更
+	if (p家宝情報[家宝配列番号::蜻蛉切].家宝分類 == 家宝分類::槍) {
+		Set_家宝分類(家宝配列番号::蜻蛉切, 家宝分類::香木);
+	}
+
+}
+		</pre>
+	</div>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_kahou_12.png"></p>
+
+	<h3>種類に関する「表示上の文字列」を状況に応じて変更するには</h3>
+	<p><a href="?page=nobu_mod_the_snmod_methodref_on_kahou_typename">On_家宝種類名表示直前</a> を利用してください。</p>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>未登場の使用や設定。</h3>
+	<p>未登場とは、外来もしくは香木など、特定の年代やイベントを経るまでは「１」が立っているもので<br>
+	この値が「1」となると、ゲーム上でも該当家宝は無くなったことを意味します。</p>
+	<p><mark>原則的にはこの「未登場」を「１」にする際には「消失」を「０」にすることも併せて行ってください。</mark></p>
+	<p>武将が「未登場の家宝」を持つのは適切ではないため、「未登場」な家宝は商人に持たせるようにしてください。<br>
+		でこの値を変更しても能力の変化には対応していないため、<br>
+	</p>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_kahou_05.png"></p>
+	<blockquote>p家宝情報[ix].未登場</blockquote>
+	<div class="code">
+		<pre class="brush:cpp;highlight:[12,15]">
+void カスタム::On_メインゲーム開始() {
+
+	int iKahouID = 家宝配列番号::タバコ;
+
+	// まだ登場していない
+	if (p家宝情報[iKahouID].未登場 == true) {
+
+		// 今から登場させるので、商人へと戻す
+		Set_家宝所有者変更(iKahouID, 0xFFFF);
+
+		// 登場させる
+		p家宝情報[iKahouID].未登場 = false;
+
+		// 消失していない
+		p家宝情報[iKahouID].消失 = false;
+
+	}
+}
+		</pre>
+	</div>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>消失の使用や設定。</h3>
+	<p>消失とは、該当の家宝が破壊された、などの理由で消失した状態を指します。<br>
+	この値が「1」の間は、ゲーム内ではその家宝はリスト一覧には掲載となります。</p>
+	<p><mark>原則的には「消失」を「１」にする際には、「未登場」を「０」にすることも併せて行ってください。</mark></p>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_kahou_04.png"></p>
+	<blockquote>p家宝情報[ix].消失</blockquote>
+	<div class="code">
+		<pre class="brush:cpp;highlight:[12,15]">
+void カスタム::On_メインゲーム開始() {
+
+	int iKahouID = 家宝配列番号::九十九髪茄子;
+
+	// 消失していない
+	if (p家宝情報[iKahouID].消失 == false) {
+
+		// 今から消失させるので、商人へと戻す
+		Set_家宝所有者変更(iKahouID, 0xFFFF);
+
+		// 消失するわけだから、一度登場したはず...
+		p家宝情報[iKahouID].未登場 = false;
+
+		// 商人の手元にあるので安全に消失に出来る
+		p家宝情報[iKahouID].消失 = true;
+
+	}
+}
+		</pre>
+	</div>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>家宝の説明文の変更</h3>
+	<p>家宝の説明文などを状況を判断しながら変更することが出来ます。</p>
+	<p>詳細は、<a href="?page=nobu_mod_the_snmod_methodref_on_viewing_kahou_retsuden">On_戦国名物事典要求時</a> を参照してください。</p>
+
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>より詳細を知るには...</h3>
+	<p>
+		「家宝」に関する主な所は以上となります。<br>
+		詳しくは「家宝情報型.h」や「家宝情報列挙.h」などを参照してください。
+	</p>
+</div>

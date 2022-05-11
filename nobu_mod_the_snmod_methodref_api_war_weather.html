@@ -1,0 +1,105 @@
+%(hilight)s
+<div class="content-box mb-3 content-lighten">
+	<h2><i class="fa fa-book fa-fw"></i>戦争 - 天気</h2>
+	<p>戦争中の天気を取得、設定するAPIです。</p>
+	<p>原則的に、メイン画面は天候とは無関係ですので、「戦争画面」にて使うことになるでしょう。</p>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_war_weather_02.png"></p>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<blockquote>byte Get_天気()</blockquote>
+	<div class="code">
+		<pre class="brush:cpp;">
+if (Get_天気() == 天気::晴れ) {
+	デバッグ出力 &lt;&lt; &quot;晴天です&quot; &lt;&lt; endl;
+} else if (Get_天気() == 天気::曇り) {
+	デバッグ出力 &lt;&lt; &quot;曇りです&quot; &lt;&lt; endl;
+} else if (Get_天気() == 天気::雨) {
+	デバッグ出力 &lt;&lt; &quot;雨です&quot; &lt;&lt; endl;
+} else if (Get_天気() == 天気::雪) {
+	デバッグ出力 &lt;&lt; &quot;雪です&quot; &lt;&lt; endl;
+}
+</pre>
+	</div>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>応用例</h3>
+	<p>天気に応じて、攻撃コマンド名を変更する例</p>
+		<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_war_weather_01.png"></p>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_残りターン変更《戦争画面》(int 残りターン数) {
+
+	デバッグ出力 &lt;&lt; &quot;このイベントハンドラの直後に本日の天候へと変わります&quot; &lt;&lt; endl;
+
+	if (Get_天気() == 天気::晴れ) {
+		デバッグ出力 &lt;&lt; &quot;先程のターンは晴天でした&quot; &lt;&lt; endl;
+	}
+	else if (Get_天気() == 天気::曇り) {
+		デバッグ出力 &lt;&lt; &quot;先程のターンは曇りでした\x0A涼しくて士気旺盛でした&quot; &lt;&lt; endl;;
+	}
+	else if (Get_天気() == 天気::雨) {
+		デバッグ出力 &lt;&lt; &quot;先程のターンは雨でした\x0A潤って士気旺盛でした&quot; &lt;&lt; endl;
+	}
+	else if (Get_天気() == 天気::雪) {
+		デバッグ出力 &lt;&lt; &quot;先程の天候は雪でした\x0Aカッチコチでした&quot;;
+	}
+}
+
+void カスタム::On_ターン変更《攻城中画面》(int ターン数) {
+}
+
+void カスタム::On_戦闘コマンド表示直前《戦争画面》(int 武将番号) {
+	int iBushouID = 武将番号 - 1; // 武将番号→武将番号【配列用】に
+
+	if (0 &lt;= iBushouID &amp;&amp; iBushouID &lt; 最大数::武将情報::配列数) {
+		if (p武将戸籍情報[iBushouID].顔番号 == 顔番号::武田晴信) { // 武田信玄の顔＆列伝番号
+			if (Get_天気() == 天気::雨) {
+				デバッグ出力 &lt;&lt; &quot;今日は晴天です&quot; &lt;&lt; endl;
+				Set_コマンド名(戦争画面::戦闘コマンド名::通常攻撃, &quot;雨攻撃&quot;);
+				Set_コマンド名(戦争画面::戦闘コマンド名::一斉攻撃, &quot;雨一斉&quot;);
+			}
+			else if (Get_天気() == 天気::晴れ) {
+				デバッグ出力 &lt;&lt; &quot;今日は晴れです&quot; &lt;&lt; endl;
+			}
+			else if (Get_天気() == 天気::曇り) {
+				デバッグ出力 &lt;&lt; &quot;今日は曇りです&quot; &lt;&lt; endl;
+				Set_コマンド名(戦争画面::戦闘コマンド名::通常攻撃, &quot;曇攻撃&quot;);
+				Set_コマンド名(戦争画面::戦闘コマンド名::一斉攻撃, &quot;曇一斉&quot;);
+			}
+			else if (Get_天気() == 天気::雪) {
+				デバッグ出力 &lt;&lt; &quot;今日は雪です&quot; &lt;&lt; endl;
+				Set_コマンド名(戦争画面::戦闘コマンド名::通常攻撃, &quot;雪攻撃&quot;);
+				Set_コマンド名(戦争画面::戦闘コマンド名::一斉攻撃, &quot;雪一斉&quot;);
+			}
+		}
+	}
+
+}
+</pre>
+	</div>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<blockquote>void Set_天気予約(int i天気, int 継続ターン=2)</blockquote>
+	<p>戦闘中にこの関数で天気を予約することで、<mark>翌日以降</mark>の天気を操作可能となる。</p>
+	<fieldset class="code"><legend>最初の３ターンは常に雪</legend>
+		<pre class="brush:cpp;">
+void カスタム::On_残りターン変更《戦争画面》(int 残りターン数) {
+	デバッグ出力 &lt;&lt; 残りターン数 &lt;&lt; endl;
+	if (残りターン数 == 30) {
+		Set_天気予約(天気::雪, 3); // 戦闘中、次のターンから３ターン分、「雪」の天気を予約する。
+	}
+}
+</pre>
+	</fieldset>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>より詳細を知るには...</h3>
+	<p>
+		「戦争 - 天気」に関する主な所は以上となります。
+		詳しくは「天気情報型.h」や「天気情報列挙.h」などを参照してください。
+	</p>
+</div>

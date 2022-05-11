@@ -1,0 +1,228 @@
+﻿%(hilight)s
+<div class="content-box mb-3 content-lighten">
+    <h2><i class="fa fa-book fa-fw"></i><a name="doc1_id612">_inmmcnf.exe</a></h2>
+    <div class="titletoc">
+        <ul>
+            <li> <a href="#doc1_player_select">[再生方法]ページ</a>
+            <li> <a href="#doc1_player_option">[プレイヤー]ページ</a>
+            <li> <a href="#doc1_error_option">[エラー]ページ</a>
+            <li> <a href="#doc1_general_option">[その他]ページ</a>
+            <li> <a href="#doc1_patch_page">[パッチ]ページ</a>
+            <li> <a href="#doc1_inieditor">[_inmm.ini]ページ</a>
+        </ul>
+    </div>
+    <p class="first_ja">_inmmcnf.exeで、_inmm.dllの動作をカスタマイズできます。_inmmcnf.exeは実行ファイルにパッチを当てるときにも使います。また_inmm.iniの簡易エディタもついています。</p>
+    <p>_inmmcnf.exeのウィンドウは、機能別に5つのページに分かれています。はじめの3つが_inmm.dllの動作を設定するものです。</p>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3><a name="doc1_player_select">[再生方法]ページ</a></h3>
+
+    <p class="first_ja">再生に使うプレイヤーを、曲の種類（正確にはファイル名）ごとに指定します。</p>
+    <p>左側の[ファイルの種類]に、ファイル名を書きます。ワイルドカード文字<code>*</code>と<code>?</code>を使えます。<code>|</code>で区切って、複数の名前を書くことができます。例えば、<code>*.mid|*.rmi</code>なら、拡張子が.midのファイルと.rmiのファイルという意味になります。</p>
+    <p>右側の[プレイヤー]で、対応するプレイヤーを指定します。「その他のファイル」では、どの[ファイルの種類]にも当てはまらないファイルの再生方法を指定します。「CD-DA」では、CDから鳴らすとき（_inmm.iniには<code>*2</code>などと書きます）の再生方法を設定します。</p>
+    <p>「CD-DA」の横にある[ドライブ]で、どのCD-ROMドライブからCD-DAを再生するかを指定します<span class="note"><a href="#doc1_id631" title="Digital CD Playerはこの方法でのドライブ指定に対応していません。Digital CD Playerの設定でCDドライブを変更してください。"><sup>(7)</sup></a></span>。「デフォルト」にすると、プレイヤーの既定値を使います。</p>
+    <p>使用しない曲種のところの設定は無視して構いません（_inmm.iniに対応するファイル名がないプレイヤーは使われません）。</p>
+    <p>今のところ、選択できるプレイヤーには以下のものがあります。</p>
+
+    <div class="table">
+        <a name="doc1_id634"></a>
+        <table class="data" rules="groups">
+            <colgroup span="2">
+                <col>
+                <col>
+            </colgroup>
+            <thead>
+                <tr class="even">
+                    <th align="center">プレイヤー</th>
+                    <th align="center">説明</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="even">
+                    <td>MCI</td>
+                    <td>Windows標準の機能を使って再生します。</td>
+                </tr>
+                <tr class="odd">
+                    <td>DirectShow</td>
+                    <td>DirectXに含まれる機能で再生します。</td>
+                </tr>
+                <tr class="even">
+                    <td>Winamp</td>
+                    <td>Winampを使って再生します。</td>
+                </tr>
+                <tr class="odd">
+                    <td>SCMPX</td>
+                    <td>SCMPXを使って再生します。</td>
+                </tr>
+                <tr class="even">
+                    <td>Digital CD Player</td>
+                    <td>Digital CD Playerを使って再生します。</td>
+                </tr>
+                <tr class="odd">
+                    <td>Lilith</td>
+                    <td>Lilithを使って再生します。</td>
+                </tr>
+                <tr class="even">
+                    <td>なし</td>
+                    <td>その種類の曲は再生されません。</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+
+    <div class="footnote">
+        <ol>
+            <li id="doc1_id631" value="7"> Digital CD Playerはこの方法でのドライブ指定に対応していません。Digital CD Playerの設定でCDドライブを変更してください。
+        </ol>
+    </div>
+</div>
+<div class="content-box mb-3 content-lighten">
+
+    <h3><a name="doc1_player_option">[プレイヤー]ページ</a></h3>
+
+    <p class="first_ja">プレイヤーごとの設定を行います。[Winamp]、[SCMPX]、[Digital CD Player]、[Lilith]と、プレイヤーごとに項目が分かれています。</p>
+    <p>プレイヤーの[パス]を設定しておくと、_inmm.dllが読み込まれたとき（つまりゲームを起動したとき）にプレイヤーを自動的に起動します。パスの設定が空の場合、ゲームを起動する前にあらかじめプレイヤーを立ち上げておく必要があります。</p>
+    <p>Winamp/SCMPXの[ウィンドウを隠す]をチェックすると、プレイヤーを自動起動したときにそのウィンドウを表示しないようにします。自動起動を使わない場合、この設定は効果がありません。Digital CD Playerには、代わりに[最小化して起動]オプションがあります。Lilithには[タスクトレイモードで起動]オプションがあります。</p>
+    <p>Waveデバイスが全部塞がっているときにWinampに再生コマンドを送ると、Winampはエラーのメッセージボックスを表示してしまいます。そのため、Waveデバイスが空いていないときはWinampに再生コマンドを送らないようにしています。[Wave出力の空きをチェックしない]をオンにするとこのチェックを行いません。DirectSound使用のゲームで威力を発揮するかもしれません。</p>
+    <p>Digital CD Playerにも、同じ理由で[Wave出力の空きをチェックしない]オプションがあります。</p>
+    <p>Digital CD Playerの[再生位置取得機能を使わない]オプションをオンにすると、音楽の再生開始からの経過時間が必要なとき、Digital CD Playerに問い合わせるのではなく_inmm側で処理します。デモ等で画面と音楽の同期がずれる場合にチェックしてみてください。</p>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3><a name="doc1_error_option">[エラー]ページ</a></h3>
+
+    <p class="first_ja">_inmm.dllの処理中にエラーが発生したときの動作を指定します。</p>
+    <p>_inmm.dllのエラーは、深刻さによって5つのレベルに分けられます。</p>
+
+    <div class="table">
+        <a name="doc1_id705"></a>
+        <table class="data" rules="groups">
+            <colgroup span="2">
+                <col>
+                <col>
+            </colgroup>
+            <thead>
+                <tr class="even">
+                    <th align="center">レベル</th>
+                    <th align="center">説明</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="even">
+                    <td>FATAL</td>
+                    <td>処理を続けられないような重大なエラーです。</td>
+                </tr>
+                <tr class="odd">
+                    <td>ERROR</td>
+                    <td>外部プレイヤーの起動失敗など、影響の大きいエラーです。</td>
+                </tr>
+                <tr class="even">
+                    <td>WARN</td>
+                    <td>ファイルの再生失敗など、比較的影響の小さいエラーです。</td>
+                </tr>
+                <tr class="odd">
+                    <td>INFO</td>
+                    <td>エラーではありませんが、有用な情報の通知です。</td>
+                </tr>
+                <tr class="even">
+                    <td>DEBUG</td>
+                    <td>エラーではなく、デバッグ用の情報です。</td>
+                </tr>
+                <tr class="odd">
+                    <td>TRACE</td>
+                    <td>詳細なデバッグ用の情報です。大量のログが書き出されるので注意してください。</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+
+    <dl>
+        <dt>[エラー表示レベル]
+        <dd>ここで指定したレベル以上のエラーが発生した場合、メッセージを表示します。WARN以上のレベルのみ指定できます。NONEを指定すると、エラーメッセージを一切表示しません。
+        <dt>[ログ]
+        <dd>
+            <p>発生したエラーをログファイルに記録できます。</p>
+            <p>ログファイルはこんな形式です。</p>
+
+            <a name="doc1_id776"></a>
+            <pre class="program">
+D 07/20 22:01:14.890 INFO  _inmm.dll 2.35
+S 07/20 22:01:14.937 INFO  _inmmserv 2.35
+S 07/20 22:01:16.328 ERROR c:\game\gerogero.mp3が見つかりません。
+</pre>
+
+            <p>左から順にエラー通知元（D=_inmm.dll, S=_inmmserv.exe）、日付、時刻（時:分:秒.ミリ秒）、レベル、エラー内容です。</p>
+
+            <dl>
+                <dt>[ファイル]
+                <dd>ログファイル名を指定します。フォルダを指定しない場合、ゲームをインストールしたフォルダにログファイルを作成します。
+                <dt>[記録レベル]
+                <dd>
+                    <p>ここで指定したレベル以上のエラーが発生した場合、ログファイルに記録します。NONEを指定すると、一切記録しません。</p>
+                    <p>DEBUGやTRACEを指定すると、ログファイルが非常に大きくなる場合があるので注意してください。</p>
+                <dt>[終了時にログ作成を通知する]
+                <dd>ログファイルが作成された場合、ゲームの終了時にメッセージを表示します。
+            </dl>
+    </dl>
+
+</div>
+<div class="content-box mb-3 content-lighten">
+
+    <h3><a name="doc1_general_option">[その他]ページ</a></h3>
+
+    <p class="first_ja">_inmm.dllの動作全般に関するオプションです。</p>
+
+    <dl>
+        <dt>[効果音]
+        <dd>
+            <p>CD-DAの代わりにwavファイルやMP3を再生していると、WAVEデバイスが占有されてしまって、ゲームの効果音が鳴らない場合があります。この問題に対処する方針を設定します。</p>
+            <p>_inmm.dllが検知できない方法で効果音を出しているゲームでは、ここでの設定は効果がありません。</p>
+
+            <dl>
+                <dt>[BGMを一時的に止めて鳴らす]
+                <dd>
+                    <p>効果音を鳴らすために、曲を一時中断します。</p>
+                    <p>WinampとSCMPXでは、効果音が鳴り終わった後に曲の初めに戻ってしまいます。一時停止コマンドではWAVEデバイスが解放されないため、停止コマンドを使っているからです。</p>
+                <dt>[標準]
+                <dd>特になにもしません。WAVEデバイスが同時に2つ以上使える環境では、この設定にしてください。
+                <dt>[鳴らさない]
+                <dd>ゲーム中に効果音が一切鳴らないようにします。
+                <dt>[DirectSoundから出力]
+                <dd>
+                    <p>_inmm.dll内で効果音の出力を横取りして、DirectSound出力から鳴らすようにします。（WinampのDirectSound output plug-inなどで）BGMをDirectSoundから再生している場合は、これをチェックすることでBGMと効果音を同時に鳴らせます。</p>
+                    <p>この機能はまだテスト段階です。ほとんどのゲームでは、従来通りwave-outから効果音が出てしまいます。(^^;</p>
+            </dl>
+        <dt>[_inmm.dllの全機能を無効にする]
+        <dd>プログラムにパッチを当てる前と同じ動作をするようになります。_inmm.dllが邪魔になったときに使います。:-)
+    </dl>
+</div>
+<div class="content-box mb-3 content-lighten">
+
+    <h3><a name="doc1_patch_page">[パッチ]ページ</a></h3>
+
+    <p class="first_ja">実行ファイルにパッチを当てるときに使用します。</p>
+    <p>左側の[グループ]欄には、ゲームのメーカー一覧が表示されます。グループ名を選択すると、そのグループに属するタイトルの一覧が右側の[タイトル]欄に表示されます。タイトルを選択して[実行]を押すとパッチをあてることができます。</p>
+    <p>特別なグループとして、「すべてのタイトルを表示」がグループリストの先頭にあります。これを選択すると、全グループのタイトルが[タイトル]欄に表示されます。</p>
+    <p>下のほうにあるテキストボックスに言葉を入れて[検索]を押すと、グループ名とタイトルから検索できます。</p>
+    <p>パッチをあてたいゲームが一覧にないときは、パッチをあてたいファイルをこのページにドラッグ＆ドロップしてください。</p>
+</div>
+<div class="content-box mb-3 content-lighten">
+
+    <h3><a name="doc1_inieditor">[_inmm.ini]ページ</a></h3>
+
+    <p class="first_ja">_inmm.ini作成のための単純なテキストエディタです。</p>
+    <p>いちばん簡単な使い方は、曲ファイルをこのページにドラッグ＆ドロップすることです。それでファイル名がテキストボックスに追加されます。プレイリストをドラッグ＆ドロップするとプレイリストの内容を追加できます。</p>
+    <p>[追加]ボタンで、ファイル選択のダイアログボックスが開きます。選択したファイルの名前がテキストボックスに追加されます。</p>
+    <p>[ソート]ボタンを押すと、テキストボックス内のファイル名をソートします。このソート機能はちょっと賢くて、普通のソートアルゴリズムではTrack10.mp3がTrack2.mp3より上にきてしまうところを、ちゃんと番号順に並べてくれます。<span class="note"><a href="#doc1_id853" title="「自然順ソート」と呼ばれているものに近いアルゴリズムです。"><sup>(8)</sup></a></span></p>
+    <p>CDを曲順通りに再生したい場合、_inmm.iniには<code>*2, *3, *4, ... *(最終トラック)</code>と書いていく必要があるのですが、こんな単純作業はコンピュータにやらせたいですね。[Track番号]を押すと出てくるダイアログボックスに、開始番号と終了番号を入力して[OK]を押すと連番を挿入できます。現在CD-ROMドライブに入っているCDからオーディオトラックの番号を取得することもできます。</p>
+    <p>[開く]は既存の_inmm.iniを読み込みます。あまり使いません。(^^;</p>
+    <p>[保存]でテキストボックスの内容をファイルに書き込みます<span class="note"><a href="#doc1_id859" title="[パッチ]ページでパッチをあてた直後は、_inmm.iniの保存先フォルダがゲームのインストールフォルダになっているのでフォルダ選択の手間が省けます。:-)"><sup>(9)</sup></a></span>。</p>
+
+    <div class="footnote">
+        <ol>
+            <li id="doc1_id853" value="8"> 「自然順ソート」と呼ばれているものに近いアルゴリズムです。
+            <li id="doc1_id859" value="9"> [パッチ]ページでパッチをあてた直後は、_inmm.iniの保存先フォルダがゲームのインストールフォルダになっているのでフォルダ選択の手間が省けます。:-)
+        </ol>
+    </div>
+</div>

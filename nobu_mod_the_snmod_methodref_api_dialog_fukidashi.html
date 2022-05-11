@@ -1,0 +1,147 @@
+%(hilight)s
+<div class="content-box mb-3 content-lighten">
+	<h2><i class="fa fa-book fa-fw"></i>ダイアログ - 噴出ダイアログ</h2>
+	<p>会話のためのダイアログを表示するAPIです。</p>
+	<p>大小関わらず、自作の独自イベントなどで利用することになるでしょう。</p>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_dialog_fukidashi_01.png"></p>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>吹き出しの開始・更新・終了を意識して利用する</h3>
+	<blockquote>噴出ダイアログ《通常・左上》開始(int 武将番号【配列用】, string メッセージ)</blockquote>
+	<blockquote>噴出ダイアログ《通常・左上》更新(int 武将番号【配列用】, string メッセージ)</blockquote>
+	<blockquote>噴出ダイアログ《通常・左上》終了()</blockquote>
+	<blockquote>噴出ダイアログ《通常・右下》開始(int 武将番号【配列用】, string メッセージ)</blockquote>
+	<blockquote>噴出ダイアログ《通常・右下》更新(int 武将番号【配列用】, string メッセージ)</blockquote>
+	<blockquote>噴出ダイアログ《通常・右下》終了()</blockquote>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+    // 左上、開いて、閉じる
+    噴出ダイアログ《通常・左上》開始(100, &quot;ああ\x0Aマイクのテストテスト&quot; );
+    噴出ダイアログ《通常・左上》終了();
+
+    // 右下、開いて、閉じる
+    噴出ダイアログ《通常・右下》開始(102, &quot;ああ、眠いなぁ～&quot; );
+    噴出ダイアログ《通常・右下》終了();
+
+    噴出ダイアログ《通常・左上》開始(100, &quot;え～本日の～&quot; );
+    // 左上ひらいたままで… 右が連続メッセージ
+    噴出ダイアログ《通常・右下》開始(102, &quot;うっせーぞっｐ!!&quot; );
+    噴出ダイアログ《通常・右下》更新(102, &quot;返れ!!&quot; );
+    噴出ダイアログ《通常・右下》更新(102, &quot;いや、帰れ!!&quot; );
+    // 右下も開いたままで… ダイアログで問いあわせ
+    int 答え = 実行／取消ダイアログ表示(&quot;帰りますか？&quot;);
+
+    if ( 答え ) {
+        噴出ダイアログ《通常・右下》更新(102, &quot;わかったようだな&quot; );
+    } else {
+        噴出ダイアログ《通常・右下》更新(102, &quot;いいから帰れ!!&quot; );
+    }
+
+    噴出ダイアログ《通常・左上》更新(100, &quot;さて、\x0A雪も降ってるし帰るか。&quot; );
+    噴出ダイアログ《通常・左上》終了();
+
+    噴出ダイアログ《通常・右下》更新(102, &quot;やっと帰ったか。&quot; );
+    噴出ダイアログ《通常・右下》終了();
+}
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>メイン画面中だけではなく、戦争中も同様に機能する。</h3>
+          <div class="code">
+            <pre class="brush:cpp;">
+void カスタム::On_ターン変更《攻城中画面》(int ターン数) {
+  if ( Is_野戦中() &amp;&amp; 1 &lt;= 残りターン数 &amp;&amp; 残りターン数 &lt; 30 ) {
+    if ( Get_天気() == 天気::雨 ) { // 前のターンが雨だった。まだこれからのターンがどうなるかは不明。
+
+      噴出ダイアログ《通常・左上》開始(100, &quot;さて、\x0A雨降ったしもう帰るか。&quot; );
+      噴出ダイアログ《通常・右下》開始(102, &quot;じゃ、俺も帰ろ!!&quot; );
+
+      噴出ダイアログ《通常・左上》終了();
+      噴出ダイアログ《通常・右下》終了();
+    }
+  }
+}
+</pre>
+	</div>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>「ある武将Ａ」が「左上で」<span class="negative">噴き出しを出している最中</span>に、<br>「別の武将Ｂ」が「同じ左上で」噴き出しを出すことはダメ。<br>一旦左上を閉じること</h3>
+	<p>同じく「ある武将Ａ」が「右下で」噴き出しを出している最中に、<br>「別の武将Ｂ」が「同じ右下で」噴き出しを出すことはダメ。<br>一旦閉じること。</p>
+	<h4>ＯＫなパターン。</h4>
+	<p>信長と勝家は話していた。<br>
+		<mark>勝家の右下の噴き出しを閉じたあとで、右下に秀吉を登場</mark>させている。</p>
+	<div class="code">
+		<pre class="brush:cpp;">
+信長：左上　開始 「勝家よ」
+勝家：右下　開始 「はい」
+信長：左上　更新 「腹が減った」
+勝家：右下　更新 「私も」
+信長：左上　終了
+勝家：右下　終了
+信長：左上  開始 「外へ出かけるか」
+秀吉：右下  開始 「私もいきまする」
+信長：左上  終了
+秀吉：右下  終了
+					</pre>
+	</div>
+	<h4>ＮＧなパターン。</h4>
+	<p>信長と勝家は話していた。<br>
+		信長側の噴出を閉じず、<span class="negative">信長の噴出を開いたまま、秀吉が左上で新たに噴き出しを出</span>している。<br>
+		これをすると、<span class="negative">噴出の背景描画が乱れる</span>ときがある。</p>
+	<div class="code">
+		<pre class="brush:cpp;highlight:[7]">
+信長：左上　開始 「勝家よ」
+勝家：右下　開始 「はい」
+信長：左上　更新 「腹が減った」
+勝家：右下　更新 「私も」
+信長：左上　更新 「外へ出かけるか」
+勝家：右下　終了
+秀吉：左上　開始 「私もいきまする」  // アウト!! 左上の信長の枠を開いたまま、さらに同じところに秀吉の枠を開いている
+信長：左上　終了
+秀吉：左上　終了
+				</pre>
+	</div>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>戦場専用として画面の中央に表示する噴き出しダイアログ</h3>
+	<blockquote>void 噴出ダイアログ《戦場・中央》表示(int 武将番号【配列用】, string メッセージ)</blockquote>
+	<p>この噴き出しダイアログは、天翔記の戦場にてよくみかける噴き出しと同一のものであり、
+		<mark>左上や右下ではなく、画面中央に１つ出る</mark>モーダルタイプである。</p>
+
+	<p>この関数は<mark>戦場でのみ利用可能です。ダイアログ終了関数を呼び出す必要はありません。</mark></p>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_dialog_fukidashi_02.png"></p>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_残りターン変更《戦争画面》(int 残りターン数) {
+
+	// 今表示中しているマップ中に居る人の武将番号【配列用】のリストを得る
+	番号リスト型 list = Get_出陣中の武将番号リスト【配列用】《表示中マップ》();
+
+	if (list.size() &gt; 0) {
+		int iBushouID = list[0];
+		string 名前 = Get_名前(iBushouID);
+		噴出ダイアログ《戦場・中央》表示(iBushouID, 名前 + &quot;、推して参る!!&quot;);
+	}
+}
+
+	</div>
+</div>
+
+
+<div class="content-box mb-3 content-lighten">
+	<h3>実践ではほとんどのシーンで「語句変化」を利用することになる</h3>
+	<p>ダイアログの文章は、<a href="?page=nobu_mod_the_snmod_methodref_api_string_gokuhenka">語句変化</a> を利用して作成することが多いため、<br>
+		そちらも参照してください。</p>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>より詳細を知るには...</h3>
+	<p>
+		「噴出ダイアログ」に関する主な所は以上となります。
+		詳しくは「ダイアログ情報型.h」を参照してください。
+	</p>
+</div>

@@ -1,0 +1,103 @@
+%(hilight)s
+<div class="content-box mb-3 content-lighten">
+	<h2><i class="fa fa-book fa-fw"></i>ダイアログ - 軍団ダイアログ</h2>
+	<p>軍団のリストを表示して、そこから選択してもらうためのダイアログを表示するAPIです。</p>
+	<p>大小関わらず、自作の独自イベントなどで利用することになるでしょう。</p>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>int 選択軍団ダイアログ表示(番号リスト型 軍団番号【配列用】リスト, int カラムオプション);</h3>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+	// 金＋米が両方3000を超える軍団を表示・選択
+	番号リスト型 ShowGundanList;
+
+	for (int iGundanID = 0; iGundanID &lt; 最大数::軍団情報::配列数; iGundanID++) {
+
+		if ( (p軍団情報[iGundanID].金 + p軍団情報[iGundanID].米) &gt; 3000) {
+			ShowGundanList.push_back(iGundanID);
+		}
+	}
+
+	int iSelectedGundanID = 選択軍団ダイアログ表示(ShowGundanList, カラム::軍団::デフォルト);
+
+	if (0 &lt; iSelectedGundanID &amp;&amp; iSelectedGundanID &lt; 最大数::軍団情報::配列数) {
+
+		int iBushouID = p軍団情報[iSelectedGundanID].軍団長【武将番号】-1;
+		if (0 &lt;= iBushouID &amp;&amp; iBushouID &lt; 最大数::武将情報::配列数) {
+			デバッグ出力 &lt;&lt; Get_名字(iBushouID) + Get_名前(iBushouID) &lt;&lt; &quot;の支配する軍団が選択されました&quot; &lt;&lt; endl;
+		}
+	}
+	else {
+		デバッグ出力 &lt;&lt; &quot;軍団は選択されませんでした&quot; &lt;&lt; endl;
+	}
+}
+		</pre>
+	</div>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_dialog_gundan_01.png"></p>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>カラムを指定することで、表示の列をカスタムすることが出来ます</h3>
+	<div class="code">
+		<pre class="brush:cpp;">
+int iSelectedGundanID = 選択軍団ダイアログ表示(ShowGundanList, カラム::軍団::軍団長|カラム::軍団::金| カラム::軍団::米);
+		</pre>
+	</div>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_dialog_gundan_02.png"></p>
+	<div class="code">
+		<pre class="brush:cpp;">
+int iSelectedGundanID = 選択軍団ダイアログ表示(ShowGundanList, カラム::軍団::名称);
+	</pre>
+	</div>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_dialog_gundan_03.png"></p>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>とある大名の配下の軍団リストを対象にする場合、Get_大名麾下軍団番号リスト【配列用】(...) が便利</h3>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_軍団ターン変更《メイン画面》(int 軍団番号) {
+
+	// 軍団ターンが回ってきているが、それがプレイヤーが担当している軍団で、かつ大名直轄の軍団（第１軍団）である。
+	int iGundanID = 軍団番号 - 1;
+	if (Is_プレイヤ担当軍団(iGundanID)) {
+
+		// 第１軍団は常に大名自身の軍団。
+		if (p軍団情報[iGundanID].軍団割当番号 == 1) {
+			int iDaimyoID = p軍団情報[iGundanID].所属大名【大名番号】-1;
+
+			if (0 &lt;= iDaimyoID &amp;&amp; iDaimyoID &lt; 最大数::大名情報::配列数) {
+				番号リスト型 list = Get_大名麾下軍団番号リスト【配列用】(iDaimyoID);
+
+				int iSelectedGundanID = 選択軍団ダイアログ表示(list, カラム::軍団::軍団長|カラム::軍団::居城);
+
+				if (0 &lt; iSelectedGundanID &amp;&amp; iSelectedGundanID &lt; 最大数::軍団情報::配列数) {
+
+					int iBushouID = p軍団情報[iSelectedGundanID].軍団長【武将番号】 - 1;
+					if (0 &lt;= iBushouID &amp;&amp; iBushouID &lt; 最大数::武将情報::配列数) {
+						デバッグ出力 &lt;&lt; Get_名字(iBushouID) + Get_名前(iBushouID) &lt;&lt; &quot;の支配する軍団が選択されました&quot; &lt;&lt; endl;
+					}
+				}
+				else {
+					デバッグ出力 &lt;&lt; &quot;軍団は選択されませんでした&quot; &lt;&lt; endl;
+				}
+			}
+		}
+	}
+}
+		</pre>
+	</div>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_dialog_gundan_04.png"></p>
+</div>
+
+
+<div class="content-box mb-3 content-lighten">
+	<h3>より詳細を知るには...</h3>
+	<p>
+		「軍団ダイアログ」に関する主な所は以上となります。
+		詳しくは「ダイアログ情報型.h」を参照してください。
+	</p>
+</div>

@@ -1,0 +1,101 @@
+%(hilight)s
+<div class="content-box mb-3 content-lighten">
+	<h2><i class="fa fa-book fa-fw"></i>メイン画面 - 戦略ターン</h2>
+	<h3>戦略.ターンの概念</h3>
+	<p>戦略.ターンとは、戦略画面の大名ターンもしくは軍団ターンのことです。<br>城ターンもあります。
+	</p>
+	<p>「現在ターンが回っている大名」「ターンが回っている軍団」<br>
+		あるいは「ターンが回ってきている城」を簡単に得ることが出来るよう、「pターン情報」が提供されています。<br>
+	</p>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_main_turn_01.png"></p>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>現在ターンが来ている大名番号や軍団番号を得る</h3>
+	<blockquote>pターン情報.現在のターン【大名番号】</blockquote>
+	<blockquote>pターン情報.現在のターン【軍団番号】</blockquote>
+	<div class="code">
+		<pre class="brush:lua;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+	int iDaimyoID = pターン情報.現在のターン【大名番号】 - 1;
+	int iGundanID = pターン情報.現在のターン【軍団番号】 - 1;
+
+	if (0 &lt;= iDaimyoID &amp;&amp; iDaimyoID &lt; 最大数::大名情報::配列数) {
+		int iBushouID = p大名情報[iDaimyoID].大名【武将番号】-1;
+
+		if (0 &lt;= iBushouID &amp;&amp; iBushouID &lt; 最大数::武将情報::配列数) {
+			デバッグ出力 &lt;&lt; &quot;大名:&quot; &lt;&lt; Get_名字(iBushouID) &lt;&lt; Get_名前(iBushouID) &lt;&lt; endl;
+		}
+	}
+
+	if (0 &lt;= iGundanID &amp;&amp; iGundanID &lt; 最大数::軍団情報::配列数) {
+		int iBushouID = p軍団情報[iGundanID].軍団長【武将番号】 - 1;
+
+		if (0 &lt;= iGundanID &amp;&amp; iGundanID &lt; 最大数::武将情報::配列数) {
+			デバッグ出力 &lt;&lt; &quot;第&quot; &lt;&lt; (int)p軍団情報[iGundanID].軍団割当番号 &lt;&lt; &quot;軍団&quot; &lt;&lt; &quot;の軍団長:&quot; &lt;&lt; Get_名字(iBushouID) &lt;&lt; Get_名前(iBushouID) &lt;&lt; endl;
+
+			int iCastleID = p軍団情報[iGundanID].所属居城【城番号】-1;
+			デバッグ出力 &lt;&lt; &quot;城:&quot; &lt;&lt; Get_城名(iCastleID) &lt;&lt; Get_城称(iCastleID) &lt;&lt; endl;
+		}
+	}
+
+	/* On_プレイヤ担当ターン《メイン画面》 では切り替わり目なので、以下のような城ターンは機能しない
+	int iGundanID = pターン情報.現在のターン【城番号】 - 1;
+	if (0 &lt;= iCastleID &amp;&amp; iCastleID &lt; 最大数::城情報::配列数) {
+
+		デバッグ出力 &lt;&lt; Get_城名(iCastleID) &lt;&lt; Get_城称(iCastleID) &lt;&lt; endl;
+	}
+	*/
+}
+</pre>
+	</div>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>On_プレイヤ担当ターン《メイン画面》()とOn_軍団ターン変更《メイン画面》() は<mark>城ターンに有効な値が入ってない</mark></h3>
+	<p>「On_プレイヤ担当ターン《メイン画面》()」と「On_軍団ターン変更《メイン画面》()」は、切り替わりい直後のメソッドとなるため、城ターンの情報がまだ更新されていません。<br>
+		しかし、軍団番号や大名番号から、簡単に所属している居城の番号が得られますので、そちらの手段で取得してください。</p>
+	<div class="code">
+		<pre class="brush:lua;">
+void カスタム::On_軍団ターン変更《メイン画面》(int 軍団番号) {
+	int iGundanID = 軍団番号 - 1;
+	if (0 &lt;= iGundanID &amp;&amp; iGundanID &lt; 最大数::軍団情報::配列数) {
+		int iBushouID = p軍団情報[iGundanID].軍団長【武将番号】 - 1;
+
+		if (0 &lt;= iGundanID &amp;&amp; iGundanID &lt; 最大数::武将情報::配列数) {
+			デバッグ出力 &lt;&lt; &quot;第&quot; &lt;&lt; (int)p軍団情報[iGundanID].軍団割当番号 &lt;&lt; &quot;軍団&quot; &lt;&lt; &quot;の軍団長:&quot; &lt;&lt; Get_名字(iBushouID) &lt;&lt; Get_名前(iBushouID) &lt;&lt; endl;
+
+			int iCastleID = p軍団情報[iGundanID].所属居城【城番号】 - 1;
+			デバッグ出力 &lt;&lt; &quot;城:&quot; &lt;&lt; Get_城名(iCastleID) &lt;&lt; Get_城称(iCastleID) &lt;&lt; endl;
+		}
+	}
+
+	/* On_軍団ターン変更《メイン画面》 では切り替わり目なので、以下のような城ターンは機能しない
+	int iGundanID = pターン情報.現在のターン【城番号】 - 1;
+	if (0 &lt;= iCastleID &amp;&amp; iCastleID &lt; 最大数::城情報::配列数) {
+
+		デバッグ出力 &lt;&lt; Get_城名(iCastleID) &lt;&lt; Get_城称(iCastleID) &lt;&lt; endl;
+	}
+	*/
+}
+</pre>
+	</div>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>注意点</h3>
+	<p><span class="negative">「大名ターン」と「大名ターン」の「間」</span>など、「どの軍団のターンでもない」といった状態は頻繁に発生します。<br>
+		そういった場合、<span class="negative">ターン軍団番号やターン大名番号には「0xFFFF」</span>が入った状態となります。<br>
+	</p>
+	<p><span class="posotive">なお、戦争をしている間は「戦争を仕掛けた軍団の行動」ですから、<br>
+			戦争をしかけた軍団の「戦略ターン」に含まれます。</span></p>
+</div>
+
+
+<div class="content-box mb-3 content-lighten">
+	<h3>より詳細を知るには...</h3>
+	<p>
+		「メイン画面 - 戦略ターン」に関する主な所は以上となります。
+		詳しくは「ターン情報型.h」などを参照してください。
+	</p>
+</div>

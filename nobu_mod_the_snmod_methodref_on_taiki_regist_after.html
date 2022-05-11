@@ -1,0 +1,43 @@
+%(hilight)s
+<div class="content-box mb-3 content-lighten">
+    <h2><i class="fa fa-book fa-fw"></i>void カスタム::On_待機武将登場直後(int 武将番号)</h2>
+    <div class="code">
+        <pre class="brush:cpp;">
+void カスタム::On_待機武将登場直後(int 武将番号) {
+}
+</pre>
+    </div>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>タイミング</h3>
+    <ul>
+        <li>このメソッドは「待機武将」が登場した直後に実行される。<br>
+    </ul>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>一般的用途</h3>
+    <ul>
+        <li>全ての武将に何らかの新属性を付与するなど、「登場直後に１回だけ能力を変更したい」という目的で利用する。<br>
+        <li>あるいは特定の武将に対して何かの属性を付与する、自作イベントの発生に備える、会話を構成する準備をするなどに利用する。
+    </ul>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>例①</h3>
+    <div class="code">
+        <pre class="brush:cpp;">
+void カスタム::On_待機武将登場直後(int 武将番号) {
+
+    int iBushouID = 武将番号 - 1; // 武将番号→配列用へ
+
+    デバッグ出力 &lt;&lt; Get_名字(iBushouID) &lt;&lt; Get_名字(iBushouID) &lt;&lt; endl;
+
+    // どんな武将でも 「待機武将 → ゲーム内へ」 と登場する段階で、弓がＳとなる。
+    Set_弓適性( iBushouID, 弓適性::Ａ );
+
+    if (p武将戸籍情報[iBushouID].顔番号 == 顔番号::長尾景虎) {
+        デバッグ出力 &lt;&lt; "何か処理" &lt;&lt; endl;
+    }
+}
+</pre>
+    </div>
+</div>

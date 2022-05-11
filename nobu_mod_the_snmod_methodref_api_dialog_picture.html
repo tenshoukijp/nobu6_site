@@ -1,0 +1,98 @@
+%(hilight)s
+<div class="content-box mb-3 content-lighten">
+	<h2><i class="fa fa-book fa-fw"></i>ダイアログ - 画像ダイアログ</h2>
+	<p>画像を表示するダイアログを表示するAPIです。</p>
+	<p>大小関わらず、自作の独自イベントなどで利用することになるでしょう。</p>
+	<p><img src="cnt_mod/mod_snmod/cnt_mod_scenario_mod_48.png"><br>
+	</p>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>int 画像ダイアログ表示(string 画像ファイル名, int Ｘ座標, int Ｙ座標, int 終了タイム )</h3>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>単純に、画像を中央に表示する。</h3>
+	<p>環境設定の表示速度に応じて、自動的に終了する。<br></p>
+	<div class="code">
+		<pre class="brush:cpp;">
+画像ダイアログ表示(&quot;picture/abc.bmp&quot;);
+	</pre>
+	</div>
+</div>
+<div class="content-box mb-3 content-lighten">
+	<h3>単純に、画像を中央に表示する。bmpではなくpngを表示する。</h3>
+	<p>環境設定の表示速度に応じて、自動的に終了する。<br>
+		(この他、jpeg等にも対応している。)<br></p>
+	<div class="code">
+		<pre class="brush:cpp;">
+画像ダイアログ表示(&quot;picture/abc.png&quot;);
+	</pre>
+	</div>
+</div>
+<div class="content-box mb-3 content-lighten">
+	<h3>画像を座標を指定して表示する。-1を指定すると、その軸は中央に表示することを意味する。</h3>
+	<div class="code">
+		<pre class="brush:cpp;">
+// Ｘ軸は中央に表示するが、Ｙは上から100ピクセルのところに表示する。
+画像ダイアログ表示(&quot;picture/abc.bmp&quot;, -1, 100);
+	</pre>
+	</div>
+</div>
+<div class="content-box mb-3 content-lighten">
+	<h3>ダイアログがマウスでクリックするまで閉じないようにする。画像は中央に表示。</h3>
+	<div class="code">
+		<pre class="brush:cpp;">
+画像ダイアログ表示(&quot;picture/abc.bmp&quot;, -1, -1, 画像ダイアログ::手動終了);
+	</pre>
+	</div>
+</div>
+<div class="content-box mb-3 content-lighten">
+	<h3>Ｘ軸は100、Ｙ軸は200のところに画像を表示する。</h3>
+	<p>画像は指定の6000ミリ秒表示する。<br></p>
+	<div class="code">
+		<pre class="brush:cpp;">
+画像ダイアログ表示(&quot;picture/abc.bmp&quot;, 100, 200, 6000);
+	</pre>
+	</div>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>枠は自動では付かない</h3>
+	<p>あくまでも画像を表示するだけなので、枠は画像の方で用意する必要がある。<br></p>
+	<p><b>画像を縦横を「４ピクセルの倍数」とするのが良い。</b><br>
+		<b>そうすることで、以下の枠画像を切り張りして、上手く枠を当てはめることが出来るだろう。</b><br>
+	</p>
+	<p><img src="cnt_mod/mod_snmod/cnt_mod_scenario_mod_46.png"></p>
+	<p><a href="cnt_mod/mod_snmod/cnt_mod_scenario_mod_image_frame.zip" class="btn btn-primary"><i class="fa fa-download fa-fw"></i>枠画像ファイル download</a></p>
+	<p>png画像は「透明」が入っていても問題はない。完全な透明でなく、「半透明」なども問題なく処理される。<br>
+	</p>
+	<p><img src="cnt_mod/mod_snmod/cnt_mod_scenario_mod_47.png"><br>
+	</p>
+	<p><img src="cnt_mod/mod_snmod/cnt_mod_scenario_mod_48.png"><br>
+	</p>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>dllに画像をパックして、そこから読み出す</h3>
+	<p>画像をバラバラのファイルとして持つのではなく、１つのdll内に、複数の画像リソースをパックしてそこから読み出すという方法もあります。</p>
+	<blockquote>int 画像ダイアログ表示(string 画像源, string 画像ＤＬＬ名, int Ｘ座標, int Ｙ座標, int 終了タイム);</blockquote>
+	<p>詳細は<a href="?page=nobu_mod_the_snmod_resource_pack">複数の効果音･画像を１つのDLLに</a> を参照してください。</p>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>新しい信長シリーズの画像の流用</h3>
+	<p>画像のスチルを利用したいといった場合、比較的新しい信長の野望から画像を流用したいと考えることもあるでしょう。<br>
+		そういった場合は、<a href="?page=nobu_mod_the_tools">RPGViewer</a>による画像の抽出が役立ちます。</p>
+	<h4>HD版の画像の流用</h4>
+	<p>RPGViewerには、天翔記 HD版の項目はありませんが、「信長の野望・創造」に見立てることで抽出することが出来ます。<br>
+		方法は、<a href="https://hd.xn--rssu31gj1g.jp/?page=HD_nobu_tool_get_resource_bin">HD版の画像の抽出</a> を参照してください。</p>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>より詳細を知るには...</h3>
+	<p>
+		「画像ダイアログ」に関する主な所は以上となります。
+		詳しくは「ダイアログ情報型.h」「ダイアログ情報列挙.h」を参照してください。
+	</p>
+</div>

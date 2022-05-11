@@ -1,0 +1,35 @@
+%(hilight)s
+<div class="content-box mb-3 content-lighten">
+	<h2><i class="fa fa-book fa-fw"></i>ダイアログ - 情報フレームダイアログ</h2>
+	<p>特にボタンや選択肢がないフレーム表示のダイアログを表示するAPIです。</p>
+	<p>大小関わらず、自作の独自イベントなどで利用することになるでしょう。</p>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_scenario_mod_101.png"></p>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<blockquote>void 情報フレームダイアログ表示(string ダイアログ文字列)</blockquote>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_相場変更直前() {
+	情報フレームダイアログ表示(&quot;そうですわ&quot;);
+}
+
+void カスタム::On_残りターン変更《戦争画面》(int 残りターン数) {
+    if ( 残りターン数 &lt; 30 ) {
+	    情報フレームダイアログ表示(&quot;あいう&quot;);
+    }
+}
+</pre>
+	</div>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_scenario_mod_101.png"> <img src="./cnt_mod/mod_snmod/cnt_mod_scenario_mod_102.png"><br>
+	</p>
+	</pre>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>より詳細を知るには...</h3>
+	<p>
+		「情報フレームダイアログ」に関する主な所は以上となります。
+		詳しくは「ダイアログ情報型.h」を参照してください。
+	</p>
+</div>

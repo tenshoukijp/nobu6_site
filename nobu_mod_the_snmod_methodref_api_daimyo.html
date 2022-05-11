@@ -1,0 +1,356 @@
+%(hilight)s
+<div class="content-box mb-3 content-lighten">
+	<h2><i class="fa fa-book fa-fw"></i>大名</h2>
+	<p>大名とは、「織田家」「武田家」といった大名のことです。<br>
+	</p>
+	<p>大名と一言で言っても３つの概念で構成されます。<br>
+	</p>
+	<ul class="pointlist">
+		<li>
+			<h4>大名</h4>
+			<p>大名という抽象的なカテゴリの概念。</p>
+			<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_daimyo_01.png"></p>
+		<li>
+			<h4>「p大名情報」という配列</h4>
+			<p>大名の一覧リストに相当する「大名の配列」の概念。</p>
+			<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_daimyo_02.png"></p>
+		<li>
+			<h4>p大名情報[ix] (0 &lt;= ix &lt; 大名の総数)</h4>
+			<p>大名の配列のうち、どれか１つの大名</p>
+			<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_daimyo_03.png"></p>
+	</ul>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>大名家から大名武将個人を求める</h3>
+	<p>これはScenarioModのプログラムを組む際によくあることです。</p>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+	for (int iDaimyoID = 0; iDaimyoID &lt; 最大数::大名情報::配列数; iDaimyoID++) {
+		int iBushouID = p大名情報[iDaimyoID].大名【武将番号】 - 1;
+		if (0 &lt;= iBushouID &amp;&amp; iBushouID &lt; 最大数::武将情報::配列数) {
+			デバッグ出力 &lt;&lt; &quot;大名番号【配列用】:&quot; &lt;&lt; iDaimyoID &lt;&lt; &quot;の、大名武将は、&quot; &lt;&lt; Get_名字(iBushouID) &lt;&lt; Get_名前(iBushouID) &lt;&lt; endl;
+		}
+		else {
+			デバッグ出力 &lt;&lt; &quot;大名番号【配列用】:&quot; &lt;&lt; iDaimyoID &lt;&lt; &quot;には、空の大名スロットであり、大名情報はありません&quot; &lt;&lt; endl;
+		}
+	}
+}
+</pre>
+	</div>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>武将が所属している大名家を求める</h3>
+	<p>これはScenarioModのプログラムを組む際によくあることです。</p>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+	int iBushouID = Get_武将番号【配列用】(顔番号::武田晴信);
+
+	if (0 &lt;= iBushouID &amp;&amp; iBushouID &lt; 最大数::武将情報::配列数) {
+		int iDaimyoID = p武将情報[iBushouID].所属大名【大名番号】 - 1;
+
+		// 浪人とか死亡とかではなく、大名家に所属しいているならば...
+		if (0 &lt;= iDaimyoID &amp;&amp; iDaimyoID &lt; 最大数::大名情報::配列数) {
+			デバッグ出力 &lt;&lt; &quot;武田信玄は&quot; &lt;&lt; &quot;「大名番号【配列用】:&quot; &lt;&lt; iDaimyoID &lt;&lt; &quot;」に所属しています&quot; &lt;&lt; endl;
+		}
+		else {
+			デバッグ出力 &lt;&lt; &quot;武田信玄は大名家には所属していません&quot; &lt;&lt; endl;
+		}
+	}
+}
+</pre>
+	</div>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>プレイヤーが担当している大名かの判定</h3>
+	<blockquote>bool Is_プレイヤ担当大名( WORD 大名番号【配列用】 )</blockquote>
+	<p>プレイヤーは複数の大名(最大で８大名)を担当することがあり得ることに注意すること</p>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+	for (int iDaimyoID = 0; iDaimyoID &lt; 最大数::大名情報::配列数; iDaimyoID++) {
+		if (Is_プレイヤ担当大名(iDaimyoID)) {
+			int iBushouID = p大名情報[iDaimyoID].大名【武将番号】 - 1;
+			if (0 &lt;= iBushouID &amp;&amp; iBushouID &lt; 最大数::武将情報::配列数) {
+				デバッグ出力 &lt;&lt; Get_名字(iBushouID) &lt;&lt; Get_名前(iBushouID) &lt;&lt; &quot;はプレイヤの担当している大名です&quot; &lt;&lt; endl;
+			}
+		}
+	}
+}
+</pre>
+	</div>
+</div>
+
+
+
+
+<div class="content-box mb-3 content-lighten">
+	<h3>大名番号【配列用】から大名自身が所属する第１軍団の軍団番号【配列用】を求める</h3>
+	<p>これはScenarioModのプログラムを組む際によくあることです。</p>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+	int iBushouID = Get_武将番号【配列用】(顔番号::武田晴信);
+
+	if (0 &lt;= iBushouID &amp;&amp; iBushouID &lt; 最大数::武将情報::配列数) {
+		int iDaimyoID = p武将情報[iBushouID].所属大名【大名番号】 - 1;
+
+		if (0 &lt;= iDaimyoID &amp;&amp; iDaimyoID &lt; 最大数::大名情報::配列数) {
+			int iGundanID_1 = p武将情報[iBushouID].所属軍団【軍団番号】 - 1; // 武将番号【配列用】→軍団番号【配列用】へ
+			int iGundanID_2 = p大名情報[iDaimyoID].所属軍団【軍団番号】 - 1; // 大名番号【配列用】→軍団番号【配列用】へ
+
+			if (iGundanID_1 == iGundanID_2) {
+				デバッグ出力 &lt;&lt; &quot;データは正常に動作しています&quot; &lt;&lt; endl;
+			}
+			else {
+				デバッグ出力 &lt;&lt; &quot;データは不正であり、破損しています&quot; &lt;&lt; endl;
+			}
+		}
+	}
+}
+</pre>
+	</div>
+</div>
+
+
+<div class="content-box mb-3 content-lighten">
+	<h3>大名番号【配列用】から麾下の全ての軍団の情報を足す</h3>
+	<p>これはScenarioModのプログラムを組む際によくあることです。</p>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+	int iBushouID = Get_武将番号【配列用】(顔番号::織田信長);
+
+	if (0 &lt;= iBushouID &amp;&amp; iBushouID &lt; 最大数::武将情報::配列数) {
+		int iDaimyoID = p武将情報[iBushouID].所属大名【大名番号】 - 1;
+
+		番号リスト型 軍団リスト = Get_大名麾下軍団番号リスト【配列用】(iDaimyoID);
+
+		int 兵数 = 0;
+		// 織田信長が帰属する大名家の麾下軍団全ての兵数を足す
+		for (int iGundanID : 軍団リスト) {
+			兵数 += Get_軍団兵数(iGundanID);
+		}
+
+		デバッグ出力 &lt;&lt; &quot;織田信長が帰属する大名の総兵数は&quot; &lt;&lt; 兵数 &lt;&lt; endl;
+
+		int 城数 = Get_大名所持城数(iDaimyoID);
+		デバッグ出力 &lt;&lt; &quot;城数は&quot; &lt;&lt; 城数 &lt;&lt; endl;
+	}
+}
+</pre>
+	</div>
+</div>
+
+
+<div class="content-box mb-3 content-lighten">
+	<h3>大名家の居城</h3>
+	<blockquote>p大名情報[ix].所属居城【城番号】</blockquote>
+	<p>大名家の居城の城番号を取得できます。<br>
+		この<mark>城番号にうかつに別の城番号を代入してはいけません</mark>。<br>
+		大名が実際に居るわけではない城が、大名の居城となると、辻褄があわなくなります。</p>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+	for (int iDaimyoID = 0; iDaimyoID &lt; 最大数::大名情報::配列数; iDaimyoID++) {
+		int iBushouID = p大名情報[iDaimyoID].大名【武将番号】 - 1;
+		int iCastleID = p大名情報[iDaimyoID].所属居城【城番号】 - 1;
+		if (0 &lt;= iBushouID &amp;&amp; iBushouID &lt; 最大数::武将情報::配列数 &amp;&amp; 0 &lt;= iCastleID &amp;&amp; iCastleID &lt; 最大数::城情報::配列数) {
+			デバッグ出力 &lt;&lt; &quot;大名番号【配列用】:&quot; &lt;&lt; iDaimyoID &lt;&lt; &quot;の、大名武将は、&quot; &lt;&lt; Get_名字(iBushouID) &lt;&lt; Get_名前(iBushouID) &lt;&lt; endl;
+			デバッグ出力 &lt;&lt; &quot;居城は&quot; &lt;&lt; Get_城名(iCastleID) &lt;&lt; Get_城称(iCastleID) &lt;&lt; &quot;です&quot; &lt;&lt; endl;
+		}
+		else {
+			デバッグ出力 &lt;&lt; &quot;大名番号【配列用】:&quot; &lt;&lt; iDaimyoID &lt;&lt; &quot;には、空の大名スロットであり、大名情報はありません&quot; &lt;&lt; endl;
+		}
+	}
+}
+</pre>
+	</div>
+</div>
+
+
+<div class="content-box mb-3 content-lighten">
+	<h3>商人関連</h3>
+	<h4>商人との友好度を表す</h4>
+	<blockquote>p大名情報[ix].商人</blockquote>
+	<p>0～100の値を自由に取得、代入できます。</p>
+	<h4>商人が怒って不在になっている。</h4>
+	<blockquote>p大名情報[ix].商人不在</blockquote>
+	<p>商人が怒っていて、商人不在なら「1」、商売可能なら「0」</p>
+	<h4>商人が怒って不在になっている。</h4>
+	<blockquote>p大名情報[ix].御用商人</blockquote>
+	<p>御用商人が誰かが入っています。「御用商人::神屋宗湛」～「御用商人::灰屋紹由」までの値をとります。</p>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+	// 全ての大名が、50以上の商人との有効なら100に、50未満なら0にされたあげく、商人不在となる。
+	for (int iDaimyoID = 0; iDaimyoID &lt; 最大数::大名情報::配列数; iDaimyoID++) {
+		if (p大名情報[iDaimyoID].商人 &gt;= 50) {
+			p大名情報[iDaimyoID].商人 = 100;
+			p大名情報[iDaimyoID].商人不在 = false;
+		}
+		else {
+			p大名情報[iDaimyoID].商人 = 0;
+			p大名情報[iDaimyoID].商人不在 = true;
+		}
+
+		// 大名が織田信長なら、御用商人を茶屋四郎次郎にする。
+		int iBushouID = p大名情報[iDaimyoID].大名【武将番号】 - 1;
+		if (0 &lt;= iBushouID &amp;&amp; iBushouID &lt; 最大数::武将情報::配列数) {
+			if (p武将戸籍情報[iBushouID].顔番号 == 顔番号::織田信長) {
+				p大名情報[iDaimyoID].御用商人 = 御用商人::茶屋四郎次郎;
+			}
+		}
+	}
+}
+		</pre>
+	</div>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_daimyo_08.png"></p>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_daimyo_09.png"></p>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>朝廷関連</h3>
+	<h4>朝廷との友好度を表す</h4>
+	<blockquote>p大名情報[ix].朝廷</blockquote>
+	<p>0～100の値を自由に取得、代入できます。</p>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+	// 全ての大名が、50以上の朝廷との有効なら100に、50未満なら0にされる
+	for (int iDaimyoID = 0; iDaimyoID &lt; 最大数::大名情報::配列数; iDaimyoID++) {
+		if (p大名情報[iDaimyoID].朝廷 &gt;= 50) {
+			p大名情報[iDaimyoID].朝廷 = 100;
+		}
+		else {
+			p大名情報[iDaimyoID].朝廷 = 0;
+		}
+	}
+}
+		</pre>
+	</div>
+</div>
+<div class="content-box mb-3 content-lighten">
+	<h3>評定済み</h3>
+	<blockquote>p大名情報[ix].布教済</blockquote>
+	<p>true か false を判定、代入できます。
+	</p>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_daimyo_10.png"></p>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+	for (int iDaimyoID = 0; iDaimyoID &lt; 最大数::大名情報::配列数; iDaimyoID++) {
+		if (p大名情報[iDaimyoID].評定済 == true) {
+			デバッグ出力 &lt;&lt; &quot;大名番号【配列用】:&quot; &lt;&lt; iDaimyoID &lt;&lt; &quot;の大名は評定済み&quot; &lt;&lt; endl;
+		}
+		else {
+			デバッグ出力 &lt;&lt; &quot;大名番号【配列用】:&quot; &lt;&lt; iDaimyoID &lt;&lt; &quot;の大名は評定済みではありませんが、ここで評定済みにします&quot; &lt;&lt; endl;
+			p大名情報[iDaimyoID].評定済 = true;
+		}
+	}
+}
+		</pre>
+	</div>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>布教済み</h3>
+	<blockquote>p大名情報[ix].評定済</blockquote>
+	<p>true か false を判定、代入できます。
+	</p>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_daimyo_11.png"></p>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+	for (int iDaimyoID = 0; iDaimyoID &lt; 最大数::大名情報::配列数; iDaimyoID++) {
+		if (p大名情報[iDaimyoID].評定済 == true) {
+			デバッグ出力 &lt;&lt; &quot;大名番号【配列用】:&quot; &lt;&lt; iDaimyoID &lt;&lt; &quot;の大名は評定済み&quot; &lt;&lt; endl;
+		}
+		else {
+			デバッグ出力 &lt;&lt; &quot;大名番号【配列用】:&quot; &lt;&lt; iDaimyoID &lt;&lt; &quot;の大名は評定済みではありませんが、ここで評定済みにします&quot; &lt;&lt; endl;
+			p大名情報[iDaimyoID].評定済 = true;
+		}
+	}
+}
+		</pre>
+	</div>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>有効な大名番号【配列用】の一覧を得る</h3>
+	<blockquote>番号リスト型 Get_大名番号リスト【配列用】(BOOL ターン大名を含む=TRUE)</blockquote>
+	<p>単純なfor文で判定するのを少し省略できます。<br></p>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+	番号リスト型 有効大名リスト = Get_大名番号リスト【配列用】();
+
+	for (int iDaimyouID : 有効大名リスト) {
+		デバッグ出力 &lt;&lt; iDaimyouID &lt;&lt; endl;
+	}
+}
+</pre>
+	</div>
+	<h4>「ターン大名」自身を含まない場合には、引数に false (要するに「自分自身の大名以外」のリストを得たい場合）</h4>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+	番号リスト型 ターン大名以外の有効大名リスト = Get_大名番号リスト【配列用】(FALSE);
+
+	for (int iDaimyouID : ターン大名以外の有効大名リスト) {
+		デバッグ出力 &lt;&lt; iDaimyouID &lt;&lt; endl;
+	}
+}
+</pre>
+	</div>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>家紋</h3>
+	<blockquote>p大名情報[ix].家紋</blockquote>
+	<p>家紋を参照、変更することが出来ます。原則的には「0-159」の範囲。</p>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_daimyo_04.png"></p>
+	<ul>
+		<li><h5>0-76</h5>予め用意されている家紋。血筋番号と同じものが割り当てられている。</li>
+		<li><h5>77-143</h5>予め用意されている家紋。血筋番号とは特に関係ない家紋。</li>
+		<li><h5>144-159</h5>予め用意されている家紋。編集可能な家紋(16個)の画像はこの144-159へと転写される。</li>
+	</ul>
+	<div class="code">
+		<pre class="brush:cpp">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+	int iBushouID = Get_武将番号【配列用】(顔番号::織田信長);
+
+	if (0 &lt;= iBushouID &amp;&amp; iBushouID &lt; 最大数::武将情報::配列数) {
+		int iDaimyoID = p武将情報[iBushouID].所属大名【大名番号】 - 1;
+
+		if (0 &lt;= iDaimyoID &amp;&amp; iDaimyoID &lt; 最大数::大名情報::配列数) {
+			p大名情報[iDaimyoID].家紋 = 151;
+		}
+	}
+
+	画面更新();
+}
+		</pre>
+	</div>
+</div>
+
+
+<div class="content-box mb-3 content-lighten">
+	<h3>より詳細を知るには...</h3>
+	<p>
+		「大名」に関する主な所は以上となります。<br>
+		詳しくは「大名情報型.h」や「大名情報列挙.h」などを参照してください。
+	</p>
+</div>

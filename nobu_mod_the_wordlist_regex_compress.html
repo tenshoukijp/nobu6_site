@@ -1,0 +1,74 @@
+%(hilight)s
+<div class="content-box mb-3 content-lighten">
+<h2><i class="fa fa-window-maximize fa-fw"></i>HmWordListRegexCompressをコンソール利用</h2>
+</div>
+<div class="content-box mb-3 content-lighten">
+        <h3>概要</h3>
+        <p>HmWordListRegexCompress.exeは汎用的なコンソールコマンドであり、<br>
+        秀丸とは無関係に利用することが可能です。</p>
+        <p>
+            このプログラムは<span class="positive">Perlの「Regex::PreSuf」</span>を利用して作成したもので、<br>
+            「単語のリスト」を「１つの正規表現」とするプログラムです。<br>
+        </p>
+        <p>単語のリストを圧縮し、容量を節約するようなシーンで利用してください。</p>
+	<ul class="pointlist">
+    <li>
+        <h4>例①</h4>
+        <div class="code">
+            <pre class="brush:ps;">
+apple
+append
+application
+</pre>
+        </div>
+        <p>という単語のリストであれば…</p>
+        <div class="code">
+            <pre class="brush:ps;">
+app(end|l(ication|e))
+</pre>
+        </div>
+        <p>のようになります。</p>
+    <li>
+        <h4>例②</h4>
+        <div class="code">
+            <pre class="brush:ps;">
+Vector
+Vector.Length3
+Vector.Dot3
+Vector.Cross3
+Vector.Distance3
+VectorToQuaternion
+</pre>
+        </div>
+        <p>という単語のリストであれば…</p>
+        <div class="code">
+            <pre class="brush:ps;">
+Vector(ToQuaternion|\.(Cross|D(istance|ot)|Length)3)?
+</pre>
+        </div>
+        <p>のようになります。</p>
+</ul>
+</div>
+<div class="content-box mb-3 content-lighten">
+        <h3>使い方</h3>
+        <p>コンソールプログラムとなっています。</p>
+        <p>「a.txt」に上述のような単語のリストが入っているものと仮定すると、</p>
+        <div class="code">
+            <pre class="brush:ps;">
+HmWordListRegexCompress.exe a.txt
+</pre>
+        </div>
+        <p>
+            のようにコマンドを実行することで、複数の単語を内包表現する正規表現が出てきます。<br>
+        </p>
+        <p>
+            デフォルトでは、最大でも240文字程度を目安として改行を入れます。<br>
+            2番目の引数を入れることで、変更することが出来ます。
+        </p>
+        <div class="code">
+            <pre class="brush:ps;">
+HmWordListRegexCompress.exe a.txt 100
+</pre>
+        </div>
+        <p>などとすると、100文字以内を目安として改行を入れます。</p>
+</div>

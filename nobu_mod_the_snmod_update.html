@@ -1,0 +1,35 @@
+%(hilight)s
+<div class="content-box mb-3 content-lighten">
+    <h2><i class="fa fa-lightbulb-o fa-fw"></i>ScenarioModVer2 更新履歴 v2.8.0.1～</h2>
+</div>
+<div class="content-box mb-3 content-lighten">
+    <h3>v2.8.0.2 ⇒ v2.8.0.3</h3>
+    <p>
+        <blockquote><a href="?page=nobu_mod_the_snmod_methodref_api_war_hex_area">ヘックス位置リスト型 Get_特定の役割の攻城戦ヘックス位置リスト(int 攻城戦ヘックス役割)</a></blockquote>
+        <p>の実装に不具合があり、状況が正しく返ってこなかったバグを修正。</p>
+    </p>
+    <h3>v2.8.0.1 ⇒ v2.8.0.2</h3>
+    <p>
+        <blockquote>double round《二分の一吸着化》(double value)</blockquote>
+        <p>がバグっていて適切に0.5へと吸着していなかった不具合を修正。</p>
+    </p>
+    <h3>v2.8.0.0 ⇒ v2.8.0.1</h3>
+    <ul class="pointlist">
+        <li>
+            <h4><a href="?page=nobu_mod_the_snmod_methodref_api_castle">void Set_城名( int 城番号【配列用】, string 城名 )</a> の<mark>強化</mark></h4>
+            <p>
+                これまで一部の城の名前を変更できなかったが、反映されるようになった。<br>
+            </p>
+        <li>
+            <h4><a href="/?page=nobu_mod_the_snmod_methodref_api_castle">void Set_城称(int 城番号【配列用】, string 城称)</a> の追加。</h4>
+            <p>
+                城称の変化についても、これまで一部の城の名前を変更できなかったが、確実に反映されるようになったため、<br>
+                今回この関数を新たに提供することとなった。
+            </p>
+        <li>
+            <h4>戦場において、<a href="?page=nobu_mod_the_snmod_methodref_api_war_hex_area">特定の役割を満たす「ヘックス位置型」のリストを得る関数</a>の追加</h4>
+            <blockquote></a>ヘックス位置リスト型 Get_特定の役割の野戦ヘックス位置リスト(int 野戦ヘックス役割)</blockquote>
+            <blockquote>ヘックス位置リスト型 Get_特定の役割の攻城戦ヘックス位置リスト(int 攻城戦ヘックス役割)</blockquote>
+            <blockquote>ヘックス位置リスト型 Get_炎上の攻城戦ヘックス位置リスト(int 攻城戦ヘックス炎上 = 攻城戦ヘックス炎上::炎上)</blockquote>
+    </ul>
+</div>

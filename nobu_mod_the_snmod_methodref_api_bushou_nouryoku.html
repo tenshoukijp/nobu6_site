@@ -1,0 +1,1074 @@
+%(hilight)s
+<div class="content-box mb-3 content-lighten">
+	<h2><i class="fa fa-book fa-fw"></i>武将 - 能力</h2>
+	<p>武将の性能に関するAPIの説明となります。
+	</p>
+</div>
+
+
+<div class="content-box mb-3 content-lighten">
+	<h3>職業</h3>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_bushou_30.png"></p>
+	<blockquote>p武将情報[ix].職業</blockquote>
+	<p><a href="?page=nobu_mod_the_tsmod_detail_job">「職業::無し」～「職業::魔族」</a>に対応する。<br>
+		TSMod側から歴史上の武将に割り当てている職業としては、「職業::無し」～「職業::切支丹」である。</p>
+	<h4>職業を持つ者の一覧を得る</h4>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+	for (int BushouID = 0; BushouID &lt;= 最大数::武将情報::配列数; BushouID++) {
+
+		// この人は昇天してる、次の人
+		if (p武将戸籍情報[BushouID].状態 == 状態::死亡 || p武将戸籍情報[BushouID].戦死 == true) {
+			continue;
+		}
+
+		int 職業 = p武将情報[BushouID].職業;
+
+		if (職業 != 職業::無し) {
+			デバッグ出力 &lt;&lt; Get_名字(BushouID) + Get_名前(BushouID) &lt;&lt; &quot;は、&quot;;
+
+			switch (職業) {
+			case 職業::忍者:
+				デバッグ出力 &lt;&lt; &quot;忍者&quot;;
+				break;
+			case 職業::茶人:
+				デバッグ出力 &lt;&lt; &quot;茶人&quot;;
+				break;
+			case 職業::剣豪:
+				デバッグ出力 &lt;&lt; &quot;剣豪&quot;;
+				break;
+			case 職業::僧侶:
+				デバッグ出力 &lt;&lt; &quot;僧侶&quot;;
+				break;
+			case 職業::海賊:
+				デバッグ出力 &lt;&lt; &quot;海賊&quot;;
+				break;
+			case 職業::高家:
+				デバッグ出力 &lt;&lt; &quot;高家&quot;;
+				break;
+			case 職業::商人:
+				デバッグ出力 &lt;&lt; &quot;商人&quot;;
+				break;
+			case 職業::庶民:
+				デバッグ出力 &lt;&lt; &quot;庶民&quot;;
+				break;
+			case 職業::切支丹:
+				デバッグ出力 &lt;&lt; &quot;切支丹&quot;;
+				break;
+			case 職業::騎士:
+				デバッグ出力 &lt;&lt; &quot;騎士&quot;;
+				break;
+			case 職業::魔術士:
+				デバッグ出力 &lt;&lt; &quot;魔術士&quot;;
+				break;
+			case 職業::魔族:
+				デバッグ出力 &lt;&lt; &quot;魔族&quot;;
+				break;
+			}
+
+			デバッグ出力 &lt;&lt; &quot;です。&quot; &lt;&lt; endl;
+		}
+	}
+}
+		</pre>
+	</div>
+	<h4>とある武将の職業を変更する</h4>
+	<div class="code">
+		<pre class="brush:cpp;">
+<pre>
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+	int iBushouID = Get_武将番号【配列用】(顔番号::武田晴信);
+
+	if (0 &lt;= iBushouID &amp;&amp; iBushouID &lt; 最大数::武将情報::配列数) {
+		// 信玄という名前になってしまっているならば...
+		if (Get_名前(iBushouID) == &quot;信玄&quot;) {
+			// 僧侶になる
+			p武将情報[iBushouID].職業 == 職業::僧侶;
+		}
+	}
+}
+</pre>
+	</div>
+	<h4>職業名をカスタムしたい</h4>
+	<p><a href="?page=nobu_mod_the_snmod_methodref_on_jobname">On_職業名表示直前</a> にて武将個人や状況に併せて、自由に職業名を変更できるようになっています。<br></p>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>政治関連</h3>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_bushou_26.png"></p>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_bushou_01.png"></p>
+	<fieldset class="alert alert-info">
+		<legend>天翔記では政治が最大で220までだが、内部データ的には110までである</legend>
+		<p>天翔記では、ゲーム内では220まで政治値を取るが、これは、単純に110までの数値を最後の表示時に２倍にして表示しているだけである。<br>
+			ScenarioModではすべて100ベース(家宝込みで110ベース)で扱う。</p>
+	</fieldset>
+	<blockquote>int Get_政治値(int 武将番号【配列用】)</blockquote>
+	<p>現在の政治の値</p>
+	<blockquote>p武将情報[iBushouID].最大政才</blockquote>
+	<p>家宝による上昇を含んだ才能</p>
+	<blockquote>int Get_元最大政才(int 武将番号【配列用】)</blockquote>
+	<p>家宝による上昇を除いた才能</p>
+	<blockquote>p武将情報[ix].政治熟練値</blockquote>
+	<p>政治熟練値 は 500～2000であり、最大政才*政治熟練値/2000が Get_政治値(...) と同じ値である。<br>
+		「要するに本人の持つ「政治の才能」の何％まで熟練しているのか？」という考え方であり、<br>
+		本人の政治の最大の才能が80だとすると、熟練値500だと20、熟練値2000だと80 ということになる。</p>
+	<blockquote>p武将情報[iBushouID].政治適性</blockquote>
+	<p>「政治適性::Ｃ～政治適性::Ａ」に対応する</p>
+	<h4>とある武将の政治関連の能力を見る</h4>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+	int iBushouID = Get_武将番号【配列用】(顔番号::松永久秀);
+	if (0 &lt;= iBushouID &amp;&amp; iBushouID &lt; 最大数::武将情報::配列数) {
+
+		string 姓名 = Get_名字(iBushouID) + Get_名前(iBushouID);
+		int 政治値 = Get_政治値(iBushouID);
+		int 最大政才 = p武将情報[iBushouID].最大政才;
+		int 元政才 = Get_元最大政才(iBushouID);
+		int 家宝による上昇 = 最大政才 - 元政才;
+		int 政治熟練値 = p武将情報[iBushouID].政治熟練値;
+		int 政治適性 = p武将情報[iBushouID].政治適性;
+
+		デバッグ出力 &lt;&lt; 姓名 &lt;&lt; &quot;の政治値は&quot; &lt;&lt; 政治値 &lt;&lt; &quot;です。&quot; &lt;&lt; endl;
+		デバッグ出力 &lt;&lt; &quot;ゲーム上の表示値は&quot; &lt;&lt; 政治値*2 &lt;&lt; &quot;です。&quot; &lt;&lt; endl;
+		デバッグ出力 &lt;&lt; &quot;最大政才は&quot; &lt;&lt; 最大政才 &lt;&lt; &quot;です。&quot; &lt;&lt; endl;
+		デバッグ出力 &lt;&lt; &quot;家宝などの上昇を除外した本人の政才としては&quot; &lt;&lt; 元政才 &lt;&lt; &quot;です。&quot; &lt;&lt; endl;
+		デバッグ出力 &lt;&lt; &quot;よって家宝による上昇値は&quot; &lt;&lt; 家宝による上昇 &lt;&lt; &quot;です。&quot; &lt;&lt; endl;
+		デバッグ出力 &lt;&lt; &quot;政治熟練値は&quot; &lt;&lt; 政治熟練値 &lt;&lt; &quot;です。&quot; &lt;&lt; endl;
+		if (政治適性 == 政治適性::Ａ) {
+			デバッグ出力 &lt;&lt; &quot;政治適性はＡです。&quot; &lt;&lt; endl;
+		}
+		else if (政治適性 == 政治適性::Ｂ) {
+			デバッグ出力 &lt;&lt; &quot;政治適性はＢです。&quot; &lt;&lt; endl;
+		}
+		else if (政治適性 == 政治適性::Ｃ) {
+			デバッグ出力 &lt;&lt; &quot;政治適性はＣです。&quot; &lt;&lt; endl;
+		}
+	}
+}
+		</pre>
+	</div>
+
+	<div class="code">
+		<pre class="brush:cpp;">
+松永久秀の政治値は53です。
+ゲーム上の表示値は106です。
+最大政才は102です。
+家宝などの上昇を除外した本人の政才としては92です。
+よって家宝による上昇値は10です。
+政治熟練値は1047です。
+政治適性はＡです。
+</pre>
+	</div>
+	<h4>すべての武将の政治適性の変更</h4>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+	for (int iBushouID = 0; iBushouID &lt; 最大数::武将情報::配列数; iBushouID++) {
+		p武将情報[iBushouID].政治適性 = 政治適性::Ｃ;
+	}
+}
+		</pre>
+	</div>
+	<h4>とある武将の最大政才を変更する</h4>
+	<p>変更するだけなら値を代入すれば終わりですが、<br>家宝による上昇分を考慮して代入するのが普通です。<br>
+		それは以下のような形となることでしょう。</p>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+	// 松永久秀の「家宝を含めない」政才を170(内部データでは85)」にするのが目的とする
+	// 家宝を含めないというところがポイント。
+
+	int iBushouID = Get_武将番号【配列用】(顔番号::松永久秀);
+	if ( 0 &lt;= iBushouID &amp;&amp; iBushouID &lt; 最大数::武将情報::配列数) {
+
+		int 最大政才 = p武将情報[iBushouID].最大政才;
+		int 元最大政才 = Get_元最大政才(iBushouID);
+
+		int 家宝によるブースト = 最大政才 - 元最大政才;
+
+		// 目標の170に家宝によるブーストを足した値が、新たな「最大政才」だ。
+		int 新最大政才 = 85 + 家宝によるブースト;
+
+		p武将情報[iBushouID].最大政才 = 新最大政才;
+
+		// 才能が変わったので改めて取得しなおす(85を元値として設定したので、85が取れるはずだ)
+		int 新元最大政才能 = Get_元最大政才(iBushouID);
+
+		デバッグ出力 &lt;&lt; Get_名字(iBushouID) + Get_名前(iBushouID) &lt;&lt; &quot;の最大政才は&quot; &lt;&lt; (int)(p武将情報[iBushouID].最大政才) &lt;&lt; &quot;で、&quot; &lt;&lt; &quot;家宝によるブーストを除去した値は&quot; &lt;&lt; 新元最大政才能 &lt;&lt; &quot;です。&quot; &lt;&lt; endl;
+	}
+}
+	</pre>
+	</div>
+	<h4>とある武将の政治熟練値を調整して代入することで、政治値を特定の値にすることをトライする</h4>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+	// 熟練値を代入する。現在の才能に基づいて、家宝のブースト込みで政治値がゲーム上で90(データ内部では45)になるように、政治熟練値を計算する
+
+	int iBushouID = Get_武将番号【配列用】(顔番号::武田晴信);
+	if (0 &lt;= iBushouID &amp;&amp; iBushouID &lt; 最大数::武将情報::配列数) {
+
+		int 最大政才 = p武将情報[iBushouID].最大政才;
+
+		// 最大政才 * (Ｘ / 2000) = 45  となるような Ｘにすれば良い。Ｘが少数になってしまったら切り上げて整数とする。
+		// Ｘ = 2000 * 45 / 最大政才  Ｘはceilすること
+		int 熟練値 = ((2000 * 45) / 最大政才) + 1; // ギリギリだと、浮動小数精度の違いで届かないことがあるので、１程度足して切り上げておく。
+
+		// 熟練値はゲーム的には500-2000の間で縛られる
+		if (熟練値 &gt; 2000) {
+			熟練値 = 2000;
+		}
+		if (熟練値 &lt; 500) {
+			熟練値 = 500;
+		}
+
+		p武将情報[iBushouID].政治熟練値 = 熟練値;
+
+		デバッグ出力 &lt;&lt; Get_名字(iBushouID) + Get_名前(iBushouID) &lt;&lt; &quot;の政治値は&quot; &lt;&lt; Get_政治値(iBushouID) &lt;&lt; endl;;
+	}
+}
+		</pre>
+	</div>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>戦闘関連</h3>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_bushou_27.png"></p>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_bushou_02.png"></p>
+	<fieldset class="alert alert-info">
+		<legend>天翔記では戦闘が最大で220までだが、内部データ的には110までである</legend>
+		<p>天翔記では、ゲーム内では220まで戦闘値を取るが、これは、単純に110までの数値を最後の表示時に２倍にして表示しているだけである。<br>
+			ScenarioModではすべて100ベース(家宝込みで110ベース)で扱う。</p>
+	</fieldset>
+	<blockquote>int Get_戦闘値(int 武将番号【配列用】)</blockquote>
+	<p>現在の戦闘の値</p>
+	<blockquote>p武将情報[iBushouID].最大戦才</blockquote>
+	<p>家宝による上昇を含んだ才能</p>
+	<blockquote>int Get_元最大戦才(int 武将番号【配列用】)</blockquote>
+	<p>家宝による上昇を除いた才能</p>
+	<blockquote>p武将情報[ix].戦闘熟練値</blockquote>
+	<p>戦闘熟練値 は 500～2000であり、最大戦才*戦闘熟練値/2000が Get_戦闘値(...) と同じ値である。<br>
+		「要するに本人の持つ「戦闘の才能」の何％まで熟練しているのか？」という考え方であり、<br>
+		本人の戦闘の最大の才能が80だとすると、熟練値500だと20、熟練値2000だと80 ということになる。</p>
+	<blockquote>p武将情報[iBushouID].戦闘適性</blockquote>
+	<p>「戦闘適性::Ｃ～戦闘適性::Ａ」に対応する</p>
+	<h4>とある武将の戦闘関連の能力を見る</h4>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+	int iBushouID = Get_武将番号【配列用】(顔番号::松永久秀);
+	if (0 &lt;= iBushouID &amp;&amp; iBushouID &lt; 最大数::武将情報::配列数) {
+
+		string 姓名 = Get_名字(iBushouID) + Get_名前(iBushouID);
+		int 戦闘値 = Get_戦闘値(iBushouID);
+		int 最大戦才 = p武将情報[iBushouID].最大戦才;
+		int 元戦才 = Get_元最大戦才(iBushouID);
+		int 家宝による上昇 = 最大戦才 - 元戦才;
+		int 戦闘熟練値 = p武将情報[iBushouID].戦闘熟練値;
+		int 戦闘適性 = p武将情報[iBushouID].戦闘適性;
+
+		デバッグ出力 &lt;&lt; 姓名 &lt;&lt; &quot;の戦闘値は&quot; &lt;&lt; 戦闘値 &lt;&lt; &quot;です。&quot; &lt;&lt; endl;
+		デバッグ出力 &lt;&lt; &quot;ゲーム上の表示値は&quot; &lt;&lt; 戦闘値*2 &lt;&lt; &quot;です。&quot; &lt;&lt; endl;
+		デバッグ出力 &lt;&lt; &quot;最大戦才は&quot; &lt;&lt; 最大戦才 &lt;&lt; &quot;です。&quot; &lt;&lt; endl;
+		デバッグ出力 &lt;&lt; &quot;家宝などの上昇を除外した本人の戦才としては&quot; &lt;&lt; 元戦才 &lt;&lt; &quot;です。&quot; &lt;&lt; endl;
+		デバッグ出力 &lt;&lt; &quot;よって家宝による上昇値は&quot; &lt;&lt; 家宝による上昇 &lt;&lt; &quot;です。&quot; &lt;&lt; endl;
+		デバッグ出力 &lt;&lt; &quot;戦闘熟練値は&quot; &lt;&lt; 戦闘熟練値 &lt;&lt; &quot;です。&quot; &lt;&lt; endl;
+		if (戦闘適性 == 戦闘適性::Ａ) {
+			デバッグ出力 &lt;&lt; &quot;戦闘適性はＡです。&quot; &lt;&lt; endl;
+		}
+		else if (戦闘適性 == 戦闘適性::Ｂ) {
+			デバッグ出力 &lt;&lt; &quot;戦闘適性はＢです。&quot; &lt;&lt; endl;
+		}
+		else if (戦闘適性 == 戦闘適性::Ｃ) {
+			デバッグ出力 &lt;&lt; &quot;戦闘適性はＣです。&quot; &lt;&lt; endl;
+		}
+	}
+}
+</pre>
+	</div>
+
+	<div class="code">
+		<pre class="brush:cpp;">
+本多忠勝の戦闘値は41です。
+ゲーム上の表示値は82です。
+最大戦才は101です。
+家宝などの上昇を除外した本人の戦才としては91です。
+よって家宝による上昇値は10です。
+戦闘熟練値は823です。
+戦闘適性はＡです。
+</pre>
+	</div>
+
+	<h4>すべての武将の戦闘適性の変更</h4>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+	for (int iBushouID = 0; iBushouID &lt; 最大数::武将情報::配列数; iBushouID++) {
+		p武将情報[iBushouID].戦闘適性 = 戦闘適性::Ｃ;
+	}
+}
+		</pre>
+	</div>
+
+	<h4>とある武将の最大戦才を変更する</h4>
+	<p>変更するだけなら値を代入すれば終わりですが、<br>家宝による上昇分を考慮して代入するのが普通です。<br>
+		それは以下のような形となることでしょう。</p>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+	// 本多忠勝の「家宝を含めない」戦才を170(内部データでは85)」にするのが目的とする
+	// 家宝を含めないというところがポイント。
+
+	int iBushouID = Get_武将番号【配列用】(顔番号::本多忠勝);
+	if ( 0 &lt;= iBushouID &amp;&amp; iBushouID &lt; 最大数::武将情報::配列数) {
+
+		int 最大戦才 = p武将情報[iBushouID].最大戦才;
+		int 元最大戦才 = Get_元最大戦才(iBushouID);
+
+		int 家宝によるブースト = 最大戦才 - 元最大戦才;
+
+		// 目標の170に家宝によるブーストを足した値が、新たな「最大戦才」だ。
+		int 新最大戦才 = 85 + 家宝によるブースト;
+
+		p武将情報[iBushouID].最大戦才 = 新最大戦才;
+
+		// 才能が変わったので改めて取得しなおす(85を元値として設定したので、85が取れるはずだ)
+		int 新元最大戦才能 = Get_元最大戦才(iBushouID);
+
+		デバッグ出力 &lt;&lt; Get_名字(iBushouID) + Get_名前(iBushouID) &lt;&lt; &quot;の最大戦才は&quot; &lt;&lt; (int)(p武将情報[iBushouID].最大戦才) &lt;&lt; &quot;で、&quot; &lt;&lt; &quot;家宝によるブーストを除去した値は&quot; &lt;&lt; 新元最大戦才能 &lt;&lt; &quot;です。&quot; &lt;&lt; endl;
+	}
+}
+	</pre>
+	</div>
+	<h4>とある武将の戦闘熟練値を調整して代入することで、戦闘値を特定の値にすることをトライする</h4>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+	// 熟練値を代入する。現在の才能に基づいて、家宝のブースト込みで戦闘値がゲーム上で90(データ内部では45)になるように、戦闘熟練値を計算する
+
+	int iBushouID = Get_武将番号【配列用】(顔番号::武田晴信);
+	if (0 &lt;= iBushouID &amp;&amp; iBushouID &lt; 最大数::武将情報::配列数) {
+
+		int 最大戦才 = p武将情報[iBushouID].最大戦才;
+
+		// 最大戦才 * (Ｘ / 2000) = 45  となるような Ｘにすれば良い。Ｘが少数になってしまったら切り上げて整数とする。
+		// Ｘ = 2000 * 45 / 最大戦才  Ｘはceilすること
+		int 熟練値 = ((2000 * 45) / 最大戦才) + 1; // ギリギリだと、浮動小数精度の違いで届かないことがあるので、１程度足して切り上げておく。
+
+		// 熟練値はゲーム的には500-2000の間で縛られる
+		if (熟練値 &gt; 2000) {
+			熟練値 = 2000;
+		}
+		if (熟練値 &lt; 500) {
+			熟練値 = 500;
+		}
+
+		p武将情報[iBushouID].戦闘熟練値 = 熟練値;
+
+		デバッグ出力 &lt;&lt; Get_名字(iBushouID) + Get_名前(iBushouID) &lt;&lt; &quot;の戦闘値は&quot; &lt;&lt; Get_戦闘値(iBushouID) &lt;&lt; endl;;
+	}
+}
+		</pre>
+	</div>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>智謀関連</h3>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_bushou_28.png"></p>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_bushou_03.png"></p>
+	<fieldset class="alert alert-info">
+		<legend>天翔記では智謀が最大で220までだが、内部データ的には110までである</legend>
+		<p>天翔記では、ゲーム内では220まで智謀値を取るが、これは、単純に110までの数値を最後の表示時に２倍にして表示しているだけである。<br>
+			ScenarioModではすべて100ベース(家宝込みで110ベース)で扱う。</p>
+	</fieldset>
+	<blockquote>int Get_智謀値(int 武将番号【配列用】)</blockquote>
+	<p>現在の智謀の値</p>
+	<blockquote>p武将情報[iBushouID].最大智才</blockquote>
+	<p>家宝による上昇を含んだ才能</p>
+	<blockquote>int Get_元最大智才(int 武将番号【配列用】)</blockquote>
+	<p>家宝による上昇を除いた才能</p>
+	<blockquote>p武将情報[ix].智謀熟練値</blockquote>
+	<p>智謀熟練値 は 500～2000であり、最大智才*智謀熟練値/2000が Get_智謀値(...) と同じ値である。<br>
+		「要するに本人の持つ「智謀の才能」の何％まで熟練しているのか？」という考え方であり、<br>
+		本人の智謀の最大の才能が80だとすると、熟練値500だと20、熟練値2000だと80 ということになる。</p>
+	<blockquote>p武将情報[iBushouID].智謀適性</blockquote>
+	<p>「智謀適性::Ｃ～智謀適性::Ａ」に対応する</p>
+	<h4>とある武将の智謀関連の能力を見る</h4>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+	int iBushouID = Get_武将番号【配列用】(顔番号::武田晴信);
+	if (0 &lt;= iBushouID &amp;&amp; iBushouID &lt; 最大数::武将情報::配列数) {
+
+		string 姓名 = Get_名字(iBushouID) + Get_名前(iBushouID);
+		int 智謀値 = Get_智謀値(iBushouID);
+		int 最大智才 = p武将情報[iBushouID].最大智才;
+		int 元智才 = Get_元最大智才(iBushouID);
+		int 家宝による上昇 = 最大智才 - 元智才;
+		int 智謀熟練値 = p武将情報[iBushouID].智謀熟練値;
+		int 智謀適性 = p武将情報[iBushouID].智謀適性;
+
+		デバッグ出力 &lt;&lt; 姓名 &lt;&lt; &quot;の智謀値は&quot; &lt;&lt; 智謀値 &lt;&lt; &quot;です。&quot; &lt;&lt; endl;
+		デバッグ出力 &lt;&lt; &quot;ゲーム上の表示値は&quot; &lt;&lt; 智謀値*2 &lt;&lt; &quot;です。&quot; &lt;&lt; endl;
+		デバッグ出力 &lt;&lt; &quot;最大智才は&quot; &lt;&lt; 最大智才 &lt;&lt; &quot;です。&quot; &lt;&lt; endl;
+		デバッグ出力 &lt;&lt; &quot;家宝などの上昇を除外した本人の智才としては&quot; &lt;&lt; 元智才 &lt;&lt; &quot;です。&quot; &lt;&lt; endl;
+		デバッグ出力 &lt;&lt; &quot;よって家宝による上昇値は&quot; &lt;&lt; 家宝による上昇 &lt;&lt; &quot;です。&quot; &lt;&lt; endl;
+		デバッグ出力 &lt;&lt; &quot;智謀熟練値は&quot; &lt;&lt; 智謀熟練値 &lt;&lt; &quot;です。&quot; &lt;&lt; endl;
+		if (智謀適性 == 智謀適性::Ａ) {
+			デバッグ出力 &lt;&lt; &quot;智謀適性はＡです。&quot; &lt;&lt; endl;
+		}
+		else if (智謀適性 == 智謀適性::Ｂ) {
+			デバッグ出力 &lt;&lt; &quot;智謀適性はＢです。&quot; &lt;&lt; endl;
+		}
+		else if (智謀適性 == 智謀適性::Ｃ) {
+			デバッグ出力 &lt;&lt; &quot;智謀適性はＣです。&quot; &lt;&lt; endl;
+		}
+	}
+}
+</pre>
+	</div>
+
+	<div class="code">
+		<pre class="brush:cpp;">
+武田信玄の智謀値は54です。
+ゲーム上の表示値は108です。
+最大智才は104です。
+家宝などの上昇を除外した本人の智才としては94です。
+よって家宝による上昇値は10です。
+智謀熟練値は1042です。
+智謀適性はＡです。
+</pre>
+	</div>
+	<h4>すべての武将の智謀適性の変更</h4>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+	for (int iBushouID = 0; iBushouID &lt; 最大数::武将情報::配列数; iBushouID++) {
+		p武将情報[iBushouID].智謀適性 = 智謀適性::Ｃ;
+	}
+}
+		</pre>
+	</div>
+	<h4>とある武将の最大智才を変更する</h4>
+	<p>変更するだけなら値を代入すれば終わりですが、<br>家宝による上昇分を考慮して代入するのが普通です。<br>
+		それは以下のような形となることでしょう。</p>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+	// 武田晴信の「家宝を含めない」智才を170(内部データでは85)」にするのが目的とする
+	// 家宝を含めないというところがポイント。
+
+	int iBushouID = Get_武将番号【配列用】(顔番号::武田晴信);
+	if ( 0 &lt;= iBushouID &amp;&amp; iBushouID &lt; 最大数::武将情報::配列数) {
+
+		int 最大智才 = p武将情報[iBushouID].最大智才;
+		int 元最大智才 = Get_元最大智才(iBushouID);
+
+		int 家宝によるブースト = 最大智才 - 元最大智才;
+
+		// 目標の170に家宝によるブーストを足した値が、新たな「最大智才」だ。
+		int 新最大智才 = 85 + 家宝によるブースト;
+
+		p武将情報[iBushouID].最大智才 = 新最大智才;
+
+		// 才能が変わったので改めて取得しなおす(85を元値として設定したので、85が取れるはずだ)
+		int 新元最大智才能 = Get_元最大智才(iBushouID);
+
+		デバッグ出力 &lt;&lt; Get_名字(iBushouID) + Get_名前(iBushouID) &lt;&lt; &quot;の最大智才は&quot; &lt;&lt; (int)(p武将情報[iBushouID].最大智才) &lt;&lt; &quot;で、&quot; &lt;&lt; &quot;家宝によるブーストを除去した値は&quot; &lt;&lt; 新元最大智才能 &lt;&lt; &quot;です。&quot; &lt;&lt; endl;
+	}
+}
+	</pre>
+	</div>
+	<h4>とある武将の智謀熟練値を調整して代入することで、智謀値を特定の値にすることをトライする</h4>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+	// 熟練値を代入する。現在の才能に基づいて、家宝のブースト込みで智謀値がゲーム上で90(データ内部では45)になるように、智謀熟練値を計算する
+
+	int iBushouID = Get_武将番号【配列用】(顔番号::武田晴信);
+	if (0 &lt;= iBushouID &amp;&amp; iBushouID &lt; 最大数::武将情報::配列数) {
+
+		int 最大智才 = p武将情報[iBushouID].最大智才;
+
+		// 最大智才 * (Ｘ / 2000) = 45  となるような Ｘにすれば良い。Ｘが少数になってしまったら切り上げて整数とする。
+		// Ｘ = 2000 * 45 / 最大智才  Ｘはceilすること
+		int 熟練値 = ((2000 * 45) / 最大智才) + 1; // ギリギリだと、浮動小数精度の違いで届かないことがあるので、１程度足して切り上げておく。
+
+		// 熟練値はゲーム的には500-2000の間で縛られる
+		if (熟練値 &gt; 2000) {
+			熟練値 = 2000;
+		}
+		if (熟練値 &lt; 500) {
+			熟練値 = 500;
+		}
+
+		p武将情報[iBushouID].智謀熟練値 = 熟練値;
+
+		デバッグ出力 &lt;&lt; Get_名字(iBushouID) + Get_名前(iBushouID) &lt;&lt; &quot;の智謀値は&quot; &lt;&lt; Get_智謀値(iBushouID) &lt;&lt; endl;;
+	}
+}
+		</pre>
+	</div>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>魅力</h3>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_bushou_04.png"></p>
+	<blockquote>p武将情報[ix].魅力</blockquote>
+	<p>この魅力は、魅力の元値＋官位によるブーストがたされた数値となります。</p>
+	<blockquote>int Get_元魅力(int 武将番号【配列用】)</blockquote>
+	<p>こちらの関数を利用することで、官位によるブーストされる前の魅力の値を取得することができます。</p>
+	<h4>魅力の値を参照する</h4>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+	for (int iBushouID = 0; iBushouID &lt; 最大数::武将情報::配列数; iBushouID++) {
+		// 死んでない
+		if (p武将戸籍情報[iBushouID].状態 != 状態::死亡 &amp;&amp; p武将戸籍情報[iBushouID].戦死 == false) {
+			int 魅力値 = p武将情報[iBushouID].魅力;
+			int 元魅力 = Get_元魅力(iBushouID);
+			if (魅力値 != 元魅力) {
+				デバッグ出力 &lt;&lt; Get_名字(iBushouID) + Get_名前(iBushouID) &lt;&lt; &quot;の魅力は&quot; &lt;&lt; 魅力値 &lt;&lt; &quot;です。&quot; &lt;&lt; endl;
+				デバッグ出力 &lt;&lt; &quot;元魅力の値は&quot; &lt;&lt; 元魅力 &lt;&lt; &quot;です。&quot; &lt;&lt; endl;
+				デバッグ出力 &lt;&lt; &quot;官位によって&quot; &lt;&lt; 魅力値 - 元魅力 &lt;&lt; &quot;上昇しています。&quot; &lt;&lt; endl;
+			}
+		}
+	}
+
+}
+		</pre>
+	</div>
+
+	<h4>すべての武将の「魅力」の元値を50にする</h4>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+	for (int iBushouID = 0; iBushouID &lt; 最大数::武将情報::配列数; iBushouID++) {
+		// 死んでない
+		if (p武将戸籍情報[iBushouID].状態 != 状態::死亡 &amp;&amp; p武将戸籍情報[iBushouID].戦死 == false) {
+			int 魅力値 = p武将情報[iBushouID].魅力;
+			int 元魅力 = Get_元魅力(iBushouID);
+			int 差分 = 魅力値 - 元魅力;
+
+			p武将情報[iBushouID].魅力 = 50 + 差分; // 官位の分を足しこみつつ、魅力を変更する
+		}
+	}
+}
+		</pre>
+	</div>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>野望</h3>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_bushou_05.png"></p>
+	<blockquote>p武将情報[ix].野望</blockquote>
+	<p>この野望は、野望の元値＋家宝によるブーストがたされた数値となります。</p>
+	<blockquote>int Get_元野望(int 武将番号【配列用】)</blockquote>
+	<p>こちらの関数を利用することで、家宝によるブーストされる前の野望の値を取得することができます。</p>
+	<h4>野望の値を参照する</h4>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+	for (int iBushouID = 0; iBushouID &lt; 最大数::武将情報::配列数; iBushouID++) {
+		// 死んでない
+		if (p武将戸籍情報[iBushouID].状態 != 状態::死亡 &amp;&amp; p武将戸籍情報[iBushouID].戦死 == false) {
+			int 野望値 = p武将情報[iBushouID].野望;
+			int 元野望 = Get_元野望(iBushouID);
+			if (野望値 != 元野望) {
+				デバッグ出力 &lt;&lt; Get_名字(iBushouID) + Get_名前(iBushouID) &lt;&lt; &quot;の野望は&quot; &lt;&lt; 野望値 &lt;&lt; &quot;です。&quot; &lt;&lt; endl;
+				デバッグ出力 &lt;&lt; &quot;元野望の値は&quot; &lt;&lt; 元野望 &lt;&lt; &quot;です。&quot; &lt;&lt; endl;
+				デバッグ出力 &lt;&lt; &quot;家宝によって&quot; &lt;&lt; 野望値 - 元野望 &lt;&lt; &quot;上昇しています。&quot; &lt;&lt; endl;
+			}
+		}
+	}
+
+}
+		</pre>
+	</div>
+
+	<h4>すべての武将の「野望」の元値を50にする</h4>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+	for (int iBushouID = 0; iBushouID &lt; 最大数::武将情報::配列数; iBushouID++) {
+		// 死んでない
+		if (p武将戸籍情報[iBushouID].状態 != 状態::死亡 &amp;&amp; p武将戸籍情報[iBushouID].戦死 == false) {
+			int 野望値 = p武将情報[iBushouID].野望;
+			int 元野望 = Get_元野望(iBushouID);
+			int 差分 = 野望値 - 元野望;
+
+			p武将情報[iBushouID].野望 = 50 + 差分; // 家宝の分を足しこみつつ、野望を変更する
+		}
+	}
+}
+		</pre>
+	</div>
+</div>
+
+
+<div class="content-box mb-3 content-lighten">
+	<h3>一喝・暗殺・流出・煽動・流言・弁舌・焼討・挑発</h3>
+	<blockquote>p武将情報[ix].技能一喝</blockquote>
+	<blockquote>p武将情報[ix].技能暗殺</blockquote>
+	<blockquote>p武将情報[ix].技能流出</blockquote>
+	<blockquote>p武将情報[ix].技能煽動</blockquote>
+	<blockquote>p武将情報[ix].技能流言</blockquote>
+	<blockquote>p武将情報[ix].技能弁舌</blockquote>
+	<blockquote>p武将情報[ix].技能焼討</blockquote>
+	<blockquote>p武将情報[ix].技能挑発</blockquote>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_bushou_29.png"></p>
+	<h4>とある武将が各技能が使えるかどうかの参照</h4>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+	for (int iBushouID = 0; iBushouID &lt; 最大数::武将情報::配列数; iBushouID++) {
+		// 死んでない
+		if (p武将戸籍情報[iBushouID].状態 != 状態::死亡 &amp;&amp; p武将戸籍情報[iBushouID].戦死 == false) {
+
+			デバッグ出力 &lt;&lt; Get_名字(iBushouID) + Get_名前(iBushouID) &lt;&lt; &quot;は、&quot;;
+			if (p武将情報[iBushouID].技能一喝) {
+				デバッグ出力 &lt;&lt; &quot;一喝&quot; &lt;&lt; &quot; &quot;;
+			}
+			if (p武将情報[iBushouID].技能暗殺) {
+				デバッグ出力 &lt;&lt; &quot;暗殺&quot; &lt;&lt; &quot; &quot;;
+			}
+			if (p武将情報[iBushouID].技能流出) {
+				デバッグ出力 &lt;&lt; &quot;流出&quot; &lt;&lt; &quot; &quot;;
+			}
+			if (p武将情報[iBushouID].技能煽動) {
+				デバッグ出力 &lt;&lt; &quot;煽動&quot; &lt;&lt; &quot; &quot;;
+			}
+			if (p武将情報[iBushouID].技能流言) {
+				デバッグ出力 &lt;&lt; &quot;流言&quot; &lt;&lt; &quot; &quot;;
+			}
+			if (p武将情報[iBushouID].技能弁舌) {
+				デバッグ出力 &lt;&lt; &quot;弁舌&quot; &lt;&lt; &quot; &quot;;
+			}
+			if (p武将情報[iBushouID].技能焼討) {
+				デバッグ出力 &lt;&lt; &quot;焼討&quot; &lt;&lt; &quot; &quot;;
+			}
+			if (p武将情報[iBushouID].技能挑発) {
+				デバッグ出力 &lt;&lt; &quot;挑発&quot; &lt;&lt; &quot; &quot;;
+			}
+
+			デバッグ出力 &lt;&lt; &quot;が使えます&quot; &lt;&lt; endl;
+		}
+	}
+}
+		</pre>
+	</div>
+	<h4>すべての武将の各技能を使えるようにする</h4>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+	for (int iBushouID = 0; iBushouID &lt; 最大数::武将情報::配列数; iBushouID++) {
+		// 死んでない
+		if (p武将戸籍情報[iBushouID].状態 != 状態::死亡 &amp;&amp; p武将戸籍情報[iBushouID].戦死 == false) {
+
+			p武将情報[iBushouID].技能一喝 = true;
+			p武将情報[iBushouID].技能暗殺 = true;
+			p武将情報[iBushouID].技能流出 = true;
+			p武将情報[iBushouID].技能煽動 = true;
+			p武将情報[iBushouID].技能流言 = true;
+			p武将情報[iBushouID].技能弁舌 = true;
+			p武将情報[iBushouID].技能焼討 = true;
+			p武将情報[iBushouID].技能挑発 = true;
+		}
+	}
+}
+</pre>
+	</div>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>兵数</h3>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_bushou_17.png"></p>
+	<blockquote>p武将情報[ix].兵数</blockquote>
+	<blockquote>int Get_武将最大兵数(int 武将番号【配列用】)</blockquote>
+	<h4>兵数の参照</h4>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+	for (int iBushouID = 0; iBushouID &lt; 最大数::武将情報::配列数; iBushouID++) {
+		// 死んでない
+		if (p武将戸籍情報[iBushouID].状態 != 状態::死亡 &amp;&amp; p武将戸籍情報[iBushouID].戦死 == false) {
+			if (p武将情報[iBushouID].兵数 &gt; 70) {
+				デバッグ出力 &lt;&lt; Get_名字(iBushouID) + Get_名前(iBushouID) &lt;&lt; &quot;の兵数は&quot; &lt;&lt; p武将情報[iBushouID].兵数 &lt;&lt; &quot;と多いです&quot; &lt;&lt; endl;
+			}
+		}
+	}
+}
+		</pre>
+	</div>
+	<h4>とある武将の兵数を、(その武将の身分や官位等々を全て考慮した）編集できる最大数にする</h4>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+	int iBushouID = Get_武将番号【配列用】(顔番号::織田信長);
+
+	if (0 &lt;= iBushouID &amp;&amp; iBushouID &lt; 最大数::武将情報::配列数) {
+		int 最大兵数 = Get_武将最大兵数(iBushouID);
+
+		p武将情報[iBushouID].兵数 = 最大兵数;
+	}
+}
+</pre>
+	</div>
+	<h4>兵数に関係するイベントハンドラ</h4>
+	<ul>
+		<li><a href="?page=nobu_mod_the_snmod_methodref_on_request_bushou_custom_maxsoldier">On_武将最大兵数要求時</a>
+		<li><a href="?page=nobu_mod_the_snmod_methodref_on_battle_damaged">On_被ダメージ時</a>
+	</ul>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>訓練・士気</h3>
+	<blockquote>p武将情報[ix].訓練</blockquote>
+	<p>訓練は最大200まで</p>
+	<blockquote>p武将情報[ix].士気</blockquote>
+	<p>士気は最大100まで</p>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_bushou_18.png"></p>
+	<h4>訓練の参照、士気の参照</h4>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+	for (int iBushouID = 0; iBushouID &lt; 最大数::武将情報::配列数; iBushouID++) {
+		// 死んでない
+		if (p武将戸籍情報[iBushouID].状態 != 状態::死亡 &amp;&amp; p武将戸籍情報[iBushouID].戦死 == false) {
+			int 訓練 = p武将情報[iBushouID].訓練;
+			int 士気 = p武将情報[iBushouID].士気;
+			string 姓名 = Get_名字(iBushouID) + Get_名前(iBushouID);
+			デバッグ出力 &lt;&lt; 姓名 &lt;&lt; &quot;は、&quot; &lt;&lt; &quot;訓練:&quot; &lt;&lt; 訓練 &lt;&lt; &quot;,&quot; &lt;&lt; &quot;士気:&quot; &lt;&lt; 士気 &lt;&lt; endl;
+		}
+	}
+}
+		</pre>
+	</div>
+	<h4>とある武将の訓練や士気を変更する</h4>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+	int iBushouID = Get_武将番号【配列用】(顔番号::織田信長);
+
+	if (0 &lt;= iBushouID &amp;&amp; iBushouID &lt; 最大数::武将情報::配列数) {
+		int 最大兵数 = Get_武将最大兵数(iBushouID);
+
+		p武将情報[iBushouID].訓練 = 200;
+		p武将情報[iBushouID].士気 = 100;
+	}
+}
+		</pre>
+	</div>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>兵態</h3>
+	<p>兵態とは「足軽隊」「騎馬隊」「鉄砲隊」「騎馬鉄砲隊」の４つが基本となります。<br>
+		「騎馬鉄砲隊」についてはごく一部の武将のみが使えます。<br>
+		(※騎馬鉄砲が使える武将については次の項目にて説明しています。<br>
+		TSModでは様々な兵態が存在していますが、基本となっているのはあくまで上記の４つです。</p>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_bushou_19.png"></p>
+	<p>p武将情報[ix].兵態</p>
+	<h4>武将の兵態の参照</h4>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+	int iBushouID = Get_武将番号【配列用】(顔番号::織田信長);
+
+	if (0 &lt;= iBushouID &amp;&amp; iBushouID &lt; 最大数::武将情報::配列数) {
+		int 兵態 = p武将情報[iBushouID].兵態;
+
+		デバッグ出力 &lt;&lt; Get_名字(iBushouID) + Get_名前(iBushouID) &lt;&lt; &quot;は&quot;;
+
+		if (兵態 == 兵態::足軽) {
+			デバッグ出力 &lt;&lt; &quot;足軽系列&quot;;
+		}
+		else if (兵態 == 兵態::騎馬) {
+			デバッグ出力 &lt;&lt; &quot;騎馬系列&quot;;
+		}
+		else if (兵態 == 兵態::鉄砲) {
+			デバッグ出力 &lt;&lt; &quot;鉄砲系列&quot;;
+		}
+		else if (兵態 == 兵態::騎馬鉄砲) {
+			デバッグ出力 &lt;&lt; &quot;騎馬鉄砲系列&quot;;
+		}
+		デバッグ出力 &lt;&lt; &quot;の兵態です。&quot; &lt;&lt; endl;
+	}
+}
+		</pre>
+	</div>
+	<h4>とある武将の兵態の変更</h4>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+	int iBushouID = Get_武将番号【配列用】(顔番号::織田信長);
+
+	if (0 &lt;= iBushouID &amp;&amp; iBushouID &lt; 最大数::武将情報::配列数) {
+		p武将情報[iBushouID].兵態 = 兵態::騎馬;
+	}
+
+	int iAkechiBushouID = Get_武将番号【配列用】(顔番号::明智光秀);
+
+	if (0 &lt;= iAkechiBushouID &amp;&amp; iAkechiBushouID &lt; 最大数::武将情報::配列数) {
+		// 騎馬鉄砲の場合は、「騎馬鉄砲が使える」というフラグを立てておくのを推奨
+		p武将情報[iAkechiBushouID].騎馬鉄砲 = true;
+		p武将情報[iAkechiBushouID].兵態 = 兵態::騎馬鉄砲;
+	}
+}
+		</pre>
+	</div>
+	<fieldset class="alert alert-info">
+		<legend>本来は兵士の数と同じ分だけ「馬」や「鉄砲」の出し入れが必要</legend>ここでは簡易的な説明のため、「兵態」のみを変更したが、本来は「兵態」を変更すると、<br>
+		騎馬や鉄砲が、兵態変更に併せて「新規に必要」となったり「逆に余ったり」する。<br>
+		例えば、「騎馬鉄砲隊の50の兵」が、「足軽隊の50の兵」へと変われば、本来ならば、
+		鉄砲50と騎馬50が、武将⇒軍団資産へと移動する。<br>
+		こまかく処理をする必要がある場合は、ScenarioModでもそのようにするべきだろう。
+	</fieldset>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+	int iBushouID = Get_武将番号【配列用】(顔番号::織田信長);
+
+	if (0 &lt;= iBushouID &amp;&amp; iBushouID &lt; 最大数::武将情報::配列数) {
+		int 元の兵態 = p武将情報[iBushouID].兵態;
+		p武将情報[iBushouID].兵態 = 兵態::騎馬;
+		int 兵数 = p武将情報[iBushouID].兵数;
+
+		int iGundanID = p武将情報[iBushouID].所属軍団【軍団番号】 - 1;
+		if (0 &lt;= iGundanID &amp;&amp; iGundanID &lt; 最大数::軍団情報::配列数) {
+
+			// 足軽隊⇒騎馬隊になったことになるのだから、軍団から織田信長の兵数の分だけの馬が減ったはず
+			if (元の兵態 == 兵態::足軽) {
+				int 馬 = p軍団情報[iGundanID].馬; // オーバーフロー防止のために 一旦 int で
+				馬 = 馬 - 兵数;
+				馬 = max(馬, 0); // 0 より小さかったら0にする
+				p軍団情報[iGundanID].馬 = 馬;
+			}
+
+			// 兵態が変わってないのだからなにもなし
+			if (元の兵態 == 兵態::騎馬) {
+				;
+			}
+
+			// 鉄砲隊⇒騎馬隊にかわったことになるのだから、軍団から馬が50失われ、逆に鉄砲が軍団へと兵数の分だけ加算される
+			if (元の兵態 == 兵態::鉄砲) {
+				int 馬 = p軍団情報[iGundanID].馬; // オーバーフロー防止のために 一旦 int で
+				馬 = 馬 - 兵数;
+				馬 = max(馬, 0); // 0 より小さかったら0にする
+				p軍団情報[iGundanID].馬 = 馬;
+
+				int 鉄砲 = p軍団情報[iGundanID].鉄砲; // オーバーフロー防止のために 一旦 int で
+				鉄砲 = 鉄砲 + 兵数;
+				鉄砲 = min(鉄砲, 60000); // 60000より大きかったら60000にする
+				p軍団情報[iGundanID].鉄砲 = 鉄砲;
+			}
+
+			// 鉄鉄砲砲隊⇒騎馬隊にかわったことになるのだから、軍団に鉄砲が兵数の分だけ加算される
+			if (元の兵態 == 兵態::騎馬鉄砲) {
+
+				int 鉄砲 = p軍団情報[iGundanID].鉄砲; // オーバーフロー防止のために 一旦 int で
+				鉄砲 = 鉄砲 + 兵数;
+				鉄砲 = min(鉄砲, 60000); // 60000より大きかったら60000にする
+				p軍団情報[iGundanID].鉄砲 = 鉄砲;
+			}
+		}
+	}
+}
+		</pre>
+	</div>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>騎馬鉄砲</h3>
+	<p>騎馬鉄砲が使える武将かどうかの判定フラグです</p>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_bushou_33.png"></p>
+	<blockquote>p武将情報[ix].騎馬鉄砲</blockquote>
+	<h4>とある武将が各技能が使えるかどうかの参照</h4>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+	for (int iBushouID = 0; iBushouID &lt; 最大数::武将情報::配列数; iBushouID++) {
+		// 死んでない
+		if (p武将戸籍情報[iBushouID].状態 != 状態::死亡 &amp;&amp; p武将戸籍情報[iBushouID].戦死 == false) {
+
+			デバッグ出力 &lt;&lt; Get_名字(iBushouID) + Get_名前(iBushouID) &lt;&lt; &quot;は、&quot;;
+			if (p武将情報[iBushouID].騎馬鉄砲) {
+				デバッグ出力 &lt;&lt; &quot;騎馬鉄砲&quot; &lt;&lt; &quot; &quot;;
+			}
+			デバッグ出力 &lt;&lt; &quot;が使えます&quot; &lt;&lt; endl;
+		}
+	}
+}
+		</pre>
+	</div>
+	<h4>すべての武将が騎馬鉄砲を使えるようにする</h4>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+	for (int iBushouID = 0; iBushouID &lt; 最大数::武将情報::配列数; iBushouID++) {
+		// 死んでない
+		if (p武将戸籍情報[iBushouID].状態 != 状態::死亡 &amp;&amp; p武将戸籍情報[iBushouID].戦死 == false) {
+
+			p武将情報[iBushouID].騎馬鉄砲 = true;
+		}
+	}
+}
+		</pre>
+	</div>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>足軽適性・騎馬適性・鉄砲適性・水軍適性・弓適性・槍適性</h3>
+	<blockquote>p武将情報[ix].足軽適性</blockquote>
+	<blockquote>p武将情報[ix].騎馬適性</blockquote>
+	<blockquote>int Get_鉄砲適性(int 武将番号【配列用】)</blockquote>
+	<blockquote>void Set_鉄砲適性(int 武将番号【配列用】, int 鉄砲適性値)</blockquote>
+	<blockquote>p武将情報[ix].水軍適性</blockquote>
+	<blockquote>int Get_弓適性(int 武将番号【配列用】)</blockquote>
+	<blockquote>void Set_弓適性(int 武将番号【配列用】, int 弓適性値)</blockquote>
+	<blockquote>int Get_槍適性(int 武将番号【配列用】)</blockquote>
+	<blockquote>void Set_槍適性(int 武将番号【配列用】, int 槍適性値 )</blockquote>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_bushou_31.png"></p>
+	<h4>武将の兵態適性の参照</h4>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+	for (int iBushouID = 0; iBushouID &lt; 最大数::武将情報::配列数; iBushouID++) {
+		// 死んでない
+		if (p武将戸籍情報[iBushouID].状態 != 状態::死亡 &amp;&amp; p武将戸籍情報[iBushouID].戦死 == false) {
+
+			デバッグ出力 &lt;&lt; Get_名字(iBushouID) + Get_名前(iBushouID) &lt;&lt; &quot;は、&quot; &lt;&lt; endl;
+			if (p武将情報[iBushouID].足軽適性 &gt;= 足軽適性::Ａ) {
+				デバッグ出力 &lt;&lt; &quot;足軽適性&quot; &lt;&lt; &quot; &quot;;
+			}
+			if (p武将情報[iBushouID].騎馬適性 &gt;= 騎馬適性::Ａ) {
+				デバッグ出力 &lt;&lt; &quot;騎馬適性&quot; &lt;&lt; &quot; &quot;;
+			}
+			if (Get_鉄砲適性(iBushouID) &gt;= 鉄砲適性::Ａ) {
+				デバッグ出力 &lt;&lt; &quot;鉄砲適性&quot; &lt;&lt; &quot; &quot;;
+			}
+			if (p武将情報[iBushouID].水軍適性 &gt;= 水軍適性::Ａ) {
+				デバッグ出力 &lt;&lt; &quot;水軍適性&quot; &lt;&lt; &quot; &quot;;
+			}
+			if (Get_弓適性(iBushouID) &gt;= 弓適性::Ａ) {
+				デバッグ出力 &lt;&lt; &quot;弓適性&quot; &lt;&lt; &quot; &quot;;
+			}
+			if (Get_槍適性(iBushouID) &gt;= 槍適性::Ａ) {
+				デバッグ出力 &lt;&lt; &quot;槍適性&quot; &lt;&lt; &quot; &quot;;
+			}
+
+			デバッグ出力 &lt;&lt; &quot;が高いです。&quot; &lt;&lt; endl;
+		}
+	}
+}
+		</pre>
+	</div>
+	<h4>武将の兵態適性の変更</h4>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+	int iBushouID = Get_武将番号【配列用】(顔番号::織田信長);
+
+	if (0 &lt;= iBushouID &amp;&amp; iBushouID &lt; 最大数::武将情報::配列数) {
+		int 最大兵数 = Get_武将最大兵数(iBushouID);
+
+		p武将情報[iBushouID].足軽適性 = 足軽適性::Ｂ;
+		p武将情報[iBushouID].騎馬適性 = 騎馬適性::Ｅ;
+		Set_鉄砲適性(iBushouID, 鉄砲適性::Ｓ);
+		p武将情報[iBushouID].水軍適性 = 水軍適性::Ａ;
+		Set_弓適性(iBushouID, 弓適性::Ｄ);
+		Set_槍適性(iBushouID, 槍適性::Ｃ);
+	}
+}
+		</pre>
+	</div>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_bushou_55.png"></p>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>大砲・鉄甲船</h3>
+	<p>大砲が所持しいているかどうか、鉄甲船を所持しているかどうかの判定フラグです</p>
+	<blockquote>p武将情報[ix].大砲</blockquote>
+	<blockquote>p武将情報[ix].鉄甲船</blockquote>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_the_snmod_methodref_api_bushou_32.png"></p>
+	<h4>とある武将が大砲や鉄甲船を使えるかどうかの参照</h4>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+	for (int iBushouID = 0; iBushouID &lt; 最大数::武将情報::配列数; iBushouID++) {
+		// 死んでない
+		if (p武将戸籍情報[iBushouID].状態 != 状態::死亡 &amp;&amp; p武将戸籍情報[iBushouID].戦死 == false) {
+
+			デバッグ出力 &lt;&lt; Get_名字(iBushouID) + Get_名前(iBushouID) &lt;&lt; &quot;は、&quot;;
+			if (p武将情報[iBushouID].大砲) {
+				デバッグ出力 &lt;&lt; &quot;大砲&quot; &lt;&lt; &quot; &quot;;
+			}
+			if (p武将情報[iBushouID].鉄甲船) {
+				デバッグ出力 &lt;&lt; &quot;鉄甲船&quot; &lt;&lt; &quot; &quot;;
+			}
+			デバッグ出力 &lt;&lt; &quot;が使えます&quot; &lt;&lt; endl;
+		}
+	}
+}
+		</pre>
+	</div>
+	<h4>すべての武将が大砲と鉄甲船を使えるようにする</h4>
+	<div class="code">
+		<pre class="brush:cpp;">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+	for (int iBushouID = 0; iBushouID &lt; 最大数::武将情報::配列数; iBushouID++) {
+		// 死んでない
+		if (p武将戸籍情報[iBushouID].状態 != 状態::死亡 &amp;&amp; p武将戸籍情報[iBushouID].戦死 == false) {
+
+			p武将情報[iBushouID].大砲 = true;
+			p武将情報[iBushouID].鉄甲船 = true;
+		}
+	}
+}
+		</pre>
+	</div>
+</div>
+
+
+<div class="content-box mb-3 content-lighten">
+	<h3>より詳細を知るには...</h3>
+	<p>
+		「武将 － 能力」に関する主な所は以上となります。<br>
+		詳しくは「武将情報型.h」や「武将情報列挙.h」を参照してください。
+	</p>
+</div>

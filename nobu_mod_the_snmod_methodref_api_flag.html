@@ -1,0 +1,112 @@
+%(hilight)s
+<div class="content-box mb-3 content-lighten">
+	<h2><i class="fa fa-book fa-fw"></i>フラグ</h2>
+	<p>ScenarioModで読み書きするフラグとしては主として２系統がある</p>
+	</p>
+	<h4>Set_フラグ(...)、Get_フラグ()、Delete_フラグ()</h4>
+	<p>下記にて説明するもので、セーブデータに保存されます</p>
+	<h4>拡張セーブデータを使う方法</h4>
+	<p><a href="?page=nobu_mod_the_snmod_methodref_api_savedata_ex">拡張セーブデータ</a> にて解説されています。</p>
+
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>セーブデータにも反映されるScenarioMod独自で使えるフラグ管理</h3>
+	<p><mark>主にご自身で独自イベントの進行具合を管理する目的で使用することが多いと思われます。</mark></p>
+	<blockquote>int Set_フラグ( string フラグ名, int フラグ値, int フラグ枠) // フラグ値の設定</blockquote>
+	<blockquote>int Get_フラグ( string フラグ名, int フラグ枠) // フラグ値の取得</blockquote>
+	<blockquote>int Delete_フラグ( string フラグ名 ) // フラグ解放(フラグ消滅。ゴミ掃除)</blockquote>
+	<fieldset class="alert alert-info">
+		<legend>永続データに対して使うこと</legend>セーブデータに保存する必要がないフラグにこれらのAPIを使わないこと!!<br>
+		スピードが遅くなるだけです!!<br>
+		ゲームを終了して、セーブデータからロードする際に、値を復活させる必要があるデータに対してのみ利用すること。<br>
+		その必要がないフラグは普通に高速なC/C++の変数で管理してください。
+	</fieldset>
+	<fieldset class="alert alert-info">
+		<legend>フラグを0で初期化しないこと</legend>
+		<font color="red">全てのフラグは0で初期化されているので、わざわざSet_フラグで初期値を設定する必要がありません。</font><br>
+		(初期化してしまうと、実際にはそのフラグを利用しなかったとしてもセーブデータに残ってしまうので注意。)<br>
+	</fieldset>
+	<p>
+		<font color="red">Get_フラグとDelete_フラグは、存在しないフラグ名を問い合わせると、「0」という値が返ってきます。</font>
+	</p>
+	<p>フラグはセーブデータへと保存されるため、無限数ではありません。<br>
+		ScenarioModや一般Modで<b>「セーブデータ１スロットあたり合計で3000ラベル」</b>使うことが出来ます。<br>
+		(セーブデータのスロットとは、下図の赤い四角。８つのスロットがある。)<br>
+	</p>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_scenario_mod_21.png"><br>
+	</p>
+	<p>一般のフラグで連想するものとは異なり、ScenarioModでは、より高度なフラグ機能を有しており、<br>
+		<b>「１つのフラグ名で９つの値」を管理することが出来ます。</b><br>
+	</p>
+	<p>概念図は以下。<br>
+	</p>
+	<h4>１つのフラグに対して９つの値を持てる</h4>
+	<ul>
+		<li>メイン枠：-13万～+13万 程度の値を持てる。「１つのフラグ名」に対してこの「メイン枠が１つ」ある。
+		<li>Ａ枠～Ｈ枠：1(true) か 0(false) のみの値を持てる。「１つのフラグ名」に対して「Ａ枠～Ｈ枠」で８つある。
+	</ul>
+	<p>１つのフラグ名に、普通の数値を入れられる「メイン枠」、TRUE/FALSEのみを入れられる「Ａ枠～Ｈ枠」の合計９つの値が管理できる。<br>
+	</p>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_scenario_mod_20.png"><br>
+	</p>
+	<p>これにより、非常に大きな、隔年に渡るようなイベントであっても、複数のフラグ名を使うようなことは無く、<br>
+		1つのフラグ名で、管理できます。<br>
+		(イベントが進んでいくごとに、Ａ枠をtrue、Ｂ枠をtrue、... という形で８段階まで１つのフラグ名で簡単に管理できる)
+	</p>
+	<p>
+		<font color="red">フラグ名が迂闊に他者と被らないように、フラグのラベルの最初の３文字程度はご自身のハンドル的な名前を付けておきましょう</font><br>
+	</p>
+</div>
+<div class="content-box mb-3 content-lighten">
+	<h3>フラグの設定</h3>
+	<blockquote>int Set_フラグ( string フラグ名, int フラグ値, int フラグ枠) // フラグ値の設定</blockquote>
+	<div class="code">
+		<pre class="brush:cpp;">
+Set_フラグ(&quot;TJP_EV01&quot;, 23 ); // フラグ名&quot;TJP_EV01&quot;のメイン枠に23という値を入れる。
+Set_フラグ(&quot;TJP_EV01&quot;, TRUE, フラグ枠::Ｃ ); // フラグ名&quot;TJP_EV01&quot;のＣ枠にTRUEを入れる。
+  </pre>
+	</div>
+</div>
+<div class="content-box mb-3 content-lighten">
+	<h3>フラグの取得</h3>
+	<blockquote>int Get_フラグ( string フラグ名, int フラグ枠) // フラグ値の取得</blockquote>
+	<div class="code">
+		<pre class="brush:cpp;">
+ /* 存在しないフラグ(Set_フラグしたことが無いフラグ)名を問い合わせた(Get_フラグした)際はFALSE(=0)が返ってくる。 */
+ 
+//フラグ名&quot;TJP_EV01&quot;のフラグ枠::メインに23という値が入ってるか？ 比較演算子を省略しないこと。
+if ( Get_フラグ(&quot;TJP_EV01&quot;) == 23 ) {
+  // ～
+}
+ 
+// フラグ枠::Ａ～Ｈについては、TRUE/FALSEと比較する。
+if ( Get_フラグ(&quot;TJP_EV01&quot;, フラグ枠::Ｃ ) == &lt;font color=&quot;red&quot;&gt;TRUE&lt;/font&gt; ) {
+  // ～
+}
+</pre>
+	</div>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>フラグの解放(消滅・ゴミ掃除)</h3>
+	<blockquote>int Delete_フラグ( string フラグ名 ) // フラグ解放(フラグ消滅。ゴミ掃除)</blockquote>
+
+	<div class="code">
+		<pre class="brush:cpp;">
+	  // フラグ名はScenarioMod、一般Modでみんなで共通で使って3000個まで。いわば共通資源。&lt;br&gt;
+	  // セーブデータにフラグ状態を保存する必要がなくなったら、不要になったら消滅・解放すること。
+	  Delete_フラグ(&quot;TJP_EV01&quot;);
+  </pre>
+	</div>
+</div>
+
+
+</div>
+<div class="content-box mb-3 content-lighten">
+	<h3>より詳細を知るには...</h3>
+	<p>
+		「フラグ」に関する主な所は以上となります。
+		詳しくは「フラグ情報型.h」などを参照してください。
+	</p>
+</div>

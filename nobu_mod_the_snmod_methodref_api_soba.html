@@ -1,0 +1,57 @@
+%(hilight)s
+<div class="content-box mb-3 content-lighten">
+	<h2><i class="fa fa-book fa-fw"></i>相場</h2>
+	<p>相場の情報を取得・設定するAPIです。<br>
+		イメージとしては下記を想定すれば良いでしょう。</p>
+	</p>
+	<p>米の部分については、表示上は浮動小数になっていますが、<br>
+		内部管理では、下記の米相場は「15」という値となります。</p>
+	<p><img src="./cnt_mod/mod_snmod/cnt_mod_scenario_mod_ref_007.png"></p>
+
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>相場の値を変更したい場合には、以下の</h3>
+	<p>
+		相場変更直前に実行されるイベントハンドラの<br>
+		<a href="?page=nobu_mod_the_snmod_methodref_on_sobachange">On_相場変更直前</a> を利用してください。
+	</p>
+</div>
+
+<div class="content-box mb-3 content-lighten">
+	<h3>p相場情報</h3>
+	<div class="code">
+		<pre class="brush:cpp">
+void カスタム::On_プレイヤ担当ターン《メイン画面》() {
+
+	int 米相場 = p相場情報.米相場; // 画面上ではこの1/10の値が表示されている
+	int 馬相場 = p相場情報.馬相場;
+	int 鉄砲相場 = p相場情報.鉄砲相場;
+	int 兵相場 = p相場情報.兵相場;
+
+	if (米相場 &lt;= 10) { // 画面表示上では、1.0
+		デバッグ出力 &lt;&lt; &quot;米が安く買えますよ&quot; &lt;&lt; endl;
+	}
+	else if (米相場 &gt;= 15) { // 画面表示上では、1.5
+		デバッグ出力 &lt;&lt; &quot;米が高く売れますよ&quot; &lt;&lt; endl;
+	}
+
+}
+</pre>
+	</div>
+</div>
+<div class="content-box mb-3 content-lighten">
+	<h3>Set_**相場() と On_相場変更直前()</h3>
+	<p>Set_**相場() 関数は、<br>
+		相場変更直前に実行されるイベントハンドラ「<a href="?page=nobu_mod_the_snmod_methodref_on_sobachange">On_相場変更直前</a>」内でのみ、正しく機能します。<br>
+		他のイベントハンドラ内での実行は想定されていません。</p>
+</div>
+
+
+<div class="content-box mb-3 content-lighten">
+	<h3>より詳細を知るには...</h3>
+	<p>
+		相場に関する主な所は以上となります。
+		詳しくは「相場情報型.h」などを参照してください。
+	</p>
+</div>
